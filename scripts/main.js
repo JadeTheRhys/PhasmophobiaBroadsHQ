@@ -3,6 +3,20 @@
 // Handles tab switching + UI setup
 // ========================================
 
+// --- Username Pop-Up ---
+let playerName = "";
+
+function askForName() {
+    playerName = prompt("Enter your name:");
+
+    // fallback if empty
+    if (!playerName || playerName.trim() === "") {
+        playerName = "Player";
+    }
+}
+
+askForName();
+
 // Grab tab buttons & content sections
 const tabButtons = document.querySelectorAll(".sidebar button[data-tab]");
 const sections = document.querySelectorAll(".section");
