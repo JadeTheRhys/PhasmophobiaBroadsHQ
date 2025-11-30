@@ -447,6 +447,47 @@ const firebaseConfig = {
     if (!data) return;
     addChatLine(data.user || "Player", data.text);
   });
+// ================= REALTIME LISTENERS =================
+
+// Evidence
+db.ref("evidence").limitToLast(100).on("child_added", snap => {
+  const item = snap.val();
+  if (!item) return;
+  const list = document.getElementById("evidence-list");
+  const p = document.createElement("p");
+  p.innerHTML = `<span class="tag">📘 Evidence</span> <strong>${item.by}:</strong> ${item.text}`;
+  list.appendChild(p);
+});
+
+// Status
+db.ref("status").limitToLast(100).on("child_added", snap => {
+  const item = snap.val();
+  if (!item) return;
+  const list = document.getElementById("status-list");
+  const p = document.createElement("p");
+  p.innerHTML = `${item.text} <small>— ${item.by}</small>`;
+  list.appendChild(p);
+});
+
+// Locations
+db.ref("locations").limitToLast(100).on("child_added", snap => {
+  const item = snap.val();
+  if (!item) return;
+  const list = document.getElementById("location-list");
+  const p = document.createElement("p");
+  p.innerHTML = `<span class="tag">📍 Location</span> <strong>${item.by}</strong> → ${item.text}`;
+  list.appendChild(p);
+});
+
+// Ghost Log
+db.ref("ghostlog").limitToLast(100).on("child_added", snap => {
+  const item = snap.val();
+  if (!item) return;
+  const list = document.getElementById("ghost-log");
+  const p = document.createElement("p");
+  p.textContent = item;
+  list.appendChild(p);
+});
 
   // ================= TABS =================
   const tabButtons = document.querySelectorAll(".tab-btn");
