@@ -1,1 +1,130 @@
+/* ================================
+   GLOBAL DARK THEME (Phasmo-style)
+   ================================ */
+
+body {
+  margin: 0;
+  background: #000;
+  color: #eee;
+  font-family: "Courier New", monospace;
+}
+
+/* Layout wrapper */
+.wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+/* ================================
+   SIDEBAR
+   ================================ */
+
+.sidebar {
+  width: 200px;
+  background: #0a0a0d;
+  border-right: 2px solid #222;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.sidebar h2 {
+  color: #9c5bff;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.sidebar button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  background: #111;
+  color: #bbb;
+  border: 1px solid #333;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sidebar button:hover {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #9c5bff;
+}
+
+/* ================================
+   MAIN PANEL
+   ================================ */
+
+.main-panel {
+  flex: 1;
+  padding: 15px;
+  box-sizing: border-box;
+  background: #0d0d12;
+}
+
+/* ================================
+   CHAT AREA
+   ================================ */
+
+#messages {
+  height: calc(100vh - 160px);
+  overflow-y: auto;
+  padding-right: 10px;
+  box-sizing: border-box;
+  border: 1px solid #222;
+  background: #08080b;
+}
+
+.message-entry {
+  margin: 10px 0;
+  padding: 10px;
+  background: #111;
+  border-left: 4px solid #9c5bff;
+  color: #eee;
+  font-size: 0.95rem;
+}
+
+/* ================================
+   INPUT AREA
+   ================================ */
+
+.input-row {
+  display: flex;
+  margin-top: 10px;
+}
+
+#chatInput {
+  flex: 1;
+  padding: 10px;
+  background: #121214;
+  border: 1px solid #333;
+  color: #eee;
+}
+
+#sendBtn {
+  padding: 10px 15px;
+  background: #9c5bff;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#sendBtn:hover {
+  background: #b784ff;
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+@media (max-width: 700px) {
+  .wrapper {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid #222;
+  }
+}
 /* style */
