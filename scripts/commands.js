@@ -1,13 +1,14 @@
-// =============================
-// COMMANDS.JS — MULTIPLAYER VERSION
-// Syncs Evidence, Status, Locations, Ghost Log
-// =============================
+// ==========================================
+// COMMANDS.JS — MULTIPLAYER SYNC VERSION
+// Works with Firebase Compat + Window Global
+// ==========================================
 
-// Firebase shortcuts (db is created in index.html)
-const evidenceRef  = firebase.database().ref("evidence");
-const statusRef    = firebase.database().ref("status");
-const locationRef  = firebase.database().ref("locations");
-const ghostRef     = firebase.database().ref("ghostlog");
+// Firebase DB refs (firebase is global because of compat scripts)
+const db = firebase.database();
+const evidenceRef  = db.ref("evidence");
+const statusRef    = db.ref("status");
+const locationRef  = db.ref("locations");
+const ghostRef     = db.ref("ghostlog");
 
 // UI elements
 const evidenceList  = document.getElementById("evidence-list");
@@ -15,53 +16,54 @@ const statusList    = document.getElementById("status-list");
 const locationList  = document.getElementById("location-list");
 const ghostLog      = document.getElementById("ghost-log");
 
-// Helper: add <p> entry
+// Helper to append rows
 function addRow(target, html) {
   const p = document.createElement("p");
   p.innerHTML = html;
   target.appendChild(p);
 }
 
-// Helper: add ghost log entry
+// Log ghost events (also send to Firebase)
 function logGhost(text) {
   addRow(ghostLog, text);
-  ghostRef.push(text);     // sync online
+  ghostRef.push(text);
 }
 
 // =====================================================
-// RECEIVE UPDATES FROM FIREBASE
+// RECEIVE REALTIME UPDATES FROM FIREBASE
 // =====================================================
 
-// Evidence
+// Evidence sync
 evidenceRef.on("child_added", snap => {
   addRow(evidenceList, `<span class="tag">📘 Evidence</span> ${snap.val()}`);
 });
 
-// Status
+// Status sync
 statusRef.on("child_added", snap => {
-  const val = snap.val();
-  if (val.type === "dead") {
-    addRow(statusList, `<span class="tag">💀 Dead</span> ${val.name}`);
+  const v = snap.val();
+  if (v.type === "dead") {
+    addRow(statusList, `<span class="tag">💀 Dead</span> ${v.name}`);
   }
-  if (val.type === "revive") {
-    addRow(statusList, `<span class="tag">❤️ Revived</span> ${val.name}`);
+  if (v.type === "revive") {
+    addRow(statusList, `<span class="tag">❤️ Revived</span> ${v.name}`);
   }
 });
 
-// Locations
+// Locations sync
 locationRef.on("child_added", snap => {
   addRow(locationList, `<span class="tag">📍 Location</span> ${snap.val()}`);
 });
 
-// Ghost log
+// Ghost log sync
 ghostRef.on("child_added", snap => {
   addRow(ghostLog, snap.val());
 });
 
 // =====================================================
 // MAIN COMMAND HANDLER
+// (NO EXPORT — MADE GLOBAL AT BOTTOM)
 // =====================================================
-export function handleCommand(text) {
+function handleCommand(text) {
 
   if (!text.startsWith("!")) return;
 
@@ -76,7 +78,7 @@ export function handleCommand(text) {
   }
 
   // ------------------------------
-  // !clear (local only)
+  // !clear — LOCAL ONLY
   // ------------------------------
   if (cmd === "!clear") {
     evidenceList.innerHTML = "";
@@ -95,7 +97,6 @@ export function handleCommand(text) {
 
     evidenceRef.push(ev);
     ghostRef.push(`New evidence logged: ${ev}`);
-
     return;
   }
 
@@ -108,7 +109,6 @@ export function handleCommand(text) {
 
     locationRef.push(loc);
     ghostRef.push(`Location updated: ${loc}`);
-
     return;
   }
 
@@ -121,7 +121,6 @@ export function handleCommand(text) {
 
     statusRef.push({ type: "dead", name: who });
     ghostRef.push(`${who} was marked DEAD.`);
-
     return;
   }
 
@@ -134,7 +133,6 @@ export function handleCommand(text) {
 
     statusRef.push({ type: "revive", name: who });
     ghostRef.push(`${who} has been REVIVED.`);
-
     return;
   }
 
@@ -143,3 +141,6 @@ export function handleCommand(text) {
   // ------------------------------
   ghostRef.push(`Unknown command: ${text}`);
 }
+
+// Make globally accessible for index.html
+window.handleCommand = handleCommand;
