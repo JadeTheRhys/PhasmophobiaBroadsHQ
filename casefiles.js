@@ -9,15 +9,16 @@ const closeBtn = document.querySelector(".close-casefiles");
 const grid = document.querySelector(".cf-grid");
 
 // ===============================================
-// CASE FILES DATA — you can add/remove images here
+// CASE FILES DATA — Updated with your provided image filenames
 // ===============================================
 const caseFiles = [
-  { src: "assets/casefiles/1.jpg", label: "Case File 01" },
-  { src: "assets/casefiles/2.jpg", label: "Case File 02" },
-  { src: "assets/casefiles/3.jpg", label: "Case File 03" },
-  { src: "assets/casefiles/4.jpg", label: "Case File 04" },
-  { src: "assets/casefiles/5.jpg", label: "Case File 05" },
-  { src: "assets/casefiles/6.jpg", label: "Case File 06" }
+  // These names MUST match the files you upload to the assets/casefiles folder
+  { src: "assets/casefiles/ChatGPT Image Nov 25, 2025, 01_35_48 PM.jpg", label: "Case File 01" },
+  { src: "assets/casefiles/ChatGPT Image Nov 25, 2025, 06_40_24 PM.jpg", label: "Case File 02" },
+  { src: "assets/casefiles/ChatGPT Image Nov 25, 2025, 06_58_04 PM.jpg", label: "Case File 03" },
+  { src: "assets/casefiles/ChatGPT Image Nov 25, 2025, 07_06_20 PM.jpg", label: "Case File 04" },
+  { src: "assets/casefiles/ChatGPT Image Nov 25, 2025, 07_27_30 PM.jpg", label: "Case File 05" },
+  { src: "assets/casefiles/ChatGPT Image Nov 25, 2025, 07_39_52 PM.jpg", label: "Case File 06" }
 ];
 
 // ===============================================
