@@ -411,6 +411,7 @@ const firebaseConfig = {
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+  setupCommandRefs(db);
   const messagesRef = db.ref("messages");
 
   // ================= IMPORT COMMAND LOGIC =================
