@@ -16,9 +16,7 @@
       --text-soft: #c5b3ff;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -53,7 +51,6 @@
       opacity: 0.9;
     }
 
-    /* NAVBAR */
     nav {
       display: flex;
       gap: 8px;
@@ -105,9 +102,7 @@
       margin: 0 auto;
     }
 
-    .panel.active {
-      display: block;
-    }
+    .panel.active { display: block; }
 
     .panel h2 {
       margin-top: 0;
@@ -122,7 +117,6 @@
       margin-bottom: 10px;
     }
 
-    /* CHAT PANEL */
     #chat-log {
       background: #05020c;
       border-radius: 10px;
@@ -133,17 +127,9 @@
       font-size: 0.9rem;
     }
 
-    .chat-line {
-      margin-bottom: 4px;
-    }
-
-    .chat-line span.user {
-      color: #ffb3ff;
-    }
-
-    .chat-line span.ghost {
-      color: #ff6666;
-    }
+    .chat-line { margin-bottom: 4px; }
+    .chat-line span.user { color: #ffb3ff; }
+    .chat-line span.ghost { color: #ff6666; }
 
     #chat-form {
       display: flex;
@@ -177,15 +163,10 @@
       transform: translateY(-1px);
     }
 
-    /* SIMPLE LIST PANELS */
     .list {
       font-size: 0.9rem;
       color: var(--text-soft);
       line-height: 1.4;
-    }
-
-    .list p {
-      margin: 4px 0;
     }
 
     .tag {
@@ -199,7 +180,6 @@
       color: var(--text-soft);
     }
 
-    /* CASE FILES GRID */
     .case-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -215,76 +195,9 @@
       font-size: 0.8rem;
     }
 
-    .case-card img {
-      width: 100%;
-      display: block;
-      aspect-ratio: 4/3;
-      object-fit: cover;
-    }
-
     .case-card div {
       padding: 6px 8px 8px;
       color: var(--text-soft);
-    }
-
-    /* LOBBY */
-    .lobby-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .lobby-row input {
-      flex: 1;
-      background: #0a0417;
-      border-radius: 999px;
-      border: 1px solid #3a235a;
-      padding: 8px 12px;
-      color: var(--text-main);
-      font-size: 0.9rem;
-    }
-
-    .room-list {
-      border-radius: 10px;
-      border: 1px solid #27153f;
-      background: #05020c;
-      padding: 6px;
-      font-size: 0.9rem;
-      max-height: 180px;
-      overflow-y: auto;
-    }
-
-    .room-pill {
-      padding: 6px 10px;
-      margin: 4px 0;
-      border-radius: 999px;
-      background: #120824;
-      border: 1px solid #2f174a;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .room-pill button {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 999px;
-    }
-
-    /* VOICE BUTTON */
-    .voice-btn {
-      margin-top: 10px;
-      background: #1b0f35;
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      padding: 8px 14px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      color: #fff;
-    }
-
-    .voice-btn:hover {
-      box-shadow: 0 0 10px #9b5bff99;
     }
 
     footer {
@@ -297,283 +210,180 @@
     }
   </style>
 
-  <!-- FIREBASE (COMPAT VERSION FOR STATIC SITES LIKE GITHUB PAGES) -->
+  <!-- Firebase compat -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
 </head>
 <body>
 
-  <header>
-    <h1>PHASMOPHOBIA BROADS HQ</h1>
-    <p>Private ghost-hunting hub for you & your crew.</p>
-  </header>
+<header>
+  <h1>PHASMOPHOBIA BROADS HQ</h1>
+  <p>Private ghost-hunting hub for you & your crew.</p>
+</header>
 
-  <nav>
-    <button class="tab-btn active" data-target="panel-chat">Chat</button>
-    <button class="tab-btn" data-target="panel-evidence">Evidence</button>
-    <button class="tab-btn" data-target="panel-status">Player Status</button>
-    <button class="tab-btn" data-target="panel-locations">Locations</button>
-    <button class="tab-btn" data-target="panel-ghostlog">Ghost Log</button>
-    <button class="tab-btn" data-target="panel-casefiles">Case Files</button>
-    <button class="tab-btn" data-target="panel-lobby">Lobby / Voice</button>
-  </nav>
+<nav>
+  <button class="tab-btn active" data-target="panel-chat">Chat</button>
+  <button class="tab-btn" data-target="panel-evidence">Evidence</button>
+  <button class="tab-btn" data-target="panel-status">Player Status</button>
+  <button class="tab-btn" data-target="panel-locations">Locations</button>
+  <button class="tab-btn" data-target="panel-ghostlog">Ghost Log</button>
+  <button class="tab-btn" data-target="panel-casefiles">Case Files</button>
+  <button class="tab-btn" data-target="panel-lobby">Lobby / Voice</button>
+</nav>
 
-  <main>
-    <!-- CHAT PANEL -->
-    <section id="panel-chat" class="panel active">
-      <h2>Van Radio Chat</h2>
-      <div id="chat-log"></div>
-      <form id="chat-form">
-        <input id="chat-input" type="text" placeholder="Type a message or ghost command (e.g. !hunt)" autocomplete="off" />
-        <button type="submit">Send</button>
-      </form>
-    </section>
+<main>
 
-    <!-- EVIDENCE PANEL -->
-    <section id="panel-evidence" class="panel">
-      <h2>Evidence Tracker</h2>
-      <div class="list">
-        <p>Use chat commands like <code>!evidence: EMF 5</code> and <code>!evidence: Ghost Writing</code> to log clues.</p>
-        <div id="evidence-list"></div>
-      </div>
-    </section>
+  <!-- CHAT PANEL -->
+  <section id="panel-chat" class="panel active">
+    <h2>Van Radio Chat</h2>
+    <div id="chat-log"></div>
 
-    <!-- STATUS PANEL -->
-    <section id="panel-status" class="panel">
-      <h2>Player Status</h2>
-      <div class="list">
-        <p>Use chat like: <code>!dead: Starla</code> or <code>!revive: Starla</code></p>
-        <div id="status-list"></div>
-      </div>
-    </section>
+    <form id="chat-form">
+      <input id="chat-input" type="text" placeholder="Type a message or ghost command (e.g. !hunt)" autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </section>
 
-    <!-- LOCATIONS PANEL -->
-    <section id="panel-locations" class="panel">
-      <h2>Player Locations</h2>
-      <div class="list">
-        <p>Use chat like: <code>!location: Starla -> Basement</code></p>
-        <div id="location-list"></div>
-      </div>
-    </section>
+  <!-- EVIDENCE PANEL -->
+  <section id="panel-evidence" class="panel">
+    <h2>Evidence Tracker</h2>
+    <div class="list">
+      <p>Use chat commands like <code>!evidence: EMF 5</code></p>
+      <div id="evidence-list"></div>
+    </div>
+  </section>
 
-    <!-- GHOST LOG PANEL -->
-    <section id="panel-ghostlog" class="panel">
-      <h2>Ghost Activity Log</h2>
-      <div id="ghost-log" class="list"></div>
-    </section>
+  <!-- STATUS PANEL -->
+  <section id="panel-status" class="panel">
+    <h2>Player Status</h2>
+    <div class="list">
+      <p>Use <code>!dead: NAME</code> or <code>!revive: NAME</code></p>
+      <div id="status-list"></div>
+    </div>
+  </section>
 
-    <!-- CASE FILES PANEL -->
-    <section id="panel-casefiles" class="panel">
-      <h2>Case Files</h2>
-      <p class="list">These can later be wired to your posters. For now, it's just a simple grid.</p>
-      <div class="case-grid" id="case-grid">
-        <!-- We’ll just show empty slots for now so nothing 404s -->
-        <div class="case-card">
-          <div>Summoning Circle Incident</div>
-        </div>
-        <div class="case-card">
-          <div>Dragged From the Van</div>
-        </div>
-        <div class="case-card">
-          <div>Voodoo Doll Tackle</div>
-        </div>
-        <div class="case-card">
-          <div>Ouija Board Chaos</div>
-        </div>
-        <div class="case-card">
-          <div>Running from the Ghost</div>
-        </div>
-        <div class="case-card">
-          <div>Ghost Writing in the Basement</div>
-        </div>
-      </div>
-    </section>
+  <!-- LOCATIONS PANEL -->
+  <section id="panel-locations" class="panel">
+    <h2>Player Locations</h2>
+    <div class="list">
+      <p>Use <code>!location: Starla -> Basement</code></p>
+      <div id="location-list"></div>
+    </div>
+  </section>
 
-    <!-- LOBBY / VOICE PANEL -->
-    <section id="panel-lobby" class="panel">
-      <h2>Lobby &amp; Voice Chat</h2>
+  <!-- GHOST LOG -->
+  <section id="panel-ghostlog" class="panel">
+    <h2>Ghost Activity Log</h2>
+    <div id="ghost-log" class="list"></div>
+  </section>
 
-      <div class="lobby-row">
-        <input id="room-name-input" type="text" placeholder="Room name (for your notes only)" />
-        <button type="button" onclick="addRoom()">Add</button>
-      </div>
+  <!-- CASE FILES -->
+  <section id="panel-casefiles" class="panel">
+    <h2>Case Files</h2>
+    <div class="case-grid">
+      <div class="case-card"><div>Summoning Circle Incident</div></div>
+      <div class="case-card"><div>Dragged From the Van</div></div>
+      <div class="case-card"><div>Voodoo Doll Tackle</div></div>
+      <div class="case-card"><div>Ouija Board Chaos</div></div>
+      <div class="case-card"><div>Running from the Ghost</div></div>
+      <div class="case-card"><div>Ghost Writing in the Basement</div></div>
+    </div>
+  </section>
 
-      <div class="room-list" id="room-list">
-        <!-- simple local room list -->
-      </div>
+  <!-- LOBBY / VOICE -->
+  <section id="panel-lobby" class="panel">
+    <h2>Lobby &amp; Voice Chat</h2>
 
-      <button class="voice-btn" type="button" onclick="openJitsi()">
-        Open Voice / Video (Jitsi)
-      </button>
+    <button class="voice-btn" type="button" onclick="openJitsi()">
+      Open Voice / Video (Jitsi)
+    </button>
 
-      <p class="list" style="margin-top:8px;">
-        This button opens a Jitsi room in a new tab so you can talk, stream, and webcam there
-        while using this site as your HUD.
-      </p>
-    </section>
-  </main>
+  </section>
 
-  <footer>
-    Phasmophobia Broads HQ &copy; <span id="year"></span>
-  </footer>
+</main>
 
-  <!-- MAIN SCRIPT -->
-  <script>
-    // ---------------- YEAR ----------------
-    document.getElementById('year').textContent = new Date().getFullYear();
+<footer>Phasmophobia Broads HQ © <span id="year"></span></footer>
 
-    // ---------------- TABS ----------------
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const panels = document.querySelectorAll('.panel');
+<!-- MAIN LOGIC -->
+<script type="module">
 
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.target;
-        tabButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        panels.forEach(p => p.classList.remove('active'));
-        document.getElementById(target).classList.add('active');
-      });
+  // ================= USERNAME POP-UP =================
+  let playerName = prompt("Enter your name:") || "Player";
+
+  // ================= FIREBASE INIT =================
+  const firebaseConfig = {
+    apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
+    authDomain: "phasmophobiabroads.firebaseapp.com",
+    projectId: "phasmophobiabroads",
+    storageBucket: "phasmophobiabroads.firebasestorage.app",
+    messagingSenderId: "503659624108",
+    appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const messagesRef = db.ref("messages");
+
+  // ================= IMPORT COMMAND LOGIC =================
+  import { handleCommand } from "./scripts/commands.js";
+
+  // ================= CHAT =================
+  const chatLog  = document.getElementById("chat-log");
+  const chatForm = document.getElementById("chat-form");
+  const chatInput= document.getElementById("chat-input");
+
+  function addChatLine(user, text) {
+    const line = document.createElement("div");
+    line.className = "chat-line";
+    line.innerHTML = `<span class="user">[${user}]</span> ${text}`;
+    chatLog.appendChild(line);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  // Send message
+  chatForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    messagesRef.push({ user: playerName, text });
+
+    handleCommand(text);
+
+    chatInput.value = "";
+  });
+
+  // Receive messages
+  messagesRef.limitToLast(100).on("child_added", snap => {
+    const data = snap.val();
+    if (!data) return;
+    addChatLine(data.user || "Player", data.text);
+  });
+
+  // ================= YEAR =================
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // ================= TABS =================
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  const panels = document.querySelectorAll(".panel");
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
+      panels.forEach(p => p.classList.remove("active"));
+
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.target).classList.add("active");
     });
+  });
 
-    // ---------------- FIREBASE SETUP ----------------
-    const firebaseConfig = {
-      apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
-      authDomain: "phasmophobiabroads.firebaseapp.com",
-      projectId: "phasmophobiabroads",
-      storageBucket: "phasmophobiabroads.firebasestorage.app",
-      messagingSenderId: "503659624108",
-      appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
-    };
+  // ================= JITSI =================
+  window.openJitsi = function() {
+    window.open("https://meet.jit.si/PhasmophobiaBroadsHQ", "_blank");
+  };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const messagesRef = db.ref("messages");
+</script>
 
-    // ---------------- CHAT ----------------
-    const chatLog = document.getElementById('chat-log');
-    const chatForm = document.getElementById('chat-form');
-    const chatInput = document.getElementById('chat-input');
-
-    function addChatLine(text, isGhost = false) {
-      const line = document.createElement('div');
-      line.className = 'chat-line';
-      line.innerHTML = isGhost
-        ? '<span class="ghost">[GHOST]</span> ' + text
-        : '<span class="user">[YOU]</span> ' + text;
-      chatLog.appendChild(line);
-      chatLog.scrollTop = chatLog.scrollHeight;
-    }
-
-    chatForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = chatInput.value.trim();
-      if (!text) return;
-
-      // Push to Firebase
-      messagesRef.push({ text });
-
-      // Handle ghost-style commands locally
-      handleCommand(text);
-
-      chatInput.value = "";
-    });
-
-    // Listen for new messages
-    messagesRef.limitToLast(100).on('child_added', snap => {
-      const data = snap.val();
-      if (!data || !data.text) return;
-      const line = document.createElement('div');
-      line.className = 'chat-line';
-      line.innerHTML = '<span class="user">[PLAYER]</span> ' + data.text;
-      chatLog.appendChild(line);
-      chatLog.scrollTop = chatLog.scrollHeight;
-    });
-
-    // ---------------- SIMPLE COMMAND HANDLER ----------------
-    const evidenceList = document.getElementById('evidence-list');
-    const statusList = document.getElementById('status-list');
-    const locationList = document.getElementById('location-list');
-    const ghostLog = document.getElementById('ghost-log');
-
-    function logGhost(text) {
-      const p = document.createElement('p');
-      p.textContent = text;
-      ghostLog.appendChild(p);
-    }
-
-    function handleCommand(text) {
-      if (!text.startsWith('!')) return;
-
-      // !hunt, !ghost, etc → just log for now
-      if (text === '!hunt') {
-        logGhost('HUNT TRIGGERED: heartbeat rises...');
-        addChatLine('You feel the ghost watching.', true);
-      } else if (text === '!ghost') {
-        logGhost('Ghost manifested briefly in the van.');
-        addChatLine('A cold whisper brushes your ear.', true);
-      } else if (text.startsWith('!evidence:')) {
-        const ev = text.split(':')[1]?.trim();
-        if (ev) {
-          const p = document.createElement('p');
-          p.innerHTML = '<span class="tag">Evidence</span> ' + ev;
-          evidenceList.appendChild(p);
-          logGhost('New evidence recorded: ' + ev);
-        }
-      } else if (text.startsWith('!location:')) {
-        // !location: Starla -> Basement
-        const part = text.split(':')[1]?.trim();
-        if (part) {
-          const p = document.createElement('p');
-          p.innerHTML = '<span class="tag">Location</span> ' + part;
-          locationList.appendChild(p);
-        }
-      } else if (text.startsWith('!dead:')) {
-        const who = text.split(':')[1]?.trim();
-        if (who) {
-          const p = document.createElement('p');
-          p.innerHTML = '<span class="tag">💀 Dead</span> ' + who;
-          statusList.appendChild(p);
-        }
-      } else if (text.startsWith('!revive:')) {
-        const who = text.split(':')[1]?.trim();
-        if (who) {
-          const p = document.createElement('p');
-          p.innerHTML = '<span class="tag">❤️ Revived</span> ' + who;
-          statusList.appendChild(p);
-        }
-      }
-    }
-
-    // ---------------- LOBBY / ROOMS (LOCAL ONLY) ----------------
-    const roomInput = document.getElementById('room-name-input');
-    const roomList = document.getElementById('room-list');
-
-    function addRoom() {
-      const name = roomInput.value.trim();
-      if (!name) return;
-      const row = document.createElement('div');
-      row.className = 'room-pill';
-      row.innerHTML = `
-        <span>${name}</span>
-        <button type="button" onclick="joinRoom('${name.replace(/'/g, "\\'")}')">Join</button>
-      `;
-      roomList.appendChild(row);
-      roomInput.value = '';
-    }
-
-    window.addRoom = addRoom;
-
-    window.joinRoom = function(name) {
-      addChatLine('You joined room: ' + name);
-    };
-
-    // ---------------- JITSI ----------------
-    function openJitsi() {
-      window.open('https://meet.jit.si/PhasmophobiaBroadsHQ', '_blank');
-    }
-    window.openJitsi = openJitsi;
-  </script>
 </body>
 </html>
-<!-- index html placeholder, user will paste final code -->
