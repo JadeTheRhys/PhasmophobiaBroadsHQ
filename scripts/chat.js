@@ -1,5 +1,5 @@
 // =============================
-// CHAT.JS — FINAL VERSION
+// CHAT.JS — FINAL VERSION (WITH USERNAMES)
 // Handles sending + receiving messages
 // =============================
 
@@ -25,9 +25,10 @@ function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
-  // Save message to Firebase
+  // Save message to Firebase WITH USERNAME
   push(messagesRef, {
-    text,
+    name: playerName,    // 🔥 username from main.js
+    text: text,
     time: Date.now()
   });
 
@@ -45,14 +46,15 @@ input.addEventListener("keydown", (e) => {
 // -----------------------------
 onChildAdded(messagesRef, (snapshot) => {
   const data = snapshot.val();
-  renderMessage(data.text);
+  renderMessage(data.name, data.text);
 });
 
-function renderMessage(text) {
+function renderMessage(name, text) {
   const div = document.createElement("div");
   div.className = "message-entry";
-  div.textContent = text;
+  div.textContent = `[${name}] ${text}`;
   msgBox.appendChild(div);
   msgBox.scrollTop = msgBox.scrollHeight;
 }
+
 // chat js
