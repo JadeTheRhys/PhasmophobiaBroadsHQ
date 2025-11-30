@@ -7,16 +7,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 /* ============================================================
-   🔥 IMPORTANT — INSERT YOUR REAL FIREBASE CONFIG BELOW
+   FIREBASE CONFIGURATION (Provided by user)
    ============================================================ */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
+  authDomain: "phasmophobiabroads.firebaseapp.com",
+  // Database URL is required for getDatabase, inferred from projectId
+  databaseURL: "https://phasmophobiabroads-default-rtdb.firebaseio.com",
+  projectId: "phasmophobiabroads",
+  storageBucket: "phasmophobiabroads.firebasestorage.app",
+  messagingSenderId: "503659624108",
+  appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
 };
 /* ============================================================
    END CONFIG
