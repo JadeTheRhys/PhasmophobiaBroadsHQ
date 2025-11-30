@@ -1,124 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Phasmophobia Broads – Journal Chatrooms</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phasmophobia Broads</title>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="chatrooms.css" />
+    <!-- MAIN STYLE -->
+    <link rel="stylesheet" href="styles/style.css">
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Courier+Prime&display=swap" rel="stylesheet">
+    <!-- CHATROOM STYLES -->
+    <link rel="stylesheet" href="styles/chatrooms.css">
 
+    <!-- FIREBASE CONFIG -->
+    <script src="scripts/firebase.js" defer></script>
+
+    <!-- SITE FUNCTIONALITY -->
+    <script src="scripts/main.js" defer></script>
+    <script src="scripts/chat.js" defer></script>
+    <script src="scripts/lobby.js" defer></script>
+    <script src="scripts/uiEffects.js" defer></script>
+    <script src="scripts/casefiles.js" defer></script>
+    <script src="scripts/voice.js" defer></script>
 </head>
+
 <body>
 
-  <!-- ===================== LOADING SCREEN ===================== -->
-  <div id="loading-screen" class="loading-screen">
-    <div class="loading-inner">
-      <div class="loader-circle"></div>
-      <p class="loading-text">Summoning the spirits...</p>
-    </div>
-  </div>
+    <!-- PHASMO DARK OVERLAY -->
+    <div id="overlay"></div>
 
-  <!-- ===================== JOURNAL WRAPPER ===================== -->
-  <div class="journal-wrapper hidden" id="journal-wrapper">
+    <!-- HEADER -->
+    <header class="main-header">
+        <h1>Phasmophobia Broads</h1>
+        <p class="subtitle">Summoning the spirits…</p>
+    </header>
 
-    <!-- Tabs -->
-    <aside class="tabs">
-      <button data-tab="chat">Chat</button>
-      <button data-tab="evidence">Evidence</button>
-      <button data-tab="players">Player Status</button>
-      <button data-tab="locations">Locations</button>
-      <button data-tab="ghostlog">Ghost Log</button>
-      <button id="openCaseFilesBtn">Case Files</button>
-      <button id="openLobbyBtn">Lobby</button>
-    </aside>
+    <!-- NAVIGATION -->
+    <nav class="phasmo-nav">
+        <button data-tab="chat">Chat</button>
+        <button data-tab="evidence">Evidence</button>
+        <button data-tab="status">Player Status</button>
+        <button data-tab="locations">Player Locations</button>
+        <button data-tab="ghostlog">Ghost Log</button>
+        <button data-tab="casefiles">Case Files</button>
+        <button data-tab="lobby">Lobby</button>
+    </nav>
 
-    <!-- Pages -->
-    <main class="journal-page">
+    <!-- MAIN CONTENT -->
+    <main>
 
-      <!-- CHAT -->
-      <section id="chat" class="page-section active">
-        <div id="messages" class="messages"></div>
-        <div class="input-row">
-          <input id="chatInput" type="text" placeholder="Write in the journal..." />
-          <button id="sendBtn">Send</button>
-        </div>
-      </section>
+        <!-- CHAT TAB -->
+        <section id="chat" class="tab active">
+            <h2>Chat</h2>
+            <textarea id="chatDisplay" readonly></textarea>
+            <input id="chatInput" type="text" placeholder="Write in the journal...">
+            <button onclick="sendChat()">Send</button>
+        </section>
 
-      <!-- Evidence -->
-      <section id="evidence" class="page-section">
-        <h2>Evidence</h2>
-        <ul id="evidenceList"></ul>
-      </section>
+        <!-- EVIDENCE TAB -->
+        <section id="evidence" class="tab">
+            <h2>Evidence</h2>
+            <div id="evidenceList"></div>
+        </section>
 
-      <!-- Player Status -->
-      <section id="players" class="page-section">
-        <h2>Player Status</h2>
-        <ul id="playerList"></ul>
-      </section>
+        <!-- PLAYER STATUS TAB -->
+        <section id="status" class="tab">
+            <h2>Player Status</h2>
+            <div id="playerStatusPanel"></div>
+        </section>
 
-      <!-- Locations -->
-      <section id="locations" class="page-section">
-        <h2>Player Locations</h2>
-        <ul id="locationList"></ul>
-      </section>
+        <!-- PLAYER LOCATIONS -->
+        <section id="locations" class="tab">
+            <h2>Player Locations</h2>
+            <div id="locationPanel"></div>
+        </section>
 
-      <!-- Ghost Log -->
-      <section id="ghostlog" class="page-section">
-        <h2>Ghost Activity Log</h2>
-        <ul id="ghostLog"></ul>
-      </section>
+        <!-- GHOST LOG TAB -->
+        <section id="ghostlog" class="tab">
+            <h2>Ghost Activity Log</h2>
+            <div id="ghostLogPanel"></div>
+        </section>
+
+        <!-- CASE FILES -->
+        <section id="casefiles" class="tab">
+            <h2>Case Files</h2>
+            <div id="caseFileContainer"></div>
+        </section>
+
+        <!-- LOBBY -->
+        <section id="lobby" class="tab">
+            <h2>Phasmo Lobby</h2>
+
+            <div class="create-room">
+                <input id="newRoomName" type="text" placeholder="Create a room...">
+                <button onclick="createRoom()">Create</button>
+            </div>
+
+            <h3>Available Rooms</h3>
+            <div id="roomList"></div>
+
+            <button onclick="startVoiceChat()">Voice Chat</button>
+        </section>
 
     </main>
-  </div>
-
-
-  <!-- ===================== CASE FILES OVERLAY ===================== -->
-  <div id="casefiles" class="casefiles hidden">
-    <button class="close-casefiles">✕</button>
-    <div class="casefiles-inner">
-      <h2 class="cf-title">Case Files</h2>
-      <div class="cf-grid" id="caseGrid"></div>
-    </div>
-  </div>
-
-  <!-- ===================== LOBBY ===================== -->
-  <div id="lobby-screen" class="lobby hidden">
-    <div class="lobby-inner">
-      <h2>Phasmo Lobby</h2>
-      <div class="lobby-create">
-        <input id="newRoomName" type="text" placeholder="Create a room..." />
-        <button id="createRoomBtn">Create</button>
-      </div>
-      <h3>Available Rooms</h3>
-      <ul id="roomList"></ul>
-    </div>
-  </div>
-
-
-  <!-- ===================== VOICE CHAT BUTTON (JITSI POP-OUT) ===================== -->
-  <button id="voiceLaunchBtn" class="voice-btn">Voice Chat</button>
-
-
-  <!-- Dust -->
-  <div id="dust-container"></div>
-  <!-- Shadow Sweep -->
-  <div id="shadow-sweep" class="shadow-sweep"></div>
-
-
-  <!-- ===================== SCRIPTS ===================== -->
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="main.js"></script>
-  <script type="module" src="chat.js"></script>
-  <script type="module" src="commands.js"></script>
-  <script type="module" src="uiEffects.js"></script>
-  <script type="module" src="ghostEvents.js"></script>
-  <script type="module" src="lobby.js"></script>
-  <script type="module" src="voice.js"></script>
-  <script type="module" src="casefiles.js"></script>
 
 </body>
 </html>
