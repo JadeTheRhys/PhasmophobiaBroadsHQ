@@ -117,6 +117,7 @@
       margin-bottom: 10px;
     }
 
+    /* CHAT */
     #chat-log {
       background: #05020c;
       border-radius: 10px;
@@ -163,11 +164,7 @@
       transform: translateY(-1px);
     }
 
-    .list {
-      font-size: 0.9rem;
-      color: var(--text-soft);
-      line-height: 1.4;
-    }
+    .list { font-size: 0.9rem; color: var(--text-soft); }
 
     .tag {
       display: inline-block;
@@ -180,6 +177,7 @@
       color: var(--text-soft);
     }
 
+    /* CASE FILES GRID */
     .case-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -192,13 +190,69 @@
       border-radius: 10px;
       border: 1px solid #2d163f;
       overflow: hidden;
-      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .case-card img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+    }
+
+    .case-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 15px #9b5bff66;
     }
 
     .case-card div {
       padding: 6px 8px 8px;
       color: var(--text-soft);
+      text-align: center;
     }
+
+    /* POSTER MODAL */
+    .poster-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      padding-top: 40px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 3, 10, 0.95);
+      backdrop-filter: blur(3px);
+      text-align: center;
+    }
+
+    .poster-modal-img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+      border: 2px solid #9b5bff;
+      box-shadow: 0 0 20px #000;
+    }
+
+    .poster-caption {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #c5b3ff;
+    }
+
+    .poster-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #fff;
+      font-size: 2.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-shadow: 0 0 10px #9b5bff;
+    }
+
+    .poster-close:hover { color: #ff88ff; }
 
     footer {
       text-align: center;
@@ -281,13 +335,46 @@
   <!-- CASE FILES -->
   <section id="panel-casefiles" class="panel">
     <h2>Case Files</h2>
-    <div class="case-grid">
-      <div class="case-card"><div>Summoning Circle Incident</div></div>
-      <div class="case-card"><div>Dragged From the Van</div></div>
-      <div class="case-card"><div>Voodoo Doll Tackle</div></div>
-      <div class="case-card"><div>Ouija Board Chaos</div></div>
-      <div class="case-card"><div>Running from the Ghost</div></div>
-      <div class="case-card"><div>Ghost Writing in the Basement</div></div>
+
+    <div class="case-grid" id="case-grid">
+
+      <div class="case-card" onclick="openPoster(1)">
+        <img src="assets/posters/poster1.png" alt="Summoning Circle Incident" />
+        <div>Summoning Circle Incident</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(2)">
+        <img src="assets/posters/poster2.png" alt="Dragged From the Van" />
+        <div>Dragged From the Van</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(3)">
+        <img src="assets/posters/poster3.png" alt="Voodoo Doll Tackle" />
+        <div>Voodoo Doll Tackle</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(4)">
+        <img src="assets/posters/poster4.png" alt="Ouija Board Chaos" />
+        <div>Ouija Board Chaos</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(5)">
+        <img src="assets/posters/poster5.png" alt="Running from the Ghost" />
+        <div>Running from the Ghost</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(6)">
+        <img src="assets/posters/poster6.png" alt="Ghost Writing in the Basement" />
+        <div>Ghost Writing in the Basement</div>
+      </div>
+
+    </div>
+
+    <!-- FULLSCREEN MODAL -->
+    <div id="poster-modal" class="poster-modal" onclick="closePoster()">
+      <span class="poster-close">&times;</span>
+      <img id="poster-modal-img" class="poster-modal-img" />
+      <div id="poster-caption" class="poster-caption"></div>
     </div>
   </section>
 
@@ -361,9 +448,6 @@
     addChatLine(data.user || "Player", data.text);
   });
 
-  // ================= YEAR =================
-  document.getElementById("year").textContent = new Date().getFullYear();
-
   // ================= TABS =================
   const tabButtons = document.querySelectorAll(".tab-btn");
   const panels = document.querySelectorAll(".panel");
@@ -377,6 +461,34 @@
       document.getElementById(btn.dataset.target).classList.add("active");
     });
   });
+
+  // ================= YEAR =================
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // ================= POSTER MODAL =================
+  window.openPoster = function(num) {
+    const modal = document.getElementById("poster-modal");
+    const img = document.getElementById("poster-modal-img");
+    const caption = document.getElementById("poster-caption");
+
+    const posters = [
+      "Summoning Circle Incident",
+      "Dragged From the Van",
+      "Voodoo Doll Tackle",
+      "Ouija Board Chaos",
+      "Running from the Ghost",
+      "Ghost Writing in the Basement"
+    ];
+
+    img.src = `assets/posters/poster${num}.png`;
+    caption.textContent = posters[num - 1];
+
+    modal.style.display = "block";
+  };
+
+  window.closePoster = function() {
+    document.getElementById("poster-modal").style.display = "none";
+  };
 
   // ================= JITSI =================
   window.openJitsi = function() {
