@@ -1,146 +1,123 @@
-// ==========================================
-// COMMANDS.JS — MULTIPLAYER SYNC VERSION
-// Works with Firebase Compat + Window Global
-// ==========================================
+// =============================
+// COMMANDS.JS — MULTIPLAYER VERSION
+// Syncs Evidence, Status, Locations, Ghost Log
+// =============================
 
-// Firebase DB refs (firebase is global because of compat scripts)
-const db = firebase.database();
-const evidenceRef  = db.ref("evidence");
-const statusRef    = db.ref("status");
-const locationRef  = db.ref("locations");
-const ghostRef     = db.ref("ghostlog");
+// Firebase references injected from index.html
+let db = null;
+let evidenceRef = null;
+let statusRef = null;
+let locationRef = null;
+let ghostRef = null;
 
-// UI elements
-const evidenceList  = document.getElementById("evidence-list");
-const statusList    = document.getElementById("status-list");
-const locationList  = document.getElementById("location-list");
-const ghostLog      = document.getElementById("ghost-log");
+// Called from index.html after Firebase initializes
+export function setupCommandRefs(firebaseDB) {
+  db = firebaseDB;
 
-// Helper to append rows
-function addRow(target, html) {
+  evidenceRef = db.ref("evidence");
+  statusRef   = db.ref("status");
+  locationRef = db.ref("locations");
+  ghostRef    = db.ref("ghostlog");
+}
+
+// ------------------------------
+// Add entries to the UI panels
+// ------------------------------
+function addEvidenceToUI(text) {
+  const list = document.getElementById("evidence-list");
   const p = document.createElement("p");
-  p.innerHTML = html;
-  target.appendChild(p);
+  p.innerHTML = `<span class="tag">📘 Evidence</span> ${text}`;
+  list.appendChild(p);
 }
 
-// Log ghost events (also send to Firebase)
-function logGhost(text) {
-  addRow(ghostLog, text);
-  ghostRef.push(text);
+function addStatusToUI(text) {
+  const list = document.getElementById("status-list");
+  const p = document.createElement("p");
+  p.innerHTML = text;
+  list.appendChild(p);
 }
 
-// =====================================================
-// RECEIVE REALTIME UPDATES FROM FIREBASE
-// =====================================================
+function addLocationToUI(text) {
+  const list = document.getElementById("location-list");
+  const p = document.createElement("p");
+  p.innerHTML = `<span class="tag">📍 Location</span> ${text}`;
+  list.appendChild(p);
+}
 
-// Evidence sync
-evidenceRef.on("child_added", snap => {
-  addRow(evidenceList, `<span class="tag">📘 Evidence</span> ${snap.val()}`);
-});
+function addGhostToUI(text) {
+  const list = document.getElementById("ghost-log");
+  const p = document.createElement("p");
+  p.textContent = text;
+  list.appendChild(p);
+}
 
-// Status sync
-statusRef.on("child_added", snap => {
-  const v = snap.val();
-  if (v.type === "dead") {
-    addRow(statusList, `<span class="tag">💀 Dead</span> ${v.name}`);
-  }
-  if (v.type === "revive") {
-    addRow(statusList, `<span class="tag">❤️ Revived</span> ${v.name}`);
-  }
-});
-
-// Locations sync
-locationRef.on("child_added", snap => {
-  addRow(locationList, `<span class="tag">📍 Location</span> ${snap.val()}`);
-});
-
-// Ghost log sync
-ghostRef.on("child_added", snap => {
-  addRow(ghostLog, snap.val());
-});
-
-// =====================================================
+// -----------------------------------
 // MAIN COMMAND HANDLER
-// (NO EXPORT — MADE GLOBAL AT BOTTOM)
-// =====================================================
-function handleCommand(text) {
+// -----------------------------------
+export function handleCommand(rawText, playerName = "Player") {
+  if (!rawText.startsWith("!")) return;
 
-  if (!text.startsWith("!")) return;
+  const text = rawText.trim();
 
-  const cmd = text.toLowerCase();
-
-  // ------------------------------
-  // !help
-  // ------------------------------
-  if (cmd === "!help") {
-    logGhost("Commands: !help, !clear, !evidence, !dead, !revive, !location");
+  // ---------------- HELP ----------------
+  if (text === "!help") {
+    ghostRef.push(`${playerName} opened help.`);
+    addGhostToUI("Commands: !help, !evidence:, !dead:, !revive:, !location:");
     return;
   }
 
-  // ------------------------------
-  // !clear — LOCAL ONLY
-  // ------------------------------
-  if (cmd === "!clear") {
-    evidenceList.innerHTML = "";
-    statusList.innerHTML   = "";
-    locationList.innerHTML = "";
-    ghostLog.innerHTML     = "";
-    return;
-  }
-
-  // ------------------------------
-  // !evidence: EMF 5
-  // ------------------------------
-  if (cmd.startsWith("!evidence:")) {
+  // ---------------- EVIDENCE ----------------
+  if (text.startsWith("!evidence:")) {
     const ev = text.split(":")[1]?.trim();
     if (!ev) return;
 
-    evidenceRef.push(ev);
-    ghostRef.push(`New evidence logged: ${ev}`);
+    evidenceRef.push({
+      by: playerName,
+      text: ev
+    });
+
     return;
   }
 
-  // ------------------------------
-  // !location: Starla -> Basement
-  // ------------------------------
-  if (cmd.startsWith("!location:")) {
-    const loc = text.split(":")[1]?.trim();
-    if (!loc) return;
-
-    locationRef.push(loc);
-    ghostRef.push(`Location updated: ${loc}`);
-    return;
-  }
-
-  // ------------------------------
-  // !dead: Starla
-  // ------------------------------
-  if (cmd.startsWith("!dead:")) {
+  // ---------------- DEAD ----------------
+  if (text.startsWith("!dead:")) {
     const who = text.split(":")[1]?.trim();
     if (!who) return;
 
-    statusRef.push({ type: "dead", name: who });
-    ghostRef.push(`${who} was marked DEAD.`);
+    statusRef.push({
+      text: `<span class="tag">💀 Dead</span> ${who}`,
+      by: playerName
+    });
+
     return;
   }
 
-  // ------------------------------
-  // !revive: Starla
-  // ------------------------------
-  if (cmd.startsWith("!revive:")) {
+  // ---------------- REVIVE ----------------
+  if (text.startsWith("!revive:")) {
     const who = text.split(":")[1]?.trim();
     if (!who) return;
 
-    statusRef.push({ type: "revive", name: who });
-    ghostRef.push(`${who} has been REVIVED.`);
+    statusRef.push({
+      text: `<span class="tag">❤️ Revived</span> ${who}`,
+      by: playerName
+    });
+
     return;
   }
 
-  // ------------------------------
-  // Unknown
-  // ------------------------------
-  ghostRef.push(`Unknown command: ${text}`);
+  // ---------------- LOCATION ----------------
+  if (text.startsWith("!location:")) {
+    const info = text.split(":")[1]?.trim();
+    if (!info) return;
+
+    locationRef.push({
+      text: info,
+      by: playerName
+    });
+
+    return;
+  }
+
+  // ---------------- UNKNOWN ----------------
+  ghostRef.push(`Unknown command from ${playerName}: ${text}`);
 }
-
-// Make globally accessible for index.html
-window.handleCommand = handleCommand;
