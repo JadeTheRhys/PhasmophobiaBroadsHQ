@@ -437,7 +437,7 @@ const firebaseConfig = {
 
     messagesRef.push({ user: playerName, text });
 
-    handleCommand(text);
+    handleCommand(text, playerName);
 
     chatInput.value = "";
   });
