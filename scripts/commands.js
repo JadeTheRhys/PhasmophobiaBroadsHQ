@@ -3,7 +3,7 @@
 // Syncs Evidence, Status, Locations, Ghost Log
 // =============================
 
-// Firebase references injected from index.html
+// Firebase references from index.html
 let db = null;
 let evidenceRef = null;
 let statusRef = null;
@@ -11,50 +11,18 @@ let locationRef = null;
 let ghostRef = null;
 
 // Called from index.html after Firebase initializes
-export function setupCommandRefs(firebaseDB) {
+window.setupCommandRefs = function(firebaseDB) {
   db = firebaseDB;
-
   evidenceRef = db.ref("evidence");
   statusRef   = db.ref("status");
   locationRef = db.ref("locations");
   ghostRef    = db.ref("ghostlog");
-}
-
-// ------------------------------
-// Add entries to the UI panels
-// ------------------------------
-function addEvidenceToUI(text) {
-  const list = document.getElementById("evidence-list");
-  const p = document.createElement("p");
-  p.innerHTML = `<span class="tag">📘 Evidence</span> ${text}`;
-  list.appendChild(p);
-}
-
-function addStatusToUI(text) {
-  const list = document.getElementById("status-list");
-  const p = document.createElement("p");
-  p.innerHTML = text;
-  list.appendChild(p);
-}
-
-function addLocationToUI(text) {
-  const list = document.getElementById("location-list");
-  const p = document.createElement("p");
-  p.innerHTML = `<span class="tag">📍 Location</span> ${text}`;
-  list.appendChild(p);
-}
-
-function addGhostToUI(text) {
-  const list = document.getElementById("ghost-log");
-  const p = document.createElement("p");
-  p.textContent = text;
-  list.appendChild(p);
-}
+};
 
 // -----------------------------------
 // MAIN COMMAND HANDLER
 // -----------------------------------
-export function handleCommand(rawText, playerName = "Player") {
+window.handleCommand = function(rawText, playerName = "Player") {
   if (!rawText.startsWith("!")) return;
 
   const text = rawText.trim();
@@ -62,7 +30,6 @@ export function handleCommand(rawText, playerName = "Player") {
   // ---------------- HELP ----------------
   if (text === "!help") {
     ghostRef.push(`${playerName} opened help.`);
-    addGhostToUI("Commands: !help, !evidence:, !dead:, !revive:, !location:");
     return;
   }
 
@@ -75,7 +42,6 @@ export function handleCommand(rawText, playerName = "Player") {
       by: playerName,
       text: ev
     });
-
     return;
   }
 
@@ -88,7 +54,6 @@ export function handleCommand(rawText, playerName = "Player") {
       text: `<span class="tag">💀 Dead</span> ${who}`,
       by: playerName
     });
-
     return;
   }
 
@@ -101,7 +66,6 @@ export function handleCommand(rawText, playerName = "Player") {
       text: `<span class="tag">❤️ Revived</span> ${who}`,
       by: playerName
     });
-
     return;
   }
 
@@ -114,10 +78,9 @@ export function handleCommand(rawText, playerName = "Player") {
       text: info,
       by: playerName
     });
-
     return;
   }
 
   // ---------------- UNKNOWN ----------------
   ghostRef.push(`Unknown command from ${playerName}: ${text}`);
-}
+};
