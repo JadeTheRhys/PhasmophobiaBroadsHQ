@@ -413,8 +413,7 @@
   const messagesRef = db.ref("messages");
 
   // ================= IMPORT COMMAND LOGIC =================
-  import { handleCommand } from "./scripts/commands.js";
-
+  const handleCommand = window.handleCommand;
   // ================= CHAT =================
   const chatLog  = document.getElementById("chat-log");
   const chatForm = document.getElementById("chat-form");
@@ -496,6 +495,7 @@
   };
 
 </script>
+<script src="scripts/commands.js"></script>
 
 </body>
 </html>
