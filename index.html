@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phasmophobia Broads – Chatrooms</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="chatrooms.css" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+  <!-- ===================== LOADING SCREEN ===================== -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-inner">
+      <div class="loader-circle"></div>
+      <p class="loading-text">Summoning the spirits...</p>
+    </div>
+  </div>
+
+  <!-- ===================== JOURNAL UI WRAPPER ===================== -->
+  <div class="journal-wrapper hidden" id="journal-wrapper">
+
+    <!-- LEFT SIDEBAR TABS -->
+    <aside class="tabs">
+      <button data-tab="chat">Chat</button>
+      <button data-tab="evidence">Evidence</button>
+      <button data-tab="players">Player Status</button>
+      <button data-tab="locations">Locations</button>
+      <button data-tab="ghostlog">Ghost Log</button>
+      <button onclick="openCaseFiles()">Case Files</button>
+      <button onclick="openLobby()">Lobby</button>
+    </aside>
+
+    <!-- JOURNAL PAGE -->
+    <main class="journal-page">
+
+      <!-- ===================== CHAT PAGE ===================== -->
+      <section id="chat" class="page-section active">
+        <div id="messages" class="messages"></div>
+        <div class="input-row">
+          <input id="chatInput" type="text" placeholder="Write in the journal..." autocomplete="off" />
+          <button id="sendBtn">Send</button>
+        </div>
+      </section>
+
+      <!-- ===================== EVIDENCE PAGE ===================== -->
+      <section id="evidence" class="page-section">
+        <h2>Evidence</h2>
+        <ul id="evidenceList"></ul>
+      </section>
+
+      <!-- ===================== PLAYER STATUS PAGE ===================== -->
+      <section id="players" class="page-section">
+        <h2>Player Status</h2>
+        <ul id="playerList"></ul>
+      </section>
+
+      <!-- ===================== LOCATIONS PAGE ===================== -->
+      <section id="locations" class="page-section">
+        <h2>Player Locations</h2>
+        <ul id="locationList"></ul>
+      </section>
+
+      <!-- ===================== GHOST LOG PAGE ===================== -->
+      <section id="ghostlog" class="page-section">
+        <h2>Ghost Activity Log</h2>
+        <ul id="ghostLog"></ul>
+      </section>
+
+    </main>
+  </div>
+
+
+  <!-- ===================== CASE FILES OVERLAY ===================== -->
+  <div id="casefiles" class="casefiles hidden">
+    <button class="close-casefiles" onclick="closeCaseFiles()">✕</button>
+    <div class="casefiles-inner">
+      <h2 class="cf-title">Case Files</h2>
+      <div class="cf-grid" id="casefiles-grid"></div>
+    </div>
+  </div>
+
+
+  <!-- ===================== LOBBY OVERLAY ===================== -->
+  <div id="lobby-screen" class="lobby hidden">
+    <div class="lobby-inner">
+      <h2>Phasmo Lobby</h2>
+
+      <!-- Create Room -->
+      <div class="lobby-create">
+        <input id="newRoomName" type="text" placeholder="Create a room..." />
+        <button id="createRoomBtn">Create</button>
+      </div>
+
+      <h3>Available Rooms</h3>
+      <ul id="roomList"></ul>
+    </div>
+  </div>
+
+
+  <!-- ===================== VOICE CHAT BUTTON ===================== -->
+  <button class="voice-btn" onclick="openVoiceChat()">Voice Chat</button>
+
+
+  <!-- ===================== FX ELEMENTS ===================== -->
+  <div id="dust-container"></div>
+  <div id="shadow-sweep" class="shadow-sweep"></div>
+
+
+  <!-- ===================== MODULE SCRIPTS ===================== -->
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="main.js"></script>
+  <script type="module" src="chat.js"></script>
+  <script type="module" src="commands.js"></script>
+  <script type="module" src="uiEffects.js"></script>
+  <script type="module" src="ghostEvents.js"></script>
+  <script type="module" src="lobby.js"></script>
+  <script type="module" src="voice.js"></script>
+  <script type="module" src="casefiles.js"></script>
+
+</body>
+</html>
