@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Phasmophobia Broads – Chatrooms</title>
+  <title>Phasmophobia Broads – Journal Chatrooms</title>
 
   <!-- Styles -->
   <link rel="stylesheet" href="chatrooms.css" />
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Courier+Prime&display=swap" rel="stylesheet">
 
 </head>
 <body>
@@ -22,51 +22,51 @@
     </div>
   </div>
 
-  <!-- ===================== JOURNAL UI WRAPPER ===================== -->
+  <!-- ===================== JOURNAL WRAPPER ===================== -->
   <div class="journal-wrapper hidden" id="journal-wrapper">
 
-    <!-- LEFT SIDEBAR TABS -->
+    <!-- Tabs -->
     <aside class="tabs">
       <button data-tab="chat">Chat</button>
       <button data-tab="evidence">Evidence</button>
       <button data-tab="players">Player Status</button>
       <button data-tab="locations">Locations</button>
       <button data-tab="ghostlog">Ghost Log</button>
-      <button onclick="openCaseFiles()">Case Files</button>
-      <button onclick="openLobby()">Lobby</button>
+      <button id="openCaseFilesBtn">Case Files</button>
+      <button id="openLobbyBtn">Lobby</button>
     </aside>
 
-    <!-- JOURNAL PAGE -->
+    <!-- Pages -->
     <main class="journal-page">
 
-      <!-- ===================== CHAT PAGE ===================== -->
+      <!-- CHAT -->
       <section id="chat" class="page-section active">
         <div id="messages" class="messages"></div>
         <div class="input-row">
-          <input id="chatInput" type="text" placeholder="Write in the journal..." autocomplete="off" />
+          <input id="chatInput" type="text" placeholder="Write in the journal..." />
           <button id="sendBtn">Send</button>
         </div>
       </section>
 
-      <!-- ===================== EVIDENCE PAGE ===================== -->
+      <!-- Evidence -->
       <section id="evidence" class="page-section">
         <h2>Evidence</h2>
         <ul id="evidenceList"></ul>
       </section>
 
-      <!-- ===================== PLAYER STATUS PAGE ===================== -->
+      <!-- Player Status -->
       <section id="players" class="page-section">
         <h2>Player Status</h2>
         <ul id="playerList"></ul>
       </section>
 
-      <!-- ===================== LOCATIONS PAGE ===================== -->
+      <!-- Locations -->
       <section id="locations" class="page-section">
         <h2>Player Locations</h2>
         <ul id="locationList"></ul>
       </section>
 
-      <!-- ===================== GHOST LOG PAGE ===================== -->
+      <!-- Ghost Log -->
       <section id="ghostlog" class="page-section">
         <h2>Ghost Activity Log</h2>
         <ul id="ghostLog"></ul>
@@ -78,41 +78,38 @@
 
   <!-- ===================== CASE FILES OVERLAY ===================== -->
   <div id="casefiles" class="casefiles hidden">
-    <button class="close-casefiles" onclick="closeCaseFiles()">✕</button>
+    <button class="close-casefiles">✕</button>
     <div class="casefiles-inner">
       <h2 class="cf-title">Case Files</h2>
-      <div class="cf-grid" id="casefiles-grid"></div>
+      <div class="cf-grid" id="caseGrid"></div>
     </div>
   </div>
 
-
-  <!-- ===================== LOBBY OVERLAY ===================== -->
+  <!-- ===================== LOBBY ===================== -->
   <div id="lobby-screen" class="lobby hidden">
     <div class="lobby-inner">
       <h2>Phasmo Lobby</h2>
-
-      <!-- Create Room -->
       <div class="lobby-create">
         <input id="newRoomName" type="text" placeholder="Create a room..." />
         <button id="createRoomBtn">Create</button>
       </div>
-
       <h3>Available Rooms</h3>
       <ul id="roomList"></ul>
     </div>
   </div>
 
 
-  <!-- ===================== VOICE CHAT BUTTON ===================== -->
-  <button class="voice-btn" onclick="openVoiceChat()">Voice Chat</button>
+  <!-- ===================== VOICE CHAT BUTTON (JITSI POP-OUT) ===================== -->
+  <button id="voiceLaunchBtn" class="voice-btn">Voice Chat</button>
 
 
-  <!-- ===================== FX ELEMENTS ===================== -->
+  <!-- Dust -->
   <div id="dust-container"></div>
+  <!-- Shadow Sweep -->
   <div id="shadow-sweep" class="shadow-sweep"></div>
 
 
-  <!-- ===================== MODULE SCRIPTS ===================== -->
+  <!-- ===================== SCRIPTS ===================== -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="main.js"></script>
   <script type="module" src="chat.js"></script>
