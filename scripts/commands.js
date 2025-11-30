@@ -1,5 +1,5 @@
 // =============================
-// COMMANDS.JS — MULTIPLAYER VERSION
+// COMMANDS.JS — GHOST EVENTS + MULTIPLAYER
 // Syncs Evidence, Status, Locations, Ghost Log
 // =============================
 
@@ -24,12 +24,11 @@ window.setupCommandRefs = function(firebaseDB) {
 // -----------------------------------
 window.handleCommand = function(rawText, playerName = "Player") {
   if (!rawText.startsWith("!")) return;
-
   const text = rawText.trim();
 
   // ---------------- HELP ----------------
   if (text === "!help") {
-    ghostRef.push(`${playerName} opened help.`);
+    ghostRef.push(`${playerName} opened help: Commands → !evidence:  !dead:  !revive:  !location:  !hunt  !event  !manifest  !flicker  !slam`);
     return;
   }
 
@@ -37,11 +36,7 @@ window.handleCommand = function(rawText, playerName = "Player") {
   if (text.startsWith("!evidence:")) {
     const ev = text.split(":")[1]?.trim();
     if (!ev) return;
-
-    evidenceRef.push({
-      by: playerName,
-      text: ev
-    });
+    evidenceRef.push({ by: playerName, text: ev });
     return;
   }
 
@@ -49,11 +44,7 @@ window.handleCommand = function(rawText, playerName = "Player") {
   if (text.startsWith("!dead:")) {
     const who = text.split(":")[1]?.trim();
     if (!who) return;
-
-    statusRef.push({
-      text: `<span class="tag">💀 Dead</span> ${who}`,
-      by: playerName
-    });
+    statusRef.push({ text: `<span class="tag">💀 Dead</span> ${who}`, by: playerName });
     return;
   }
 
@@ -61,11 +52,7 @@ window.handleCommand = function(rawText, playerName = "Player") {
   if (text.startsWith("!revive:")) {
     const who = text.split(":")[1]?.trim();
     if (!who) return;
-
-    statusRef.push({
-      text: `<span class="tag">❤️ Revived</span> ${who}`,
-      by: playerName
-    });
+    statusRef.push({ text: `<span class="tag">❤️ Revived</span> ${who}`, by: playerName });
     return;
   }
 
@@ -73,11 +60,47 @@ window.handleCommand = function(rawText, playerName = "Player") {
   if (text.startsWith("!location:")) {
     const info = text.split(":")[1]?.trim();
     if (!info) return;
+    locationRef.push({ text: info, by: playerName });
+    return;
+  }
 
-    locationRef.push({
-      text: info,
-      by: playerName
-    });
+  // =================================================
+  // 🔥 GHOST EVENT COMMANDS
+  // =================================================
+
+  // HUNT
+  if (text === "!hunt") {
+    ghostRef.push(`👹 The ghost has started a HUNT triggered by ${playerName}! RUN!`);
+    return;
+  }
+
+  // RANDOM EVENT
+  if (text === "!event") {
+    ghostRef.push(`👻 A ghost event just happened near ${playerName}…`);
+    return;
+  }
+
+  // MANIFEST
+  if (text === "!manifest") {
+    ghostRef.push(`🫥 The ghost is manifesting in front of ${playerName}!`);
+    return;
+  }
+
+  // LIGHT FLICKER
+  if (text === "!flicker") {
+    ghostRef.push(`💡 The lights begin flickering violently! (${playerName})`);
+    return;
+  }
+
+  // DOOR SLAM
+  if (text === "!slam") {
+    ghostRef.push(`🚪 A door SLAMS shut behind ${playerName}!`);
+    return;
+  }
+
+  // CURSED EVENT
+  if (text === "!curse") {
+    ghostRef.push(`🔮 A cursed presence surrounds ${playerName}… something feels WRONG.`);
     return;
   }
 
