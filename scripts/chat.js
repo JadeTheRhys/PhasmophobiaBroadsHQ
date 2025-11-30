@@ -1,1 +1,1 @@
-// Placeholder chat.js
+// chat js
