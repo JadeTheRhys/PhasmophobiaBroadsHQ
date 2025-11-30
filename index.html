@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Phasmophobia Broads</title>
+<link rel="stylesheet" href="styles.css">
+<script src="firebase.js"></script>
+<script src="chat.js" defer></script>
+<script src="jitsi.js" defer></script>
+</head>
+<body>
+<div id="hud">
+<h1>Phasmophobia Broads HQ</h1>
+<div class="menu">
+<button onclick="openTab('chat')">Chat</button>
+<button onclick="openTab('journal')">Journal</button>
+<button onclick="openJitsi()">Voice/Video</button>
+</div>
+</div>
+<div id="content">
+<div id="chat" class="tab"> <h2>Chat</h2><div id="messages"></div>
+<input id="msgBox"><button onclick="sendMsg()">Send</button></div>
+<div id="journal" class="tab" style="display:none"><h2>Journal</h2><p>Welcome, Broads.</p></div>
+</div>
+<script>
+function openTab(id){
+ document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+ document.getElementById(id).style.display='block';
+}
+function openJitsi(){
+ window.open("https://meet.jit.si/PhasmophobiaBroadsHQ","_blank");
+}
+</script>
+</body>
+</html>
