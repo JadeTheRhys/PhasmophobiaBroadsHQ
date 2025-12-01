@@ -1,80 +1,81 @@
-// =======================================================
-// hunt.js — Version B (SYNCED TO animations.css)
-// Listens to Firebase ghostEvent/live and applies effects
-// =======================================================
+// ============================================================
+// hunt.js — Version B (ES MODULE)
+// Global Ghost Event Listener + Visual Effects
+// Works with commands.js + firebase.js + animations.css
+// ============================================================
 
-// DB reference from firebase.js (already created globally)
-const db = window.__DB;
+import { db } from "./firebase.js";
+import {
+    ref,
+    onValue
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// Firebase event path
-const liveEventRef = db.ref("ghostEvent/live");
+// Safety check
+if (!db) console.error("❌ hunt.js: Firebase DB missing!");
 
-// ---------------------------------------------
-// APPLY EFFECTS TO <body>
-// ---------------------------------------------
-function playEffect(type, by) {
-    console.log("🔥 Ghost event received:", type, "by", by);
+// Firebase event path — commands.js writes here
+const eventRef = ref(db, "ghostEvent/live");
 
-    // Clear any existing effects so animations re-trigger cleanly
-    document.body.classList.remove(
-        "hunt-active",
-        "ghost-manifest",
-        "lights-flicker",
-        "door-slam",
-        "curse-effect",
-        "ghost-event"
-    );
+// ============================================================
+// APPLY VISUAL EFFECT
+// Adds a class → waits → removes it
+// ============================================================
+function runEffect(className, duration = 2000) {
+    document.body.classList.add(className);
+    setTimeout(() => {
+        document.body.classList.remove(className);
+    }, duration);
+}
 
-    // Force reflow (ensures animation restarts properly)
-    void document.body.offsetWidth;
+// ============================================================
+// HANDLE REMOTE GHOST EVENTS
+// ============================================================
+function handleGhostEvent(type, by) {
+    console.log(`👻 Ghost event received: ${type} by ${by}`);
 
-    // Apply correct effect
     switch (type) {
-
         case "hunt":
-            document.body.classList.add("hunt-active");
+            runEffect("hunt-active", 5000);
             break;
 
         case "manifest":
-            document.body.classList.add("ghost-manifest");
+            runEffect("ghost-manifest", 3000);
             break;
 
         case "flicker":
-            document.body.classList.add("lights-flicker");
+            runEffect("lights-flicker", 1500);
             break;
 
         case "slam":
-            document.body.classList.add("door-slam");
+            runEffect("door-slam", 1500);
             break;
 
         case "curse":
-            document.body.classList.add("curse-effect");
+            runEffect("curse-effect", 4000);
             break;
 
         case "event":
-            document.body.classList.add("ghost-event");
+            runEffect("ghost-event", 2000);
             break;
-    }
 
-    // Optional: remove the effect after animation duration
-    setTimeout(() => {
-        document.body.classList.remove(
-            "hunt-active",
-            "ghost-manifest",
-            "lights-flicker",
-            "door-slam",
-            "curse-effect",
-            "ghost-event"
-        );
-    }, 6000);
+        default:
+            console.warn("⚠ Unknown ghost event:", type);
+    }
 }
 
-// ---------------------------------------------
-// LISTEN FOR EVENTS FROM FIREBASE
-// ---------------------------------------------
-liveEventRef.on("value", snap => {
-    const data = snap.val();
+// ============================================================
+// LISTEN FOR LIVE EVENTS
+// ALL players receive the ghost events instantly
+// ============================================================
+onValue(eventRef, (snapshot) => {
+    const data = snapshot.val();
     if (!data) return;
 
-    playEffect(data.type, data.by);
+    const { type, by } = data;
+    if (!type) return;
+
+    handleGhostEvent(type, by);
 });
+
+// Done
+console.log("👹 hunt.js (Version B) loaded.");
