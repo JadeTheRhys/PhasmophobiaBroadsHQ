@@ -254,4 +254,109 @@ let playerName = prompt("Enter your name:") || "Player";
 
 /* ==========================================================
    CHAT
-====================
+========================================================== */
+function addChat(user, text) {
+  const div = document.createElement("div");
+  div.className = "chat-line";
+  div.innerHTML = `<span class="user">[${user}]</span> ${text}`;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+const chatLog = document.getElementById("chat-log");
+const chatForm = document.getElementById("chat-form");
+const chatInput = document.getElementById("chat-input");
+
+const messagesRef = db.ref("messages");
+
+// Send chat
+chatForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  messagesRef.push({ user: playerName, text });
+  window.handleCommand(text, playerName);
+  chatInput.value = "";
+});
+
+// Load chat
+messagesRef.limitToLast(100).on("child_added", snap => {
+  const d = snap.val();
+  if (d) addChat(d.user, d.text);
+});
+
+/* ==========================================================
+   READ EVIDENCE / STATUS / LOCATIONS / GHOST LOG
+========================================================== */
+db.ref("evidence").on("child_added", snap => {
+  const e = snap.val();
+  document.getElementById("evidence-list").innerHTML += `<p>📘 <b>${e.by}</b>: ${e.text}</p>`;
+});
+
+db.ref("status").on("child_added", snap => {
+  const e = snap.val();
+  document.getElementById("status-list").innerHTML += `<p>${e.text}</p>`;
+});
+
+db.ref("locations").on("child_added", snap => {
+  const e = snap.val();
+  document.getElementById("location-list").innerHTML += `<p>📍 <b>${e.by}</b>: ${e.text}</p>`;
+});
+
+db.ref("ghostlog").on("child_added", snap => {
+  const e = snap.val();
+  document.getElementById("ghost-log").innerHTML += `<p>${e}</p>`;
+});
+
+/* ==========================================================
+   CASE FILES + POSTERS
+========================================================== */
+function loadImages(folder, gridId) {
+  fetch(folder + "/index.json")
+    .then(r => r.json())
+    .then(files => {
+      const grid = document.getElementById(gridId);
+      files.forEach(file => {
+        const img = document.createElement("img");
+        img.src = `${folder}/${file}`;
+        img.onclick = () => openModal(img.src);
+        grid.appendChild(img);
+      });
+    });
+}
+
+loadImages("assets/casefiles", "case-grid");
+loadImages("assets/posters", "poster-grid");
+
+/* POSTER MODAL */
+const modal = document.getElementById("modal");
+modal.onclick = () => modal.style.display = "none";
+
+function openModal(src) {
+  modal.querySelector("img").src = src;
+  modal.style.display = "flex";
+}
+
+/* ==========================================================
+   TABS
+========================================================== */
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.target).classList.add("active");
+  });
+});
+
+/* YEAR */
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+<!-- Version B SCRIPTS -->
+<script src="scripts/commands.js"></script>
+<script src="scripts/hunt.js"></script>
+
+</body>
+</html>
