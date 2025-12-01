@@ -1,0 +1,171 @@
+/* ---------------------------------------------------------
+   GLOBAL PHASMOPHOBIA BROADS HQ THEME (FINAL)
+--------------------------------------------------------- */
+
+:root {
+    --neon-purple: #b71cff;
+    --soft-cyan: #5dfdff;
+    --deep-black: #0a0a0f;
+
+    --card-radius: 16px;
+    --section-padding: 24px;
+
+    --text-main: #e0e0e0;
+}
+
+/* BODY -------------------------------------------------- */
+
+body {
+    background-color: var(--deep-black);
+    color: var(--text-main);
+    font-family: 'JetBrains Mono', monospace;
+
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231f2937' fill-opacity='0.1'%3E%3Cpath d='M36 34L30 30.9138V29.0862L36 26V34zm6-3l-6-3.0862v-1.8276L42 28V31zm-6-8.9138L42 19V22L36 25.0862V22zm0-2.1724V16L42 13V19L36 15.9138zM24 22v3.0862L30 22v-3.0862L24 16zM30 15.9138L24 13V16L30 19.0862V15.9138zm0 18.1724V31L24 28V26l6 3.0862V34zm0 2.1724V34L24 37V40l6-3.0862V36.2586zm0 2.1724V37L24 40V43l6-3.0862V38.431zM36 36.2586L30 33.1724V37L36 40V36.2586zm0 2.1724V37L30 40V43L36 39.8276V38.431zM24 10.0862V7L30 4V7L24 10.0862zM30 4V7L24 10.0862V13L30 9.9138z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* TITLES -------------------------------------------------- */
+
+.phasmo-title {
+    color: var(--soft-cyan);
+    text-shadow: 0 0 8px rgba(93, 253, 255, 0.6);
+    font-family: 'Orbitron', sans-serif;
+}
+
+.phasmo-subtitle {
+    color: var(--neon-purple);
+    text-shadow: 0 0 5px rgba(183, 28, 255, 0.4);
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* CARDS --------------------------------------------------- */
+
+.phasmo-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--neon-purple);
+    border-radius: var(--card-radius);
+    padding: var(--section-padding);
+    box-shadow: 0 0 10px rgba(183, 28, 255, 0.4),
+                inset 0 0 5px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* BUTTONS -------------------------------------------------- */
+
+.phasmo-btn {
+    background-color: var(--deep-black);
+    color: white;
+    border: 1px solid var(--neon-purple);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 10px 16px;
+    box-shadow: 0 0 6px rgba(183, 28, 255, 0.6);
+    transition: all 0.25s ease;
+}
+
+.phasmo-btn:hover {
+    border-color: var(--soft-cyan);
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(183, 28, 255, 0.9),
+                0 0 8px rgba(93, 253, 255, 0.6);
+}
+
+/* TAB BUTTONS ---------------------------------------------- */
+
+.tab-button {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+}
+
+.tab-button.active-tab {
+    background-color: var(--neon-purple);
+    color: white;
+    border-color: var(--soft-cyan);
+    box-shadow: 0 0 12px rgba(183, 28, 255, 0.9);
+}
+
+/* LOG / CHAT BOXES ----------------------------------------- */
+
+.log-container {
+    background-color: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(183, 28, 255, 0.35);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.log-entry {
+    line-height: 1.5;
+}
+
+.log-entry-event {
+    color: #ff5d5d;
+}
+
+.log-entry-command {
+    color: var(--soft-cyan);
+}
+
+/* EMF BAR --------------------------------------------------- */
+
+.emf-bar-container {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--soft-cyan);
+    height: 20px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.emf-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* MAP ------------------------------------------------------- */
+
+#map-location-image {
+    border: 2px solid var(--soft-cyan);
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(93, 253, 255, 0.6);
+}
+
+/* MODAL ----------------------------------------------------- */
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.90);
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background-color: var(--deep-black);
+    border: 3px solid var(--soft-cyan);
+    border-radius: 18px;
+    box-shadow: 0 0 60px rgba(93, 253, 255, 0.75);
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+/* JUMPSCARE EFFECTS ----------------------------------------- */
+
+.scare-flicker {
+    animation: flicker 0.25s alternate 4;
+}
+
+.scare-shake {
+    animation: shake 0.5s ease;
+}
+
+@keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.2; }
+    100% { opacity: 1; }
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    25% { transform: translate(-2px, 0px) rotate(-1deg); }
+    50% { transform: translate(3px, 2px) rotate(1deg); }
+    75% { transform: translate(-1px, -1px) rotate(0deg); }
+    100% { transform: translate(1px, 2px) rotate(1deg); }
+}

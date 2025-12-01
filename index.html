@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phasmophobia Broads HQ</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Neon + HQ Theme -->
+    <style>
+        body {
+            background: #0a0a0f;
+            color: #e0e0f8;
+            font-family: Arial, sans-serif;
+        }
+
+        .active-tab {
+            background-color: #5dfdff !important;
+            color: #0a0a0f !important;
+        }
+
+        .tab-btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid #5dfdff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: #5dfdff33;
+        }
+
+        .scare-flicker {
+            animation: flicker 0.8s ease;
+        }
+
+        .scare-shake {
+            animation: shake 0.6s ease;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            20% { opacity: 0.4; }
+            40% { opacity: 0.8; }
+            60% { opacity: 0.3; }
+            80% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        @keyframes shake {
+            0% { transform: translate(0px); }
+            25% { transform: translate(4px); }
+            50% { transform: translate(-4px); }
+            75% { transform: translate(4px); }
+            100% { transform: translate(0px); }
+        }
+    </style>
+</head>
+
+<body class="p-4">
+
+    <!-- HEADER -->
+    <h1 class="text-3xl text-soft-cyan font-bold text-center mb-6">
+        PHASMOPHOBIA BROADS HQ COMMAND CENTER
+    </h1>
+
+    <!-- TAB BUTTONS -->
+    <div class="flex space-x-3 justify-center mb-6">
+        <button id="tab-btn-chat" class="tab-btn">Chat</button>
+        <button id="tab-btn-ghosts" class="tab-btn">Ghost Logs</button>
+        <button id="tab-btn-evidence" class="tab-btn">Evidence</button>
+        <button id="tab-btn-status" class="tab-btn">Squad Status</button>
+        <button id="tab-btn-maps" class="tab-btn">Map</button>
+        <button id="tab-btn-casefiles" class="tab-btn">Case Files</button>
+        <button id="tab-btn-jitsi" class="tab-btn">HQ Room</button>
+        <button id="tab-btn-profile" class="tab-btn">Profile</button>
+    </div>
+
+    <!-- TAB CONTENTS -->
+    <div id="tab-chat" class="hidden">
+        <h2 class="text-xl mb-3">Squad Radio</h2>
+
+        <div id="chat-messages" class="h-80 overflow-y-scroll bg-black/40 p-3 rounded border border-soft-cyan mb-3"></div>
+
+        <input id="chat-input"
+               placeholder="Type message or command (!hunt:now)"
+               class="w-full p-2 rounded bg-black/60 border border-soft-cyan" />
+    </div>
+
+    <div id="tab-ghosts" class="hidden">
+        <h2 class="text-xl mb-3">Ghost Activity Log</h2>
+        <div id="ghost-activity-log" class="h-96 overflow-y-scroll bg-black/40 p-3 rounded border border-neon-purple"></div>
+    </div>
+
+    <div id="tab-evidence" class="hidden">
+        <h2 class="text-xl mb-3">Evidence Tracker</h2>
+        <div id="evidence-display" class="space-y-3"></div>
+    </div>
+
+    <div id="tab-status" class="hidden">
+        <h2 class="text-xl mb-3">Squad Status</h2>
+        <div id="status-display" class="space-y-3"></div>
+    </div>
+
+    <div id="tab-maps" class="hidden">
+        <h2 class="text-xl mb-3">Investigation Map</h2>
+        <img id="map-location-image" class="w-full rounded border border-soft-cyan" src="" alt="Map" />
+    </div>
+
+    <div id="tab-casefiles" class="hidden">
+        <h2 class="text-xl mb-3">Case Files</h2>
+        <div id="case-files-gallery" class="grid grid-cols-2 gap-4"></div>
+    </div>
+
+    <div id="tab-jitsi" class="hidden">
+        <h2 class="text-xl mb-3">HQ Video Room</h2>
+        <p class="mb-2">Click below to enter the squad's encrypted HQ meeting room:</p>
+        <a href="https://meet.jit.si/PhasmophobiaBroadsHQ" target="_blank"
+           class="text-neon-purple underline">Join Jitsi Room</a>
+    </div>
+
+    <div id="tab-profile" class="hidden">
+        <h2 class="text-xl mb-3">Your Profile</h2>
+
+        <label>Name:</label>
+        <input id="display-name-input" class="w-full p-2 rounded mb-3 bg-black/50 border border-soft-cyan" />
+
+        <label>Profile Photo:</label>
+        <select id="photo-select" class="w-full p-2 rounded mb-3 bg-black/50 border border-soft-cyan">
+            <option value="/assets/images/default1.png">Default 1</option>
+            <option value="/assets/images/default2.png">Default 2</option>
+        </select>
+
+        <img id="profile-preview" class="w-20 h-20 rounded-full mb-3 border-2 border-neon-purple" />
+
+        <button id="profile-save-btn"
+                class="px-4 py-2 bg-neon-purple text-black rounded font-bold">
+            Save Profile
+        </button>
+    </div>
+
+    <!-- CASE FILE MODAL -->
+    <div id="case-file-modal"
+         class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-black p-4 rounded-lg border-2 border-neon-purple max-w-lg">
+            <img id="modal-image" class="w-full rounded mb-3" />
+            <h3 id="modal-title" class="text-xl text-soft-cyan mb-2"></h3>
+            <p id="modal-description" class="text-gray-300 mb-4"></p>
+            <button onclick="document.getElementById('case-file-modal').classList.add('hidden')"
+                    class="px-3 py-2 bg-soft-cyan text-black rounded font-bold">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPT IMPORTS — MUST REMAIN IN THIS EXACT ORDER -->
+    <script type="module" src="/js/main.js"></script>
+</body>
+</html>
