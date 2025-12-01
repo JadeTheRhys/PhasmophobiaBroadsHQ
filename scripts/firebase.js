@@ -1,5 +1,5 @@
 /* ============================================================
-   PHASMOPHOBIA BROADS — FIREBASE INITIALIZER (MODULAR FIX)
+   PHASMOPHOBIA BROADS — FIREBASE INITIALIZER (FINAL CLEANED)
    Modular Firebase v10 | Exposes DB and Player Name
    ============================================================ */
 
@@ -32,33 +32,20 @@ const app = initializeApp(firebaseConfig);
 // 2. Initialize the Realtime Database Service
 const db = getDatabase(app);
 
-console.log("🔥 Firebase initialized (Modular V10)");
-
-
 // ----------------------
 // PLAYER NAME
 // ----------------------
 let playerName = localStorage.getItem("playerName");
 
 if (!playerName) {
-  // Use prompt to get the name if it's not stored
-  // Note: prompt() is blocked in some browsers/security contexts, but fine for local testing.
   playerName = prompt("Enter your name:") || "Player";
   localStorage.setItem("playerName", playerName);
 }
 
 console.log("🎮 Player:", playerName);
-
+console.log("🔥 Firebase initialized (Modular V10)"); // Combined log
 
 // ----------------------
 // EXPORTS for ES modules
 // ----------------------
 export { app, db, playerName };
-
-// ----------------------
-// EXPOSE GLOBALS
-// ----------------------
-// We can skip the global window.__DB and window.PLAYER_NAME exports
-// since all your other modules (lobby.js, chat.js, ghostEvents.js)
-// are already importing 'db' and 'playerName' directly from this file.
-// If commands.js or other files still use the old globals, they need to be updated.
