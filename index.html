@@ -5,358 +5,131 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phasmophobia Broads HQ</title>
 
-  <!-- GLOBAL STYLES -->
+  <!-- GLOBAL HOLOGRAPHIC VERSION B STYLES -->
+  <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="styles/animations.css" />
-  <style>
-    :root {
-      --bg: #05030a;
-      --panel: #11091f;
-      --accent: #9b5bff;
-      --text-main: #f1e6ff;
-      --text-soft: #c5b3ff;
-      --border: #3a1b6d;
-    }
+  <link rel="stylesheet" href="styles/hunt.css" />
 
-    body {
-      margin: 0;
-      background: radial-gradient(circle at top, #140a2d, #05030a 70%);
-      font-family: "Trebuchet MS", system-ui;
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      padding: 18px 24px;
-      font-size: 1.6rem;
-      border-bottom: 2px solid var(--border);
-      background: linear-gradient(to right, #0a0418, #190c36);
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    /* NAV BAR */
-    nav {
-      display: flex;
-      gap: 10px;
-      padding: 10px 20px;
-      background: rgba(10, 6, 20, 0.6);
-      backdrop-filter: blur(6px);
-      border-bottom: 1px solid var(--border);
-      overflow-x: auto;
-    }
-
-    nav button {
-      background: #1a0d33;
-      border: 1px solid #2f1452;
-      border-radius: 999px;
-      padding: 8px 16px;
-      color: var(--text-soft);
-      cursor: pointer;
-      transition: 0.2s;
-      white-space: nowrap;
-      font-size: 0.95rem;
-    }
-
-    nav button.active {
-      background: var(--accent);
-      color: white;
-      box-shadow: 0 0 10px var(--accent);
-    }
-
-    /* PANELS */
-    .panel {
-      display: none;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      margin: 20px auto;
-      max-width: 1100px;
-      box-shadow: 0 0 25px rgba(90, 0, 160, 0.3);
-    }
-
-    .panel.active {
-      display: block;
-    }
-
-    /* CHAT */
-    #chat-log {
-      height: 300px;
-      overflow-y: auto;
-      padding: 10px;
-      background: #0a0417;
-      border-radius: 10px;
-      border: 1px solid #27153f;
-    }
-
-    .chat-line span.user {
-      color: #ffb3ff;
-      font-weight: bold;
-    }
-
-    /* GALLERIES */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 16px;
-    }
-
-    .grid img {
-      width: 100%;
-      border-radius: 12px;
-      cursor: pointer;
-      border: 2px solid var(--border);
-      transition: 0.15s;
-    }
-
-    .grid img:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 12px var(--accent);
-    }
-
-    /* POSTER MODAL */
-    #modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    #modal img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 12px;
-      border: 2px solid var(--accent);
-      box-shadow: 0 0 25px var(--accent);
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      margin-top: auto;
-      opacity: 0.7;
-      font-size: 0.9rem;
-    }
-  </style>
-
-  <!-- FIREBASE -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 
 <body>
-<header>PHASMOPHOBIA BROADS HQ</header>
 
-<!-- NAVIGATION -->
+<header>
+  <h1>PHASMOPHOBIA BROADS HQ</h1>
+</header>
+
 <nav>
-  <button class="tab-btn active" data-target="chat">Chat</button>
-  <button class="tab-btn" data-target="evidence">Evidence</button>
-  <button class="tab-btn" data-target="status">Player Status</button>
-  <button class="tab-btn" data-target="locations">Locations</button>
-  <button class="tab-btn" data-target="ghostlog">Ghost Log</button>
-  <button class="tab-btn" data-target="casefiles">Case Files</button>
-  <button class="tab-btn" data-target="posters">Posters</button>
-  <button class="tab-btn" data-target="jitsi">Live Meeting</button>
+  <button class="tab-btn active" data-target="panel-chat">Chat</button>
+  <button class="tab-btn" data-target="panel-evidence">Evidence</button>
+  <button class="tab-btn" data-target="panel-status">Player Status</button>
+  <button class="tab-btn" data-target="panel-locations">Locations</button>
+  <button class="tab-btn" data-target="panel-ghostlog">Ghost Log</button>
+  <button class="tab-btn" data-target="panel-casefiles">Case Files</button>
+  <button class="tab-btn" data-target="panel-lobby">Lobby / Voice</button>
 </nav>
 
 <main>
 
-<!-- CHAT -->
-<section id="chat" class="panel active">
-  <h2>Ghost Radio Chat</h2>
-  <div id="chat-log"></div>
+  <!-- CHAT PANEL -->
+  <section id="panel-chat" class="panel active">
+    <h2>Ghost Radio Chat</h2>
+    <div id="chat-log"></div>
 
-  <form id="chat-form">
-    <input id="chat-input" type="text" placeholder="Type or use commands (!hunt, !manifest, !evidence: EMF 5)" autocomplete="off" />
-    <button type="submit">Send</button>
-  </form>
-</section>
+    <form id="chat-form">
+      <input id="chat-input" type="text" placeholder="Type commands like !hunt, !manifest, !curse…" autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </section>
 
-<!-- EVIDENCE -->
-<section id="evidence" class="panel">
-  <h2>Evidence Tracker</h2>
-  <div id="evidence-list"></div>
-</section>
+  <!-- EVIDENCE PANEL -->
+  <section id="panel-evidence" class="panel">
+    <h2>Evidence Tracker</h2>
+    <div id="evidence-list" class="list"></div>
+  </section>
 
-<!-- STATUS -->
-<section id="status" class="panel">
-  <h2>Player Status</h2>
-  <div id="status-list"></div>
-</section>
+  <!-- STATUS PANEL -->
+  <section id="panel-status" class="panel">
+    <h2>Player Status</h2>
+    <div id="status-list" class="list"></div>
+  </section>
 
-<!-- LOCATIONS -->
-<section id="locations" class="panel">
-  <h2>Player Locations</h2>
-  <div id="location-list"></div>
-</section>
+  <!-- LOCATIONS PANEL -->
+  <section id="panel-locations" class="panel">
+    <h2>Player Locations</h2>
+    <div id="location-list" class="list"></div>
+  </section>
 
-<!-- GHOST LOG -->
-<section id="ghostlog" class="panel">
-  <h2>Ghost Log</h2>
-  <div id="ghost-log"></div>
-</section>
+  <!-- GHOST LOG PANEL -->
+  <section id="panel-ghostlog" class="panel">
+    <h2>Ghost Activity Log</h2>
+    <div id="ghost-log" class="list"></div>
+  </section>
 
-<!-- CASE FILES -->
-<section id="casefiles" class="panel">
-  <h2>Case Files</h2>
-  <div class="grid" id="case-grid"></div>
-</section>
+  <!-- CASE FILES PANEL -->
+  <section id="panel-casefiles" class="panel">
+    <h2>Case Files</h2>
 
-<!-- POSTERS -->
-<section id="posters" class="panel">
-  <h2>Posters</h2>
-  <div class="grid" id="poster-grid"></div>
-</section>
+    <div class="case-grid" id="case-grid">
+      <!-- Auto-generated by casefiles.js -->
+    </div>
+  </section>
 
-<!-- LIVE MEETING -->
-<section id="jitsi" class="panel">
-  <h2>Live Meeting</h2>
-  <p>Click below to join:</p>
-  <a href="https://meet.jit.si/PhasmoBroadsHQ" target="_blank">
-    <button>Join Jitsi Room</button>
-  </a>
-</section>
+  <!-- LOBBY / VOICE / FUTURE EXPANSION -->
+  <section id="panel-lobby" class="panel">
+    <h2>Lobby & Voice</h2>
+    <p>Voice chat controls and lobby system will appear here.</p>
+    <div id="voice-status"></div>
+  </section>
 
 </main>
 
 <!-- POSTER MODAL -->
-<div id="modal"><img /></div>
+<div id="posterModal">
+  <span id="posterModalClose">✖</span>
+  <img id="posterModalImg" src="" />
+</div>
 
-<footer>© <span id="year"></span> Phasmophobia Broads HQ</footer>
+<footer>
+  © <span id="year"></span> Phasmophobia Broads HQ
+</footer>
 
-<script>
-/* ==========================================================
-   FIREBASE INIT
-========================================================== */
-firebase.initializeApp({
-  apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
-  authDomain: "phasmophobiabroads.firebaseapp.com",
-  databaseURL: "https://phasmophobiabroads-default-rtdb.firebaseio.com",
-  projectId: "phasmophobiabroads",
-  storageBucket: "phasmophobiabroads.firebasestorage.app",
-  messagingSenderId: "503659624108",
-  appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
-});
 
-const db = firebase.database();
-window.__DB = db;
+<!-- ============================= -->
+<!-- FIREBASE INIT                -->
+<!-- ============================= -->
+<script src="scripts/firebase.js"></script>
 
-/* ==========================================================
-   USERNAME
-========================================================== */
-let playerName = prompt("Enter your name:") || "Player";
-
-/* ==========================================================
-   CHAT
-========================================================== */
-function addChat(user, text) {
-  const div = document.createElement("div");
-  div.className = "chat-line";
-  div.innerHTML = `<span class="user">[${user}]</span> ${text}`;
-  chatLog.appendChild(div);
-  chatLog.scrollTop = chatLog.scrollHeight;
-}
-
-const chatLog = document.getElementById("chat-log");
-const chatForm = document.getElementById("chat-form");
-const chatInput = document.getElementById("chat-input");
-
-const messagesRef = db.ref("messages");
-
-// Send chat
-chatForm.addEventListener("submit", e => {
-  e.preventDefault();
-  const text = chatInput.value.trim();
-  if (!text) return;
-
-  messagesRef.push({ user: playerName, text });
-  window.handleCommand(text, playerName);
-  chatInput.value = "";
-});
-
-// Load chat
-messagesRef.limitToLast(100).on("child_added", snap => {
-  const d = snap.val();
-  if (d) addChat(d.user, d.text);
-});
-
-/* ==========================================================
-   READ EVIDENCE / STATUS / LOCATIONS / GHOST LOG
-========================================================== */
-db.ref("evidence").on("child_added", snap => {
-  const e = snap.val();
-  document.getElementById("evidence-list").innerHTML += `<p>📘 <b>${e.by}</b>: ${e.text}</p>`;
-});
-
-db.ref("status").on("child_added", snap => {
-  const e = snap.val();
-  document.getElementById("status-list").innerHTML += `<p>${e.text}</p>`;
-});
-
-db.ref("locations").on("child_added", snap => {
-  const e = snap.val();
-  document.getElementById("location-list").innerHTML += `<p>📍 <b>${e.by}</b>: ${e.text}</p>`;
-});
-
-db.ref("ghostlog").on("child_added", snap => {
-  const e = snap.val();
-  document.getElementById("ghost-log").innerHTML += `<p>${e}</p>`;
-});
-
-/* ==========================================================
-   CASE FILES + POSTERS
-========================================================== */
-function loadImages(folder, gridId) {
-  fetch(folder + "/index.json")
-    .then(r => r.json())
-    .then(files => {
-      const grid = document.getElementById(gridId);
-      files.forEach(file => {
-        const img = document.createElement("img");
-        img.src = `${folder}/${file}`;
-        img.onclick = () => openModal(img.src);
-        grid.appendChild(img);
-      });
-    });
-}
-
-loadImages("assets/casefiles", "case-grid");
-loadImages("assets/posters", "poster-grid");
-
-/* POSTER MODAL */
-const modal = document.getElementById("modal");
-modal.onclick = () => modal.style.display = "none";
-
-function openModal(src) {
-  modal.querySelector("img").src = src;
-  modal.style.display = "flex";
-}
-
-/* ==========================================================
-   TABS
-========================================================== */
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById(btn.dataset.target).classList.add("active");
-  });
-});
-
-/* YEAR */
-document.getElementById("year").textContent = new Date().getFullYear();
-</script>
-
-<!-- Version B SCRIPTS -->
+<!-- ============================= -->
+<!-- MAIN FUNCTIONAL SCRIPTS      -->
+<!-- ============================= -->
+<script src="scripts/chat.js"></script>
 <script src="scripts/commands.js"></script>
 <script src="scripts/hunt.js"></script>
+<script src="scripts/ghostEvents.js"></script>
+<script src="scripts/casefiles.js"></script>
+<script src="scripts/lobby.js"></script>
+<script src="scripts/voice.js"></script>
+<script src="scripts/uiEffects.js"></script>
+<script src="scripts/main.js"></script>
+
+<script>
+  // YEAR DISPLAY
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // TABS FUNCTIONALITY
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.target).classList.add("active");
+    });
+  });
+</script>
 
 </body>
 </html>
