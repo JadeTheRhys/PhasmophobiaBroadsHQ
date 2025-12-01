@@ -1,255 +1,244 @@
-/* =====================================================
-   STYLE.CSS — VERSION B (HOLOGRAPHIC UI)
-   Phasmophobia Broads HQ — Full UI Layout
-   ===================================================== */
+/* ============================================================
+   style.css — Version B
+   Main UI Styling for Phasmophobia Broads HQ
+   ============================================================ */
 
-/* GLOBAL ------------------------------------------------ */
 :root {
-  --bg: #090114;
-  --panel: #150826;
-  --panel-soft: #1d0b33;
-  --border: #32185a;
-  --accent: #a86dff;
-  --accent-soft: #5b2fa3;
-  --text-main: #f0e4ff;
-  --text-soft: #c9b6ff;
+    --bg: #05030a;
+    --panel: #12091f;
+    --accent: #9b5bff;
+    --accent-soft: #5b2fa3;
+    --text-main: #f1e6ff;
+    --text-soft: #c5b3ff;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Trebuchet MS", system-ui, sans-serif;
-}
-
+/* ------------------------------------------------------------
+   GLOBAL PAGE
+------------------------------------------------------------ */
 body {
-  background: radial-gradient(circle at top, #17072e, #090114 60%, #000 100%);
-  color: var(--text-main);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+    margin: 0;
+    font-family: "Trebuchet MS", system-ui, sans-serif;
+    background: radial-gradient(circle at top, #120a2a 0%, #05030a 60%, #000 100%);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-/* HEADER ------------------------------------------------ */
 header {
-  padding: 20px 24px;
-  border-bottom: 2px solid var(--accent-soft);
-  background: linear-gradient(to right, #0a0319, #20053a, #0a0319);
-  box-shadow: 0 0 35px #000 inset;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--accent-soft);
+    background: linear-gradient(to right, #080413, #140827, #080413);
+    box-shadow: 0 0 25px #000;
 }
 
 header h1 {
-  font-size: 1.8rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-family: "Courier New", monospace;
-  text-shadow: 0 0 12px var(--accent);
+    margin: 0;
+    font-size: 1.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: "Courier New", monospace;
+    text-shadow: 0 0 8px var(--accent);
 }
 
-/* NAVIGATION ------------------------------------------- */
+header p {
+    margin-top: 6px;
+    color: var(--text-soft);
+}
+
+
+/* ------------------------------------------------------------
+   NAVIGATION TABS
+------------------------------------------------------------ */
 nav {
-  display: flex;
-  gap: 10px;
-  padding: 12px 24px;
-  background: #0d0318;
-  border-bottom: 1px solid #341a55;
-  overflow-x: auto;
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    background: #060312;
+    border-bottom: 1px solid #271444;
+    overflow-x: auto;
 }
 
 nav button {
-  padding: 8px 18px;
-  border-radius: 999px;
-  background: #17082b;
-  border: 1px solid #311a52;
-  color: var(--text-soft);
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: 0.2s ease;
-  white-space: nowrap;
+    background: #120824;
+    color: var(--text-soft);
+    border: 1px solid #2f174a;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s ease;
 }
 
 nav button:hover {
-  background: #230d41;
+    background: #1b0f35;
 }
 
 nav button.active {
-  background: var(--accent-soft);
-  color: white;
-  border-color: var(--accent);
-  box-shadow: 0 0 10px #a86dff88;
+    background: var(--accent-soft);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px #9b5bff88;
 }
 
-/* MAIN PANELS ------------------------------------------- */
+
+/* ------------------------------------------------------------
+   PANELS
+------------------------------------------------------------ */
 main {
-  flex: 1;
-  padding: 20px;
+    padding: 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .panel {
-  display: none;
-  background: var(--panel);
-  border-radius: 14px;
-  padding: 20px;
-  border: 1px solid var(--border);
-  box-shadow: 0 0 30px #000 inset;
-  max-width: 1150px;
-  margin: 0 auto;
+    display: none;
+    background: radial-gradient(circle at top left, #22113f 0%, #12091f 40%, #05030a 100%);
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #2c1744;
+    box-shadow: 0 0 20px #000;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .panel.active {
-  display: block;
+    display: block;
 }
 
 .panel h2 {
-  font-family: "Courier New", monospace;
-  font-size: 1.1rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding-bottom: 8px;
-  margin-bottom: 15px;
-  border-bottom: 1px solid var(--border);
-  color: var(--accent);
-  text-shadow: 0 0 8px var(--accent);
+    font-size: 1rem;
+    margin-top: 0;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    font-family: "Courier New", monospace;
+    border-bottom: 1px solid #2c1744;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
 }
 
-/* CHAT --------------------------------------------------- */
+
+/* ------------------------------------------------------------
+   CHAT
+------------------------------------------------------------ */
 #chat-log {
-  height: 350px;
-  overflow-y: auto;
-  background: #0b0416;
-  border: 1px solid #2e1850;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 0.9rem;
-  scroll-behavior: auto;
+    background: #05020c;
+    border-radius: 10px;
+    border: 1px solid #27153f;
+    padding: 10px;
+    height: 260px;
+    overflow-y: auto;
+    font-size: 0.9rem;
 }
 
 .chat-line {
-  margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 .chat-line span.user {
-  color: #ffb3ff;
+    color: #ffb3ff;
 }
 
-#chat-form {
-  margin-top: 12px;
-  display: flex;
-  gap: 10px;
-}
 
-#chat-form input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #311a52;
-  background: #120725;
-  color: white;
-}
-
-#chat-form button {
-  padding: 10px 16px;
-  border-radius: 8px;
-  background: var(--accent-soft);
-  border: 1px solid var(--accent);
-  color: white;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-#chat-form button:hover {
-  background: var(--accent);
-}
-
-/* LIST SECTIONS (Evidence / Status / Locations) ----------- */
-.list {
-  font-size: 0.95rem;
-  color: var(--text-soft);
-  line-height: 1.5;
-}
-
-.list-item {
-  background: var(--panel-soft);
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  margin-bottom: 8px;
-}
-
+/* ------------------------------------------------------------
+   TAGS + LIST ITEMS
+------------------------------------------------------------ */
 .tag {
-  display: inline-block;
-  background: #20093c;
-  border-radius: 999px;
-  padding: 3px 10px;
-  border: 1px solid var(--accent-soft);
-  font-size: 0.75rem;
-  margin-right: 6px;
-  color: var(--accent);
+    display: inline-block;
+    padding: 3px 10px;
+    background: #1a0f2d;
+    color: var(--text-soft);
+    border-radius: 999px;
+    border: 1px solid #3a235a;
+    font-size: 0.75rem;
+    margin-right: 6px;
 }
 
-/* CASEFILES PANEL --------------------------------------- */
+
+/* ------------------------------------------------------------
+   CASE FILES GRID
+------------------------------------------------------------ */
 .case-grid {
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-top: 10px;
 }
 
 .case-card {
-  background: var(--panel-soft);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px;
-  text-align: center;
-  color: var(--text-main);
-  cursor: pointer;
-  transition: 0.2s;
+    background: #0b0615;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #281638;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s ease;
 }
 
 .case-card:hover {
-  background: #240d43;
-  box-shadow: 0 0 10px #a86dff55;
+    transform: scale(1.04);
+    box-shadow: 0 0 12px #9b5bff55;
 }
 
-/* POSTER MODAL ------------------------------------------- */
-#posterModal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.78);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 999999;
-  backdrop-filter: blur(5px);
+.case-card img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 8px;
 }
 
-#posterModal img {
-  width: 60%;
-  max-width: 650px;
-  border-radius: 12px;
-  border: 2px solid var(--accent);
-  box-shadow: 0 0 25px #a86dffaa;
+
+/* ------------------------------------------------------------
+   POSTER MODAL
+------------------------------------------------------------ */
+.poster-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 0, 20, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 99999;
 }
 
-#posterModal.visible {
-  display: flex;
+.poster-modal img {
+    max-width: 80%;
+    max-height: 70%;
+    border-radius: 8px;
+    box-shadow: 0 0 20px #000;
 }
 
-#posterModalClose {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 2rem;
-  cursor: pointer;
-  color: white;
-  text-shadow: 0 0 10px red;
+.poster-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 2.3rem;
+    color: var(--text-main);
+    cursor: pointer;
 }
 
-/* FOOTER -------------------------------------------------- */
+#poster-caption {
+    color: var(--text-soft);
+    font-size: 1rem;
+    margin-top: 12px;
+}
+
+
+/* ------------------------------------------------------------
+   FOOTER
+------------------------------------------------------------ */
 footer {
-  text-align: center;
-  padding: 12px;
-  font-size: 0.85rem;
-  color: var(--text-soft);
-  opacity: 0.8;
+    text-align: center;
+    padding: 12px;
+    font-size: 0.8rem;
+    color: #8f7bb9;
+    opacity: 0.85;
 }
