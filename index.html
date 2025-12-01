@@ -77,38 +77,7 @@
     <h2>Case Files</h2>
 
     <div class="case-grid">
-
-      <div class="case-card" onclick="openPoster(1)">
-        <img src="assets/posters/poster1.png" />
-        <div>Summoning Circle</div>
       </div>
-
-      <div class="case-card" onclick="openPoster(2)">
-        <img src="assets/posters/poster2.png" />
-        <div>Dragged From the Van</div>
-      </div>
-
-      <div class="case-card" onclick="openPoster(3)">
-        <img src="assets/posters/poster3.png" />
-        <div>Voodoo Doll Tackle</div>
-      </div>
-
-      <div class="case-card" onclick="openPoster(4)">
-        <img src="assets/posters/poster4.png" />
-        <div>Ouija Board Chaos</div>
-      </div>
-
-      <div class="case-card" onclick="openPoster(5)">
-        <img src="assets/posters/poster5.png" />
-        <div>Running From Ghost</div>
-      </div>
-
-      <div class="case-card" onclick="openPoster(6)">
-        <img src="assets/posters/poster6.png" />
-        <div>Ghost Writing</div>
-      </div>
-
-    </div>
 
     <div id="poster-modal" class="poster-modal" onclick="closePoster()">
       <span class="poster-close">&times;</span>
@@ -149,17 +118,11 @@
     const caption = document.getElementById("poster-caption");
 
     const labels = [
-      "Summoning Circle",
-      "Dragged From the Van",
-      "Voodoo Doll Tackle",
-      "Ouija Board Chaos",
-      "Running From Ghost",
-      "Ghost Writing"
+      "Summoning Circle", "Dragged From the Van", "Voodoo Doll Tackle",
+      "Ouija Board Chaos", "Running From Ghost", "Ghost Writing"
     ];
 
-    // NOTE: This image path is wrong for the new structure! It should be updated
-    // in your assets folder structure. I'm leaving the original path to avoid
-    // modifying the structure you may already have, but it's a potential fix point.
+    // This path is correct because index.html is at the root
     img.src = `assets/posters/poster${num}.png`; 
     caption.textContent = labels[num - 1];
     modal.style.display = "block";
@@ -170,8 +133,6 @@
   }
 
   function openJitsi() {
-    // NOTE: If you decide to use the openVoiceChat function from scripts/voice.js, 
-    // you would call window.openVoiceChat() here instead.
     window.open("https://meet.jit.si/PhasmophobiaBroadsHQ", "_blank");
   }
 
