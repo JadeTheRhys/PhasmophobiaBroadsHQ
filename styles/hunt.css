@@ -1,31 +1,54 @@
-/* =============================
-   HUNT MODE VISUAL EFFECTS
-   ============================= */
-
+/* HUNT MODE */
 body.hunt-active {
-  animation: hunt-flicker 0.15s infinite;
+  animation: huntFlash 0.15s alternate infinite;
 }
 
-@keyframes hunt-flicker {
-  0% { background-color: #0a020f; }
-  50% { background-color: #250036; }
-  100% { background-color: #0a020f; }
+@keyframes huntFlash {
+  from { background-color: #200015; }
+  to   { background-color: #3b001e; }
 }
 
-body.hunt-active::after {
-  content: "";
-  position: fixed;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-
-  background: rgba(0, 0, 0, 0.35)
-              url("../assets/hunt-overlay.png") center/contain no-repeat;
-  animation: ghost-stalk 1.5s infinite;
+/* Flicker */
+body.lights-flicker {
+  animation: flicker 0.08s alternate 10;
 }
 
-@keyframes ghost-stalk {
-  0% { opacity: 0.1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.04); }
-  100% { opacity: 0.1; transform: scale(1); }
+@keyframes flicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+/* Manifest */
+body.ghost-manifest {
+  animation: manifest 0.2s steps(1) 10;
+}
+
+@keyframes manifest {
+  0% { filter: invert(0); }
+  100% { filter: invert(1); }
+}
+
+/* Door Slam */
+body.door-slam {
+  animation: slam 0.12s alternate 6;
+}
+
+@keyframes slam {
+  from { transform: translateX(-12px); }
+  to   { transform: translateX(12px); }
+}
+
+/* Curse Aura */
+body.curse-effect {
+  box-shadow: inset 0 0 80px #7b00ff;
+}
+
+body.ghost-event {
+  animation: eventFlash 0.2s alternate 6;
+}
+
+@keyframes eventFlash {
+  from { filter: brightness(1); }
+  to   { filter: brightness(0.3); }
 }
