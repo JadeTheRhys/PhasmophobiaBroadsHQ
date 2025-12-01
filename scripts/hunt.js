@@ -1,94 +1,80 @@
-// ======================================================================
-// hunt.js — Version B
-// Global Ghost Event Animation Engine
-// Every player sees the SAME effects in real-time
-// ======================================================================
+// =======================================================
+// hunt.js — Version B (SYNCED TO animations.css)
+// Listens to Firebase ghostEvent/live and applies effects
+// =======================================================
 
-// DB reference (created in firebase.js and exposed globally)
+// DB reference from firebase.js (already created globally)
 const db = window.__DB;
 
-if (!db) console.error("❌ hunt.js: Missing Firebase DB reference!");
-
-// Firebase ghost event listener
+// Firebase event path
 const liveEventRef = db.ref("ghostEvent/live");
 
-// ======================================================================
-// 🔥 PLAY EFFECT — Trigger CSS Animations From animations.css
-// ======================================================================
+// ---------------------------------------------
+// APPLY EFFECTS TO <body>
+// ---------------------------------------------
 function playEffect(type, by) {
-    console.log(`👻 Running effect: ${type} (triggered by ${by})`);
+    console.log("🔥 Ghost event received:", type, "by", by);
 
-    // --------------------------
-    // HUNT
-    // --------------------------
-    if (type === "hunt") {
-        document.body.classList.add("hunt-active");
-        setTimeout(() => {
-            document.body.classList.remove("hunt-active");
-        }, 5000);
+    // Clear any existing effects so animations re-trigger cleanly
+    document.body.classList.remove(
+        "hunt-active",
+        "ghost-manifest",
+        "lights-flicker",
+        "door-slam",
+        "curse-effect",
+        "ghost-event"
+    );
+
+    // Force reflow (ensures animation restarts properly)
+    void document.body.offsetWidth;
+
+    // Apply correct effect
+    switch (type) {
+
+        case "hunt":
+            document.body.classList.add("hunt-active");
+            break;
+
+        case "manifest":
+            document.body.classList.add("ghost-manifest");
+            break;
+
+        case "flicker":
+            document.body.classList.add("lights-flicker");
+            break;
+
+        case "slam":
+            document.body.classList.add("door-slam");
+            break;
+
+        case "curse":
+            document.body.classList.add("curse-effect");
+            break;
+
+        case "event":
+            document.body.classList.add("ghost-event");
+            break;
     }
 
-    // --------------------------
-    // MANIFEST
-    // --------------------------
-    if (type === "manifest") {
-        document.body.classList.add("ghost-manifest");
-        setTimeout(() => {
-            document.body.classList.remove("ghost-manifest");
-        }, 3000);
-    }
-
-    // --------------------------
-    // FLICKER
-    // --------------------------
-    if (type === "flicker") {
-        document.body.classList.add("lights-flicker");
-        setTimeout(() => {
-            document.body.classList.remove("lights-flicker");
-        }, 1500);
-    }
-
-    // --------------------------
-    // DOOR SLAM
-    // --------------------------
-    if (type === "slam") {
-        document.body.classList.add("door-slam");
-        setTimeout(() => {
-            document.body.classList.remove("door-slam");
-        }, 1500);
-    }
-
-    // --------------------------
-    // CURSE
-    // --------------------------
-    if (type === "curse") {
-        document.body.classList.add("curse-effect");
-        setTimeout(() => {
-            document.body.classList.remove("curse-effect");
-        }, 3500);
-    }
-
-    // --------------------------
-    // RANDOM EVENT
-    // --------------------------
-    if (type === "event") {
-        document.body.classList.add("ghost-event");
-        setTimeout(() => {
-            document.body.classList.remove("ghost-event");
-        }, 2000);
-    }
+    // Optional: remove the effect after animation duration
+    setTimeout(() => {
+        document.body.classList.remove(
+            "hunt-active",
+            "ghost-manifest",
+            "lights-flicker",
+            "door-slam",
+            "curse-effect",
+            "ghost-event"
+        );
+    }, 6000);
 }
 
-// ======================================================================
-// 🔥 LISTEN FOR GHOST EVENTS FROM FIREBASE
-// This updates instantly for EVERY PLAYER.
-// ======================================================================
-liveEventRef.on("value", (snapshot) => {
-    const data = snapshot.val();
+// ---------------------------------------------
+// LISTEN FOR EVENTS FROM FIREBASE
+// ---------------------------------------------
+liveEventRef.on("value", snap => {
+    const data = snap.val();
     if (!data) return;
 
-    const { type, by } = data;
-
-    // Execute the effect visually
-    playEffect(type, by);
+    playEffect(data.type, data.by);
 });
