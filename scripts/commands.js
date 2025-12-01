@@ -1,89 +1,77 @@
-// =======================================
-// commands.js — GLOBAL COMMAND HANDLER
-// =======================================
+// ===========================================
+// COMMANDS.JS — MULTIPLAYER GHOST COMMAND SYSTEM
+// ===========================================
 
-let db = null;
-let evidenceRef = null;
-let statusRef = null;
-let locationRef = null;
-let ghostRef = null;
-let liveEventRef = null;
+// Use the global DB passed from index.html
+const db = window.__DB;
 
-// Called from index.html AFTER Firebase initializes
-window.setupCommandRefs = function(firebaseDB) {
-  db = firebaseDB;
+let evidenceRef  = db.ref("evidence");
+let statusRef    = db.ref("status");
+let locationRef  = db.ref("locations");
+let ghostRef     = db.ref("ghostlog");
+let liveEventRef = db.ref("ghostEvent/live");
 
-  evidenceRef = db.ref("evidence");
-  statusRef   = db.ref("status");
-  locationRef = db.ref("locations");
-  ghostRef    = db.ref("ghostlog");
-  liveEventRef = db.ref("ghostEvent/live");
-};
-
-
-// =======================================
+// ===========================================
 // MAIN COMMAND HANDLER
-// =======================================
+// ===========================================
+window.handleCommand = function (rawText, playerName = "Player") {
+    if (!rawText.startsWith("!")) return;
 
-window.handleCommand = function(rawText, playerName = "Player") {
-  if (!rawText.startsWith("!")) return;
-  const text = rawText.trim();
+    const text = rawText.trim();
 
-  // -------------- HELP --------------
-  if (text === "!help") {
-    ghostRef.push(`${playerName} opened help → commands: !hunt !flicker !slam !manifest !curse !event !evidence: X !dead: X !revive: X !location: X`);
-    return;
-  }
+    // --- HELP ---
+    if (text === "!help") {
+        ghostRef.push(`${playerName} opened help: Commands → !evidence:  !dead:  !revive:  !location:  !hunt  !event  !manifest  !flicker  !slam  !curse`);
+        return;
+    }
 
-  // -------------- EVIDENCE --------------
-  if (text.startsWith("!evidence:")) {
-    const value = text.split(":")[1]?.trim();
-    if (!value) return;
-    evidenceRef.push({ text: value, by: playerName });
-    return;
-  }
+    // --- EVIDENCE ---
+    if (text.startsWith("!evidence:")) {
+        const ev = text.split(":")[1]?.trim();
+        if (!ev) return;
+        evidenceRef.push({ by: playerName, text: ev });
+        return;
+    }
 
-  // -------------- DEAD ------------------
-  if (text.startsWith("!dead:")) {
-    const who = text.split(":")[1]?.trim();
-    if (!who) return;
-    statusRef.push({ text: `💀 Dead — ${who}`, by: playerName });
-    return;
-  }
+    // --- DEAD ---
+    if (text.startsWith("!dead:")) {
+        const who = text.split(":")[1]?.trim();
+        if (!who) return;
+        statusRef.push({ text: `💀 ${who} is dead`, by: playerName });
+        return;
+    }
 
-  // -------------- REVIVE ------------------
-  if (text.startsWith("!revive:")) {
-    const who = text.split(":")[1]?.trim();
-    if (!who) return;
-    statusRef.push({ text: `❤️ Revived — ${who}`, by: playerName });
-    return;
-  }
+    // --- REVIVE ---
+    if (text.startsWith("!revive:")) {
+        const who = text.split(":")[1]?.trim();
+        if (!who) return;
+        statusRef.push({ text: `❤️ ${who} revived`, by: playerName });
+        return;
+    }
 
-  // -------------- LOCATION ------------------
-  if (text.startsWith("!location:")) {
-    const value = text.split(":")[1]?.trim();
-    if (!value) return;
-    locationRef.push({ text: value, by: playerName });
-    return;
-  }
+    // --- LOCATION ---
+    if (text.startsWith("!location:")) {
+        const info = text.split(":")[1]?.trim();
+        if (!info) return;
+        locationRef.push({ text: info, by: playerName });
+        return;
+    }
 
+    // ===========================================
+    // 🔥 GHOST EVENTS — send to hunt.js listener
+    // ===========================================
+    const eventList = ["!hunt", "!event", "!manifest", "!flicker", "!slam", "!curse"];
+    const eventType = text.replace("!", "");
 
-  // ==========================================================
-  // 🔥 GHOST EVENT COMMANDS (send to global animation channel)
-  // ==========================================================
+    if (eventList.includes(text)) {
+        liveEventRef.set({
+            type: eventType,
+            by: playerName,
+            time: Date.now()
+        });
+        return;
+    }
 
-  const sendEvent = (type) => {
-    ghostRef.push(`${playerName} triggered: ${type.toUpperCase()}`);
-    liveEventRef.set({ type, by: playerName, time: Date.now() });
-  };
-
-  if (text === "!hunt")     return sendEvent("hunt");
-  if (text === "!flicker")  return sendEvent("flicker");
-  if (text === "!slam")     return sendEvent("slam");
-  if (text === "!manifest") return sendEvent("manifest");
-  if (text === "!curse")    return sendEvent("curse");
-  if (text === "!event")    return sendEvent("event");
-
-  // -------------- UNKNOWN ------------------
-  ghostRef.push(`Unknown command from ${playerName}: ${text}`);
+    // --- UNKNOWN ---
+    ghostRef.push(`Unknown command from ${playerName}: ${text}`);
 };
