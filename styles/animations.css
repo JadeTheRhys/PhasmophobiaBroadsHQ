@@ -1,105 +1,95 @@
 /* ============================================================
-   GLOBAL GHOST EVENT ANIMATIONS (Phasmophobia Broads HQ)
-   Fully synced with hunt.js + commands.js
+   animations.css — SAFE GLOBAL GHOST ANIMATION STYLES
+   Matches hunt.js EXACTLY
    ============================================================ */
 
-/* ---------------------------------------
-   1. SCREEN FLICKER ( !flicker )
----------------------------------------- */
-.lights-flicker {
-  animation: flickerAnim 0.12s infinite;
-}
-
-@keyframes flickerAnim {
-  0%   { opacity: 0.3; }
-  50%  { opacity: 1; }
-  100% { opacity: 0.3; }
-}
-
-/* ---------------------------------------
-   2. DOOR SLAM FLASH ( !slam )
----------------------------------------- */
-.door-slam::after {
-  content: "";
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: white;
-  opacity: 0.8;
-  z-index: 99999;
-  animation: slamFlash 0.4s ease-out forwards;
-  pointer-events: none;
-}
-
-@keyframes slamFlash {
-  0% { opacity: 0.9; }
-  100% { opacity: 0; }
-}
-
-/* ---------------------------------------
-   3. HUNT MODE ( !hunt )
----------------------------------------- */
+/* ------------------------------------------------------------
+   1. HUNT MODE (Red pulsing danger overlay)
+   ------------------------------------------------------------ */
 .hunt-active {
   animation: huntPulse 0.8s infinite alternate;
-  filter: brightness(0.6);
+  background: rgba(90, 0, 0, 0.4) !important;
 }
 
 @keyframes huntPulse {
-  0%   { background: rgba(100, 0, 0, 0.2); }
-  100% { background: rgba(255, 0, 0, 0.35); }
+  0% {
+    background: rgba(90, 0, 0, 0.15);
+  }
+  100% {
+    background: rgba(255, 0, 0, 0.35);
+  }
 }
 
-/* ---------------------------------------
-   4. GHOST MANIFESTATION ( !manifest )
----------------------------------------- */
-.ghost-manifest::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(180, 0, 255, 0.18);
-  backdrop-filter: blur(3px);
-  animation: manifestPulse 1s infinite alternate;
-  z-index: 99998;
-  pointer-events: none;
+
+/* ------------------------------------------------------------
+   2. LIGHTS FLICKER
+   ------------------------------------------------------------ */
+.lights-flicker {
+  animation: flickerFlash 0.15s infinite;
 }
 
-@keyframes manifestPulse {
-  0%   { opacity: 0.2; }
-  100% { opacity: 0.5; }
+@keyframes flickerFlash {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
 }
 
-/* ---------------------------------------
-   5. CURSE EFFECT ( !curse )
----------------------------------------- */
+
+/* ------------------------------------------------------------
+   3. GHOST MANIFEST (white flash)
+   ------------------------------------------------------------ */
+.ghost-manifest {
+  animation: manifestFlash 0.35s ease-out forwards;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes manifestFlash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+
+/* ------------------------------------------------------------
+   4. DOOR SLAM (screen shake)
+   ------------------------------------------------------------ */
+.door-slam {
+  animation: screenShake 0.6s ease-out;
+}
+
+@keyframes screenShake {
+  0%   { transform: translate(0px, 0px); }
+  20%  { transform: translate(-8px, 3px); }
+  40%  { transform: translate(5px, -5px); }
+  60%  { transform: translate(-6px, 4px); }
+  80%  { transform: translate(3px, -3px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+
+/* ------------------------------------------------------------
+   5. CURSE EFFECT (purple static distortion)
+   ------------------------------------------------------------ */
 .curse-effect {
-  animation: curseShake 0.4s infinite;
-  filter: hue-rotate(240deg);
+  animation: curseDistort 0.15s infinite;
+  filter: hue-rotate(270deg) contrast(1.4);
 }
 
-@keyframes curseShake {
-  0%   { transform: translate(0,0); }
-  25%  { transform: translate(-5px, 2px); }
-  50%  { transform: translate(4px, -3px); }
-  75%  { transform: translate(-3px, 4px); }
-  100% { transform: translate(0,0); }
+@keyframes curseDistort {
+  0% { transform: scale(1); filter: blur(1px); }
+  50% { transform: scale(1.02); filter: blur(2px); }
+  100% { transform: scale(1); filter: blur(1px); }
 }
 
-/* ---------------------------------------
-   6. RANDOM GHOST EVENT ( !event )
----------------------------------------- */
-.ghost-event::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 255, 0, 0.15);
-  animation: eventFlash 0.3s ease-out forwards;
-  pointer-events: none;
-  z-index: 99997;
+
+/* ------------------------------------------------------------
+   6. RANDOM EVENT (ghostly flash)
+   ------------------------------------------------------------ */
+.ghost-event {
+  animation: ghostFlash 0.3s ease-out forwards;
+  background: rgba(180, 180, 255, 0.4);
 }
 
-@keyframes eventFlash {
-  0% { opacity: 0.7; }
+@keyframes ghostFlash {
+  0% { opacity: 0.9; }
   100% { opacity: 0; }
 }
