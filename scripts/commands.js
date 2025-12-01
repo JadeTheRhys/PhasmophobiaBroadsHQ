@@ -1,43 +1,46 @@
 // ======================================================================
-// commands.js — Version B
-// Unified Ghost Commands, Evidence Sync, Player Status, Locations
-// Works with main.js + hunt.js + firebase.js
+// commands.js — Version B (ES MODULE)
+// Handles Evidence, Status, Locations + Ghost Event Commands
+// Works with firebase.js, main.js, hunt.js
 // ======================================================================
 
-// GLOBAL FIREBASE DB (set in firebase.js)
-const db = window.__DB;
+import { db, playerName } from "./firebase.js";
+import {
+    ref,
+    push,
+    set
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 // Safety check
 if (!db) console.error("❌ commands.js: Firebase DB missing!");
 
 // Firebase references
-const evidenceRef  = db.ref("evidence");
-const statusRef    = db.ref("status");
-const locationRef  = db.ref("locations");
-const ghostLogRef  = db.ref("ghostlog");
+const evidenceRef  = ref(db, "evidence");
+const statusRef    = ref(db, "status");
+const locationRef  = ref(db, "locations");
+const ghostLogRef  = ref(db, "ghostlog");
 
-// GLOBAL ghost event reference (hunt.js listens here)
-const eventRef     = db.ref("ghostEvent/live");
+// Global ghost event reference (hunt.js listens to this)
+const eventRef     = ref(db, "ghostEvent/live");
 
 // ======================================================================
-// GHOST EVENT EMITTER
+// PUSH GHOST EVENT — hunt.js picks this up and animates screen
 // ======================================================================
-function emitGhostEvent(type, playerName) {
+function emitGhostEvent(type) {
     const payload = {
         type,
         by: playerName,
         time: Date.now()
     };
 
-    ghostLogRef.push(`👻 ${type.toUpperCase()} triggered by ${playerName}`);
-    eventRef.set(payload);
+    push(ghostLogRef, `👻 ${type.toUpperCase()} triggered by ${playerName}`);
+    set(eventRef, payload);
 }
 
 // ======================================================================
-// MAIN COMMAND HANDLER
-// (Called directly from main.js whenever a player types "!something")
+// MAIN COMMAND HANDLER (called from main.js)
 // ======================================================================
-window.handleCommand = function(rawText, playerName = "Player") {
+export function handleCommand(rawText) {
 
     if (!rawText.startsWith("!")) return;
 
@@ -47,7 +50,7 @@ window.handleCommand = function(rawText, playerName = "Player") {
     // HELP
     // ------------------------------------------------------------
     if (text === "!help") {
-        ghostLogRef.push(`${playerName} opened the help menu.`);
+        push(ghostLogRef, `${playerName} opened the help menu.`);
         return;
     }
 
@@ -58,12 +61,12 @@ window.handleCommand = function(rawText, playerName = "Player") {
         const ev = text.split(":")[1]?.trim();
         if (!ev) return;
 
-        evidenceRef.push({
+        push(evidenceRef, {
             by: playerName,
             text: ev
         });
 
-        ghostLogRef.push(`📘 Evidence update by ${playerName}: ${ev}`);
+        push(ghostLogRef, `📘 Evidence by ${playerName}: ${ev}`);
         return;
     }
 
@@ -74,12 +77,12 @@ window.handleCommand = function(rawText, playerName = "Player") {
         const who = text.split(":")[1]?.trim();
         if (!who) return;
 
-        statusRef.push({
+        push(statusRef, {
             by: playerName,
             text: `<span class="tag">💀 Dead</span> ${who}`
         });
 
-        ghostLogRef.push(`💀 ${who} reported dead by ${playerName}`);
+        push(ghostLogRef, `💀 ${who} reported dead by ${playerName}`);
         return;
     }
 
@@ -90,12 +93,12 @@ window.handleCommand = function(rawText, playerName = "Player") {
         const who = text.split(":")[1]?.trim();
         if (!who) return;
 
-        statusRef.push({
+        push(statusRef, {
             by: playerName,
             text: `<span class="tag">❤️ Revived</span> ${who}`
         });
 
-        ghostLogRef.push(`❤️ ${who} revived by ${playerName}`);
+        push(ghostLogRef, `❤️ ${who} revived by ${playerName}`);
         return;
     }
 
@@ -106,52 +109,28 @@ window.handleCommand = function(rawText, playerName = "Player") {
         const loc = text.split(":")[1]?.trim();
         if (!loc) return;
 
-        locationRef.push({
+        push(locationRef, {
             by: playerName,
             text: loc
         });
 
-        ghostLogRef.push(`📍 ${playerName} → ${loc}`);
+        push(ghostLogRef, `📍 ${playerName} → ${loc}`);
         return;
     }
 
     // ======================================================================
-    // GHOST EVENT COMMANDS
-    // (ALL synced through Firebase + animations handled in hunt.js)
+    // GHOST EVENT COMMANDS — synced through Firebase + animated by hunt.js
     // ======================================================================
 
-    if (text === "!hunt") {
-        emitGhostEvent("hunt", playerName);
-        return;
-    }
-
-    if (text === "!manifest") {
-        emitGhostEvent("manifest", playerName);
-        return;
-    }
-
-    if (text === "!flicker") {
-        emitGhostEvent("flicker", playerName);
-        return;
-    }
-
-    if (text === "!slam") {
-        emitGhostEvent("slam", playerName);
-        return;
-    }
-
-    if (text === "!curse") {
-        emitGhostEvent("curse", playerName);
-        return;
-    }
-
-    if (text === "!event") {
-        emitGhostEvent("event", playerName);
-        return;
-    }
+    if (text === "!hunt")     return emitGhostEvent("hunt");
+    if (text === "!manifest") return emitGhostEvent("manifest");
+    if (text === "!flicker")  return emitGhostEvent("flicker");
+    if (text === "!slam")     return emitGhostEvent("slam");
+    if (text === "!curse")    return emitGhostEvent("curse");
+    if (text === "!event")    return emitGhostEvent("event");
 
     // ------------------------------------------------------------
     // UNKNOWN COMMAND
     // ------------------------------------------------------------
-    ghostLogRef.push(`❓ Unknown command from ${playerName}: ${rawText}`);
-};
+    push(ghostLogRef, `❓ Unknown command from ${playerName}: ${rawText}`);
+}
