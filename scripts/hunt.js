@@ -1,21 +1,34 @@
 // =======================================================
-// hunt.js — Global Ghost Event Animation Engine
-// SAFE VERSION (NO duplicate db declarations)
+// hunt.js — GLOBAL Ghost Event Animation Engine
+// Works for ALL connected players
+// Reads events from Firebase in real time
 // =======================================================
 
 // Pull DB reference created in index.html
-const huntDB = window.__DB;   // renamed to avoid conflicts
+const db = window.__DB;
 
 // Firebase event path
-const liveEventRef = huntDB.ref("ghostEvent/live");
+const liveEventRef = db.ref("ghostEvent/live");
 
 // =======================================================
-// PLAY EFFECT — runs screen animation based on ghost command
+// PLAY EFFECT — Runs the correct animation on the screen
 // =======================================================
 function playEffect(type, by) {
-  console.log("🔥 Ghost event:", type, "triggered by", by);
+  console.log("🔥 Ghost event:", type, "| triggered by:", by);
 
+  // Remove ALL previous effects first (clean reset)
+  document.body.classList.remove(
+    "hunt-active",
+    "lights-flicker",
+    "ghost-manifest",
+    "door-slam",
+    "curse-effect",
+    "ghost-event",
+  );
+
+  // Then apply the new one
   switch (type) {
+
     case "hunt":
       document.body.classList.add("hunt-active");
       setTimeout(() => document.body.classList.remove("hunt-active"), 5000);
@@ -45,15 +58,20 @@ function playEffect(type, by) {
       document.body.classList.add("ghost-event");
       setTimeout(() => document.body.classList.remove("ghost-event"), 2000);
       break;
+
+    default:
+      console.warn("Unknown ghost event:", type);
   }
 }
 
 // =======================================================
-// LISTEN FOR LIVE GHOST EVENTS
+// LISTEN FOR LIVE GHOST EVENTS FROM FIREBASE
 // =======================================================
 liveEventRef.on("value", snap => {
   const data = snap.val();
   if (!data) return;
 
-  playEffect(data.type, data.by);
+  const { type, by } = data;
+
+  playEffect(type, by);
 });
