@@ -1,6 +1,7 @@
 // ============================================================
-// casefiles.js — FINAL MODULAR VERSION
-// Creates poster cards and handles the full-screen modal pop-up.
+// casefiles.js — FINAL CONTENT
+// Creates poster cards and provides global functions for the modal.
+// This is required to populate the "Case Files" tab.
 // ============================================================
 
 // Poster data based on the file names and the labels in index.html
@@ -29,10 +30,11 @@ function buildCaseFiles() {
     card.className = "case-card";
     
     // Add the onclick handler to use the global function defined in index.html
+    // NOTE: This relies on the openPoster() function defined in the <script> block of index.html
     card.setAttribute("onclick", `openPoster(${item.num})`);
 
     const img = document.createElement("img");
-    // CRITICAL FIX: The image path must start from the root assets/posters
+    // Path is correct: index.html is root, posters are in assets/posters
     img.src = `assets/posters/${item.file}`; 
 
     const caption = document.createElement("div");
@@ -50,7 +52,3 @@ function buildCaseFiles() {
 
 // Run the function to build the cards when the page loads
 window.addEventListener('load', buildCaseFiles);
-
-// Note: The openPoster() and closePoster() functions are already defined
-// at the bottom of your index.html file, so they don't need to be
-// redefined or exported here. This module just builds the cards.// casefiles js
