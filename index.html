@@ -130,39 +130,6 @@
 
     .chat-line { margin-bottom: 4px; }
     .chat-line span.user { color: #ffb3ff; }
-    .chat-line span.ghost { color: #ff6666; }
-
-    #chat-form {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    #chat-input {
-      flex: 1;
-      background: #0a0417;
-      border-radius: 999px;
-      border: 1px solid #3a235a;
-      padding: 8px 12px;
-      color: var(--text-main);
-      font-size: 0.9rem;
-    }
-
-    #chat-form button {
-      background: var(--accent-soft);
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      padding: 8px 16px;
-      cursor: pointer;
-      color: #fff;
-      font-size: 0.9rem;
-      transition: 0.2s;
-    }
-
-    #chat-form button:hover {
-      box-shadow: 0 0 10px #9b5bffaa;
-      transform: translateY(-1px);
-    }
 
     .list { font-size: 0.9rem; color: var(--text-soft); }
 
@@ -184,91 +151,17 @@
       gap: 12px;
       margin-top: 8px;
     }
-
-    .case-card {
-      background: #090414;
-      border-radius: 10px;
-      border: 1px solid #2d163f;
-      overflow: hidden;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .case-card img {
-      width: 100%;
-      display: block;
-      aspect-ratio: 4/3;
-      object-fit: cover;
-    }
-
-    .case-card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 15px #9b5bff66;
-    }
-
-    .case-card div {
-      padding: 6px 8px 8px;
-      color: var(--text-soft);
-      text-align: center;
-    }
-
-    /* POSTER MODAL */
-    .poster-modal {
-      display: none;
-      position: fixed;
-      z-index: 9999;
-      padding-top: 40px;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(5, 3, 10, 0.95);
-      backdrop-filter: blur(3px);
-      text-align: center;
-    }
-
-    .poster-modal-img {
-      max-width: 90%;
-      max-height: 80%;
-      border-radius: 10px;
-      border: 2px solid #9b5bff;
-      box-shadow: 0 0 20px #000;
-    }
-
-    .poster-caption {
-      margin-top: 10px;
-      font-size: 1rem;
-      color: #c5b3ff;
-    }
-
-    .poster-close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      color: #fff;
-      font-size: 2.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      text-shadow: 0 0 10px #9b5bff;
-    }
-
-    .poster-close:hover { color: #ff88ff; }
-
-    footer {
-      text-align: center;
-      font-size: 0.75rem;
-      color: #8068c0;
-      padding: 8px 0 10px;
-      border-top: 1px solid #140a26;
-      background: #05030c;
-    }
   </style>
 
   <!-- Firebase compat -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
+  <!-- Styles for animations + hunt mode -->
+  <link rel="stylesheet" href="styles/animations.css" />
+  <link rel="stylesheet" href="styles/hunt.css" />
 </head>
+
 <body>
 
 <header>
@@ -332,62 +225,6 @@
     <div id="ghost-log" class="list"></div>
   </section>
 
-  <!-- CASE FILES -->
-  <section id="panel-casefiles" class="panel">
-    <h2>Case Files</h2>
-
-    <div class="case-grid" id="case-grid">
-
-      <div class="case-card" onclick="openPoster(1)">
-        <img src="assets/posters/poster1.png" alt="Summoning Circle Incident" />
-        <div>Summoning Circle Incident</div>
-      </div>
-
-      <div class="case-card" onclick="openPoster(2)">
-        <img src="assets/posters/poster2.png" alt="Dragged From the Van" />
-        <div>Dragged From the Van</div>
-      </div>
-
-      <div class="case-card" onclick="openPoster(3)">
-        <img src="assets/posters/poster3.png" alt="Voodoo Doll Tackle" />
-        <div>Voodoo Doll Tackle</div>
-      </div>
-
-      <div class="case-card" onclick="openPoster(4)">
-        <img src="assets/posters/poster4.png" alt="Ouija Board Chaos" />
-        <div>Ouija Board Chaos</div>
-      </div>
-
-      <div class="case-card" onclick="openPoster(5)">
-        <img src="assets/posters/poster5.png" alt="Running from the Ghost" />
-        <div>Running from the Ghost</div>
-      </div>
-
-      <div class="case-card" onclick="openPoster(6)">
-        <img src="assets/posters/poster6.png" alt="Ghost Writing in the Basement" />
-        <div>Ghost Writing in the Basement</div>
-      </div>
-
-    </div>
-
-    <!-- FULLSCREEN MODAL -->
-    <div id="poster-modal" class="poster-modal" onclick="closePoster()">
-      <span class="poster-close">&times;</span>
-      <img id="poster-modal-img" class="poster-modal-img" />
-      <div id="poster-caption" class="poster-caption"></div>
-    </div>
-  </section>
-
-  <!-- LOBBY / VOICE -->
-  <section id="panel-lobby" class="panel">
-    <h2>Lobby &amp; Voice Chat</h2>
-
-    <button class="voice-btn" type="button" onclick="openJitsi()">
-      Open Voice / Video (Jitsi)
-    </button>
-
-  </section>
-
 </main>
 
 <footer>Phasmophobia Broads HQ © <span id="year"></span></footer>
@@ -399,23 +236,24 @@
   let playerName = prompt("Enter your name:") || "Player";
 
   // ================= FIREBASE INIT =================
-const firebaseConfig = {
-  apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
-  authDomain: "phasmophobiabroads.firebaseapp.com",
-  databaseURL: "https://phasmophobiabroads-default-rtdb.firebaseio.com",
-  projectId: "phasmophobiabroads",
-  storageBucket: "phasmophobiabroads.firebasestorage.app",
-  messagingSenderId: "503659624108",
-  appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
-};
+  firebase.initializeApp({
+    apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
+    authDomain: "phasmophobiabroads.firebaseapp.com",
+    databaseURL: "https://phasmophobiabroads-default-rtdb.firebaseio.com",
+    projectId: "phasmophobiabroads",
+    storageBucket: "phasmophobiabroads.firebasestorage.app",
+    messagingSenderId: "503659624108",
+    appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
+  });
 
-  firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+
+  // Setup command + hunt references
   setupCommandRefs(db);
+  setupHuntRef(db);
+
   const messagesRef = db.ref("messages");
 
-  // ================= IMPORT COMMAND LOGIC =================
-  const handleCommand = window.handleCommand;
   // ================= CHAT =================
   const chatLog  = document.getElementById("chat-log");
   const chatForm = document.getElementById("chat-form");
@@ -429,117 +267,28 @@ const firebaseConfig = {
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 
-  // Send message
   chatForm.addEventListener("submit", e => {
     e.preventDefault();
     const text = chatInput.value.trim();
     if (!text) return;
 
     messagesRef.push({ user: playerName, text });
-
     handleCommand(text, playerName);
 
     chatInput.value = "";
   });
 
-  // Receive messages
   messagesRef.limitToLast(100).on("child_added", snap => {
     const data = snap.val();
     if (!data) return;
     addChatLine(data.user || "Player", data.text);
   });
-// ================= REALTIME LISTENERS =================
-
-// Evidence
-db.ref("evidence").limitToLast(100).on("child_added", snap => {
-  const item = snap.val();
-  if (!item) return;
-  const list = document.getElementById("evidence-list");
-  const p = document.createElement("p");
-  p.innerHTML = `<span class="tag">📘 Evidence</span> <strong>${item.by}:</strong> ${item.text}`;
-  list.appendChild(p);
-});
-
-// Status
-db.ref("status").limitToLast(100).on("child_added", snap => {
-  const item = snap.val();
-  if (!item) return;
-  const list = document.getElementById("status-list");
-  const p = document.createElement("p");
-  p.innerHTML = `${item.text} <small>— ${item.by}</small>`;
-  list.appendChild(p);
-});
-
-// Locations
-db.ref("locations").limitToLast(100).on("child_added", snap => {
-  const item = snap.val();
-  if (!item) return;
-  const list = document.getElementById("location-list");
-  const p = document.createElement("p");
-  p.innerHTML = `<span class="tag">📍 Location</span> <strong>${item.by}</strong> → ${item.text}`;
-  list.appendChild(p);
-});
-
-// Ghost Log
-db.ref("ghostlog").limitToLast(100).on("child_added", snap => {
-  const item = snap.val();
-  if (!item) return;
-  const list = document.getElementById("ghost-log");
-  const p = document.createElement("p");
-  p.textContent = item;
-  list.appendChild(p);
-});
-
-  // ================= TABS =================
-  const tabButtons = document.querySelectorAll(".tab-btn");
-  const panels = document.querySelectorAll(".panel");
-
-  tabButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      tabButtons.forEach(b => b.classList.remove("active"));
-      panels.forEach(p => p.classList.remove("active"));
-
-      btn.classList.add("active");
-      document.getElementById(btn.dataset.target).classList.add("active");
-    });
-  });
-
-  // ================= YEAR =================
-  document.getElementById("year").textContent = new Date().getFullYear();
-
-  // ================= POSTER MODAL =================
-  window.openPoster = function(num) {
-    const modal = document.getElementById("poster-modal");
-    const img = document.getElementById("poster-modal-img");
-    const caption = document.getElementById("poster-caption");
-
-    const posters = [
-      "Summoning Circle Incident",
-      "Dragged From the Van",
-      "Voodoo Doll Tackle",
-      "Ouija Board Chaos",
-      "Running from the Ghost",
-      "Ghost Writing in the Basement"
-    ];
-
-    img.src = `assets/posters/poster${num}.png`;
-    caption.textContent = posters[num - 1];
-
-    modal.style.display = "block";
-  };
-
-  window.closePoster = function() {
-    document.getElementById("poster-modal").style.display = "none";
-  };
-
-  // ================= JITSI =================
-  window.openJitsi = function() {
-    window.open("https://meet.jit.si/PhasmophobiaBroadsHQ", "_blank");
-  };
 
 </script>
-<link rel="stylesheet" href="styles/animations.css" />
+
+<!-- Scripts -->
 <script src="scripts/animations.js"></script>
+<script src="scripts/hunt.js"></script>
 <script src="scripts/commands.js"></script>
 
 </body>
