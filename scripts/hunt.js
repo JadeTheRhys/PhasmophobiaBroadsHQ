@@ -1,81 +1,96 @@
-// ============================================================
-// hunt.js — Version B (ES MODULE)
-// Global Ghost Event Listener + Visual Effects
-// Works with commands.js + firebase.js + animations.css
-// ============================================================
+// ======================================================================
+// hunt.js — Version B
+// Global Ghost Event Animation Engine
+// Listens for ghostEvent/live in Firebase + triggers animations
+// Works with animations.css + commands.js + main.js
+// ======================================================================
 
-import { db } from "./firebase.js";
-import {
-    ref,
-    onValue
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+// ============================================================
+// 1. GET FIREBASE DB (from firebase.js via window.__DB)
+// ============================================================
+const db = window.__DB;
 
 // Safety check
 if (!db) console.error("❌ hunt.js: Firebase DB missing!");
 
-// Firebase event path — commands.js writes here
-const eventRef = ref(db, "ghostEvent/live");
 
 // ============================================================
-// APPLY VISUAL EFFECT
-// Adds a class → waits → removes it
+// 2. LISTEN FOR LIVE GHOST EVENTS
 // ============================================================
-function runEffect(className, duration = 2000) {
+const liveEventRef = db.ref("ghostEvent/live");
+
+liveEventRef.on("value", snap => {
+    const data = snap.val();
+    if (!data) return;
+
+    console.log("👻 Ghost Event Received:", data.type, "by", data.by);
+    playGhostEffect(data.type);
+});
+
+
+// ============================================================
+// 3. MASTER EFFECT CONTROLLER
+// ============================================================
+function playGhostEffect(type) {
+
+    switch(type) {
+
+        // ------------------------------------------------------
+        // 🔥 HUNT
+        // ------------------------------------------------------
+        case "hunt":
+            addEffect("hunt-active", 5000);
+            break;
+
+        // ------------------------------------------------------
+        // 👻 MANIFEST (dark pulse)
+        // ------------------------------------------------------
+        case "manifest":
+            addEffect("ghost-manifest", 3000);
+            break;
+
+        // ------------------------------------------------------
+        // 💡 FLICKER (lights flash)
+        // ------------------------------------------------------
+        case "flicker":
+            addEffect("lights-flicker", 1500);
+            break;
+
+        // ------------------------------------------------------
+        // 🚪 DOOR SLAM (white flash + shake)
+        // ------------------------------------------------------
+        case "slam":
+            addEffect("door-slam", 1200);
+            break;
+
+        // ------------------------------------------------------
+        // 🔮 CURSE (purple ripple effect)
+        // ------------------------------------------------------
+        case "curse":
+            addEffect("curse-effect", 3500);
+            break;
+
+        // ------------------------------------------------------
+        // 🎲 RANDOM EVENT
+        // ------------------------------------------------------
+        case "event":
+            addEffect("ghost-event", 1600);
+            break;
+    }
+}
+
+
+// ============================================================
+// 4. EFFECT EXECUTION
+// Adds a class to <body> → waits → removes it
+// ============================================================
+function addEffect(className, duration) {
+
     document.body.classList.add(className);
+
     setTimeout(() => {
         document.body.classList.remove(className);
     }, duration);
 }
 
-// ============================================================
-// HANDLE REMOTE GHOST EVENTS
-// ============================================================
-function handleGhostEvent(type, by) {
-    console.log(`👻 Ghost event received: ${type} by ${by}`);
-
-    switch (type) {
-        case "hunt":
-            runEffect("hunt-active", 5000);
-            break;
-
-        case "manifest":
-            runEffect("ghost-manifest", 3000);
-            break;
-
-        case "flicker":
-            runEffect("lights-flicker", 1500);
-            break;
-
-        case "slam":
-            runEffect("door-slam", 1500);
-            break;
-
-        case "curse":
-            runEffect("curse-effect", 4000);
-            break;
-
-        case "event":
-            runEffect("ghost-event", 2000);
-            break;
-
-        default:
-            console.warn("⚠ Unknown ghost event:", type);
-    }
-}
-
-// ============================================================
-// LISTEN FOR LIVE EVENTS
-// ALL players receive the ghost events instantly
-// ============================================================
-onValue(eventRef, (snapshot) => {
-    const data = snapshot.val();
-    if (!data) return;
-
-    const { type, by } = data;
-    if (!type) return;
-
-    handleGhostEvent(type, by);
-});
-
-// Done
-console.log("👹 hunt.js (Version B) loaded.");
+console.log("🎮 hunt.js (Version B) loaded successfully.");
