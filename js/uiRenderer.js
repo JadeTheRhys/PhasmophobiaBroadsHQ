@@ -1,8 +1,8 @@
 // --------------------------------------------------------------
-// UI RENDERER — FINAL VERSION
+// UI RENDERER — FINAL PRODUCTION VERSION
 // Handles all DOM updates for:
-// chat, events, evidence, ghost profiles, squad status, map,
-// case file gallery + modal
+// chat, ghost events, evidence, ghost profiles, squad status,
+// map display, case file gallery, and modal interactions.
 // --------------------------------------------------------------
 
 import { getMapImage } from "./mapData.js";
@@ -13,7 +13,6 @@ import { getMapImage } from "./mapData.js";
 export function renderChat(messages) {
     const box = document.getElementById("chat-messages");
     if (!box) return;
-
     box.innerHTML = "";
 
     messages.forEach(msg => {
@@ -41,7 +40,7 @@ export function renderChat(messages) {
 }
 
 // --------------------------------------------------------------
-// GHOST EVENT RENDERING (flicker, hunt, slam etc)
+// GHOST EVENT RENDERING
 // --------------------------------------------------------------
 export function renderGhostEvent(event) {
     if (!event) return;
@@ -53,19 +52,18 @@ export function renderGhostEvent(event) {
 
     const div = document.createElement("p");
     div.className = "log-entry log-entry-event";
-
     div.innerHTML = `[${time}] EVENT — ${event.message}`;
+
     log.appendChild(div);
     log.scrollTop = log.scrollHeight;
 
-    // Add visual screen effects
     triggerScreenEffect(event.type);
 }
 
-// Basic flicker/shake animation
 function triggerScreenEffect(type) {
     const body = document.body;
-    if (type === "hunt" || type === "slam") {
+
+    if (type === "hunt" || type === "slam" || type === "curse") {
         body.classList.add("scare-shake");
         setTimeout(() => body.classList.remove("scare-shake"), 1000);
     } else {
@@ -75,7 +73,7 @@ function triggerScreenEffect(type) {
 }
 
 // --------------------------------------------------------------
-// EVIDENCE DISPLAY
+// EVIDENCE PANEL
 // --------------------------------------------------------------
 export function renderEvidence(list) {
     const box = document.getElementById("evidence-display");
@@ -101,7 +99,7 @@ export function renderEvidence(list) {
 }
 
 // --------------------------------------------------------------
-// GHOST PROFILE RENDERING
+// GHOST PROFILE PANEL
 // --------------------------------------------------------------
 export function populateGhostDropdown(data) {
     const select = document.getElementById("ghost-select");
@@ -139,7 +137,7 @@ export function renderGhostProfile(name, data) {
 }
 
 // --------------------------------------------------------------
-// SQUAD STATUS PANEL
+// SQUAD STATUS
 // --------------------------------------------------------------
 export function renderSquadStatus(statuses, profiles) {
     const box = document.getElementById("status-display");
@@ -150,7 +148,7 @@ export function renderSquadStatus(statuses, profiles) {
     Object.values(statuses).forEach(st => {
         const profile = profiles[st.userId] || {};
         const name = profile.displayName || "Unknown";
-        const photo = profile.photoUrl || "https://placehold.co/50x50";
+        const photo = profile.photoUrl || "/assets/profiles/default.jpg";
 
         const isDead = st.isDead;
         const map = st.map || "Unknown Map";
@@ -162,6 +160,7 @@ export function renderSquadStatus(statuses, profiles) {
         box.innerHTML += `
             <div class="flex items-center space-x-3 p-4 rounded-lg border-2 ${statusColor} bg-white/5">
                 <img class="w-10 h-10 rounded-full border border-soft-cyan" src="${photo}" />
+
                 <div class="flex-grow">
                     <span class="font-bold text-white text-lg">${name}</span>
                     <div class="text-sm text-gray-400">
@@ -169,6 +168,7 @@ export function renderSquadStatus(statuses, profiles) {
                         ${isDead ? "DECEASED" : `${map} — ${loc}`}
                     </div>
                 </div>
+
                 <i class="fas ${statusIcon} text-2xl"></i>
             </div>
         `;
@@ -176,14 +176,14 @@ export function renderSquadStatus(statuses, profiles) {
 }
 
 // --------------------------------------------------------------
-// MAP RENDERING
+// MAP RENDERER
 // --------------------------------------------------------------
 export function renderMap(mapName, mapUrl) {
     const img = document.getElementById("map-location-image");
     if (!img) return;
 
     img.src = mapUrl || getMapImage(mapName);
-    img.alt = mapName || "Map";
+    img.alt = mapName || "Map Location";
 }
 
 // --------------------------------------------------------------
@@ -201,6 +201,7 @@ export function populateCaseFiles() {
         img.className =
             "w-full h-32 object-cover rounded-lg border-2 border-neon-purple hover:border-soft-cyan cursor-pointer shadow-lg";
         img.onclick = () => openCaseFileModal(i);
+
         gallery.appendChild(img);
     });
 }
