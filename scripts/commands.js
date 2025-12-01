@@ -1,17 +1,17 @@
 // =====================================================
 // commands.js — Global Ghost Commands + Player Sync
-// Works with the restored index AND hunt.js
+// SAFE VERSION (NO duplicate db declarations)
 // =====================================================
 
-// Pull global DB reference created in index.html
-const db = window.__DB;
+// Pull DB reference created in index.html
+const cmdDB = window.__DB;  // renamed to avoid conflicts
 
-// Firebase paths
-const evidenceRef  = db.ref("evidence");
-const statusRef    = db.ref("status");
-const locationRef  = db.ref("locations");
-const ghostLogRef  = db.ref("ghostlog");
-const eventRef     = db.ref("ghostEvent/live");
+// Firebase database paths
+const evidenceRef  = cmdDB.ref("evidence");
+const statusRef    = cmdDB.ref("status");
+const locationRef  = cmdDB.ref("locations");
+const ghostLogRef  = cmdDB.ref("ghostlog");
+const eventRef     = cmdDB.ref("ghostEvent/live");
 
 // =====================================================
 // MAIN COMMAND HANDLER
@@ -42,12 +42,12 @@ window.handleCommand = function(raw, playerName = "Player") {
       text: ev
     });
 
-    ghostLogRef.push(`📘 Evidence update by ${playerName}: ${ev}`);
+    ghostLogRef.push(`📘 Evidence updated by ${playerName}: ${ev}`);
     return;
   }
 
   // ----------------------
-  // PLAYER STATUS (DEAD)
+  // DEAD
   // ----------------------
   if (text.startsWith("!dead:")) {
     const who = text.split(":")[1]?.trim();
@@ -58,7 +58,7 @@ window.handleCommand = function(raw, playerName = "Player") {
       text: `<span class="tag">💀 Dead</span> ${who}`
     });
 
-    ghostLogRef.push(`💀 ${who} has died! (Reported by ${playerName})`);
+    ghostLogRef.push(`💀 ${who} died! Reported by ${playerName}`);
     return;
   }
 
@@ -74,12 +74,12 @@ window.handleCommand = function(raw, playerName = "Player") {
       text: `<span class="tag">❤️ Revived</span> ${who}`
     });
 
-    ghostLogRef.push(`❤️ ${who} was revived! (Thanks to ${playerName})`);
+    ghostLogRef.push(`❤️ ${who} was revived by ${playerName}`);
     return;
   }
 
   // ----------------------
-  // LOCATIONS
+  // LOCATION
   // ----------------------
   if (text.startsWith("!location:")) {
     const loc = text.split(":")[1]?.trim();
@@ -90,52 +90,27 @@ window.handleCommand = function(raw, playerName = "Player") {
       text: loc
     });
 
-    ghostLogRef.push(`📍 ${playerName} updated location → ${loc}`);
+    ghostLogRef.push(`📍 ${playerName} moved to → ${loc}`);
     return;
   }
 
   // =====================================================
-  // ⭐ GHOST EVENT COMMANDS — These also trigger HUNT.JS
+  // ⭐ GHOST EVENT COMMANDS (Sync to ALL players)
   // =====================================================
-
-  function ghostEvent(type, playerName) {
+  function ghostEvent(type) {
     ghostLogRef.push(`👻 ${type.toUpperCase()} triggered by ${playerName}`);
-    eventRef.set({ type, by: playerName, time: Date.now() });
+    eventRef.set({
+      type,
+      by: playerName,
+      time: Date.now()
+    });
   }
 
-  // ---- HUNT ----
-  if (text === "!hunt") {
-    ghostEvent("hunt", playerName);
-    return;
-  }
+  // Supported ghost commands
+  const ghostCommands = ["hunt", "manifest", "flicker", "slam", "curse", "event"];
 
-  // ---- MANIFEST ----
-  if (text === "!manifest") {
-    ghostEvent("manifest", playerName);
-    return;
-  }
-
-  // ---- FLICKER ----
-  if (text === "!flicker") {
-    ghostEvent("flicker", playerName);
-    return;
-  }
-
-  // ---- DOOR SLAM ----
-  if (text === "!slam") {
-    ghostEvent("slam", playerName);
-    return;
-  }
-
-  // ---- CURSE ----
-  if (text === "!curse") {
-    ghostEvent("curse", playerName);
-    return;
-  }
-
-  // ---- RANDOM EVENT ----
-  if (text === "!event") {
-    ghostEvent("event", playerName);
+  if (ghostCommands.includes(text.substring(1))) {
+    ghostEvent(text.substring(1));
     return;
   }
 
