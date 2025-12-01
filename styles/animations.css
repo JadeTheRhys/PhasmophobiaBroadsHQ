@@ -1,102 +1,118 @@
-/* =====================================================================
-   animations.css — VERSION B (Full UI + Ghost Event FX)
-   Works with commands.js + hunt.js + index.html (Version B)
-   ===================================================================== */
+/* ============================================================
+   animations.css — Version B
+   All ghost event visual effects used by hunt.js + commands.js
+   ============================================================ */
 
-/* ----------------------------------------------------
-   GLOBAL ANIMATION HELPERS
----------------------------------------------------- */
+/* -------------------------
+   GLOBAL SCREEN EFFECT BASE
+   ------------------------- */
 
-@keyframes screenShake {
-  0%   { transform: translate(0, 0); }
-  20%  { transform: translate(-8px, 5px); }
-  40%  { transform: translate(6px, -6px); }
-  60%  { transform: translate(-5px, 4px); }
-  80%  { transform: translate(4px, -3px); }
-  100% { transform: translate(0, 0); }
+.effect-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
 }
 
-@keyframes pulseRed {
-  0%   { background: rgba(90, 0, 0, 0.25); }
-  100% { background: rgba(255, 0, 0, 0.45); }
-}
-
-@keyframes flickerLights {
-  0%   { opacity: 0.4; }
-  50%  { opacity: 1;   }
-  100% { opacity: 0.4; }
-}
-
-@keyframes manifestPulse {
-  0%   { opacity: 0.2; transform: scale(1); }
-  100% { opacity: 0.6; transform: scale(1.05); }
-}
-
-@keyframes curseDistort {
-  0%   { filter: blur(0px) brightness(1); }
-  50%  { filter: blur(2px) brightness(0.7); }
-  100% { filter: blur(0px) brightness(1); }
-}
-
-/* ----------------------------------------------------
-   HUNT MODE — Red emergency overlay
----------------------------------------------------- */
+/* ============================================================
+   🔥 HUNT EFFECT — Red pulse + panic shake
+   ============================================================ */
 
 .hunt-active {
-  animation: pulseRed 0.7s infinite alternate;
-  backdrop-filter: blur(3px);
+    animation: huntPulse 0.8s infinite alternate ease-in-out,
+               screenShake 0.6s infinite ease-in-out;
 }
 
-/* ----------------------------------------------------
-   LIGHT FLICKER
----------------------------------------------------- */
-
-.lights-flicker {
-  animation: flickerLights 0.15s infinite;
+@keyframes huntPulse {
+    0%   { background: rgba(120, 0, 0, 0.2); }
+    100% { background: rgba(255, 0, 0, 0.35); }
 }
 
-/* ----------------------------------------------------
-   GHOST MANIFEST — spooky visual distortion
----------------------------------------------------- */
+@keyframes screenShake {
+    0%   { transform: translate(0,0); }
+    20%  { transform: translate(-8px, 4px); }
+    40%  { transform: translate(5px, -5px); }
+    60%  { transform: translate(-6px, 3px); }
+    80%  { transform: translate(4px, -3px); }
+    100% { transform: translate(0,0); }
+}
+
+/* ============================================================
+   👻 MANIFEST — darkening + ghostly fade overlay
+   ============================================================ */
 
 .ghost-manifest {
-  backdrop-filter: blur(4px) brightness(0.6);
-  animation: manifestPulse 0.8s infinite alternate;
+    animation: manifestFade 3s ease-out;
 }
 
-/* ----------------------------------------------------
-   DOOR SLAM — bright white flash
----------------------------------------------------- */
+@keyframes manifestFade {
+    0%   { filter: brightness(0.6); }
+    50%  { filter: brightness(1.2) contrast(1.4); }
+    100% { filter: brightness(1); }
+}
 
-.door-slam::before {
-  content: "";
-  position: fixed;
-  z-index: 9999;
-  left: 0; top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255,255,255,0.85);
-  animation: slamFlash 0.25s ease-out forwards;
-  pointer-events: none;
+/* ============================================================
+   💡 FLICKER — rapid light flickering
+   ============================================================ */
+
+.lights-flicker {
+    animation: flickerFlash 0.15s infinite;
+}
+
+@keyframes flickerFlash {
+    0%   { opacity: 0.3; }
+    50%  { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+/* ============================================================
+   🚪 DOOR SLAM — bright flash + shake
+   ============================================================ */
+
+.door-slam {
+    animation: slamFlash 0.35s ease-out,
+               slamShake 0.5s ease-out;
 }
 
 @keyframes slamFlash {
-  0%   { opacity: 1; }
-  100% { opacity: 0; }
+    0%   { background: rgba(255,255,255,0.8); }
+    100% { background: rgba(255,255,255,0); }
 }
 
-/* ----------------------------------------------------
-   CURSE EFFECT — screen distortion
----------------------------------------------------- */
+@keyframes slamShake {
+    0%   { transform: translate(0,0); }
+    25%  { transform: translate(-8px, 3px); }
+    50%  { transform: translate(5px, -4px); }
+    75%  { transform: translate(-6px, 2px); }
+    100% { transform: translate(0,0); }
+}
+
+/* ============================================================
+   🔮 CURSE — purple distortion + blur pulse
+   ============================================================ */
 
 .curse-effect {
-  animation: curseDistort 0.25s infinite;
+    animation: cursePulse 3s ease-in-out;
 }
 
-/* ----------------------------------------------------
-   RANDOM GHOST EVENT — camera shake
----------------------------------------------------- */
+@keyframes cursePulse {
+    0%   { filter: blur(0px) brightness(0.9); }
+    40%  { filter: blur(3px) brightness(1.4) hue-rotate(250deg); }
+    100% { filter: blur(0px) brightness(1); }
+}
+
+/* ============================================================
+   🎲 RANDOM GHOST EVENT — jitter flash
+   ============================================================ */
 
 .ghost-event {
-  animation: screenShake 0.65s ease-out;
+    animation: randomFlash 0.2s alternate 8;
+}
+
+@keyframes randomFlash {
+    0%   { opacity: 0.2; }
+    100% { opacity: 1; }
 }
