@@ -29,28 +29,31 @@ window.addEventListener('load', () => {
 });
 
 /* ============================================================
-   TAB SWITCHING
+   TAB SWITCHING (FIXED)
    ============================================================ */
-const tabButtons = document.querySelectorAll('.tabs button[data-tab]');
-const sections = document.querySelectorAll('.page-section');
-
-// NOTE: Your index.html uses data-tab, but the Version B code used
-// .tab-btn, .panel, and data-target. This code uses the correct elements
-// found in your original index.html structure.
-
-tabButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = btn.getAttribute('data-tab');
-    if(!target) return;
-
-    // Deactivate all sections and buttons
-    sections.forEach(s => s.classList.remove('active'));
-    tabButtons.forEach(b => b.classList.remove('active'));
+window.addEventListener('load', () => {
+    // CRITICAL FIX 1: Selecting all buttons by class '.tab-btn'
+    const tabButtons = document.querySelectorAll('.tab-btn');
     
-    // Activate the clicked button and target section
-    document.getElementById(target)?.classList.add('active');
-    btn.classList.add('active'); // Add active class to the button itself
-  });
+    // CRITICAL FIX 2: Selecting all panels by class '.panel'
+    const sections = document.querySelectorAll('.panel'); 
+
+    // This logic is now wrapped in window.load so buttons are available
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Targets the ID of the panel (e.g., 'panel-chat')
+        const targetId = btn.getAttribute('data-target'); 
+        if(!targetId) return;
+
+        // Deactivate all sections and buttons
+        sections.forEach(s => s.classList.remove('active'));
+        tabButtons.forEach(b => b.classList.remove('active'));
+        
+        // Activate the clicked button and target section
+        document.getElementById(targetId)?.classList.add('active');
+        btn.classList.add('active'); 
+      });
+    });
 });
 
 /* ============================================================
@@ -84,6 +87,10 @@ startGhostLoop();
    (Attaches functions exposed globally by other modules)
    ============================================================ */
 window.addEventListener('load', () => {
+    // Note: Your index.html does not have buttons with these specific IDs, 
+    // but relies on the onclick attributes in the main content. 
+    // This section is now mainly for future-proofing or wiring custom buttons.
+    
     const caseBtn = document.getElementById('openCaseFilesBtn');
     const lobbyBtn = document.getElementById('openLobbyBtn');
     const voiceBtn = document.getElementById('voiceLaunchBtn');
