@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phasmophobia Broads HQ</title>
 
-  <!-- GLOBAL SAFE STYLES -->
+  <!-- GLOBAL STYLES -->
   <link rel="stylesheet" href="styles/animations.css" />
   <link rel="stylesheet" href="styles/hunt.css" />
 
@@ -14,24 +14,26 @@
       --bg: #05030a;
       --panel: #11091f;
       --accent: #9b5bff;
+      --accent-soft: #5b2fa3;
       --text-main: #f1e6ff;
       --text-soft: #c5b3ff;
     }
 
     body {
       margin: 0;
-      font-family: "Trebuchet MS", system-ui;
-      background: radial-gradient(circle at top, #120a2a, #05030a 70%);
+      font-family: "Trebuchet MS", sans-serif;
+      background: radial-gradient(circle at top, #120a2a, #05030a 60%, #000);
       color: var(--text-main);
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
       padding: 16px 20px;
-      border-bottom: 2px solid #5b2fa3;
       background: linear-gradient(to right, #080413, #140827);
+      border-bottom: 2px solid var(--accent-soft);
+      text-shadow: 0 0 10px var(--accent);
     }
 
     nav {
@@ -48,24 +50,27 @@
       color: var(--text-soft);
       border: 1px solid #2f174a;
       border-radius: 999px;
-      padding: 7px 14px;
+      padding: 8px 14px;
       cursor: pointer;
+      white-space: nowrap;
       transition: 0.2s;
     }
 
     nav button.active {
       background: var(--accent);
-      color: #fff;
+      color: white;
+      box-shadow: 0 0 10px #9b5bff88;
     }
 
     .panel {
       display: none;
-      background: #12091f;
+      background: radial-gradient(circle at top left, #22113f 0, #12091f 40%, #05030a);
       border-radius: 12px;
       padding: 16px;
-      max-width: 1000px;
-      margin: 20px auto;
       border: 1px solid #2c1744;
+      box-shadow: 0 0 25px #000;
+      max-width: 1100px;
+      margin: 20px auto;
     }
 
     .panel.active {
@@ -85,20 +90,78 @@
       color: #ffb3ff;
     }
 
-    .tag {
-      background: #1a0f2d;
-      border-radius: 999px;
-      padding: 3px 10px;
-      border: 1px solid #3a235a;
-      font-size: 0.75rem;
+    .case-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .case-card {
+      border: 1px solid #2d163f;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #090414;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .case-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 12px #9b5bff55;
+    }
+
+    .case-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .case-card div {
+      padding: 8px;
+      text-align: center;
       color: var(--text-soft);
+    }
+
+    /* Poster Modal */
+    #poster-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      text-align: center;
+      padding-top: 40px;
+    }
+
+    #poster-modal-img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 20px #000;
+    }
+
+    #poster-caption {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: var(--text-soft);
+    }
+
+    .poster-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 2.4rem;
+      cursor: pointer;
+      text-shadow: 0 0 10px var(--accent);
     }
   </style>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
 </head>
 
 <body>
@@ -113,6 +176,7 @@
   <button class="tab-btn" data-target="status">Player Status</button>
   <button class="tab-btn" data-target="locations">Locations</button>
   <button class="tab-btn" data-target="ghostlog">Ghost Log</button>
+  <button class="tab-btn" data-target="casefiles">Case Files</button>
 </nav>
 
 <main>
@@ -123,8 +187,7 @@
     <div id="chat-log"></div>
 
     <form id="chat-form">
-      <input id="chat-input" type="text" autocomplete="off"
-             placeholder="Type or use commands (!hunt, !manifest, !flicker, etc)" />
+      <input id="chat-input" type="text" placeholder="Type or use commands (!hunt, !flicker, !manifest…)" autocomplete="off" />
       <button type="submit">Send</button>
     </form>
   </section>
@@ -153,6 +216,50 @@
     <div id="ghost-log"></div>
   </section>
 
+  <!-- CASE FILES -->
+  <section id="casefiles" class="panel">
+    <h2>Case Files</h2>
+
+    <div class="case-grid">
+      <div class="case-card" onclick="openPoster(1)">
+        <img src="assets/posters/poster1.png" />
+        <div>Summoning Circle Incident</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(2)">
+        <img src="assets/posters/poster2.png" />
+        <div>Dragged From the Van</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(3)">
+        <img src="assets/posters/poster3.png" />
+        <div>Voodoo Doll Tackle</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(4)">
+        <img src="assets/posters/poster4.png" />
+        <div>Ouija Board Chaos</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(5)">
+        <img src="assets/posters/poster5.png" />
+        <div>Running from the Ghost</div>
+      </div>
+
+      <div class="case-card" onclick="openPoster(6)">
+        <img src="assets/posters/poster6.png" />
+        <div>Ghost Writing in Basement</div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="poster-modal" onclick="closePoster()">
+      <span class="poster-close">&times;</span>
+      <img id="poster-modal-img" />
+      <div id="poster-caption"></div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -160,10 +267,14 @@
 </footer>
 
 <script>
-// ================= USERNAME =================
+// =========================================
+// USERNAME
+// =========================================
 let playerName = prompt("Enter your name:") || "Player";
 
-// ================ FIREBASE ===================
+// =========================================
+// FIREBASE
+// =========================================
 firebase.initializeApp({
   apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
   authDomain: "phasmophobiabroads.firebaseapp.com",
@@ -175,14 +286,16 @@ firebase.initializeApp({
 });
 
 const db = firebase.database();
-
-// Expose DB to other scripts
 window.__DB = db;
 
-// ================= CHAT ===================
+// =========================================
+// CHAT
+// =========================================
 const chatLog = document.getElementById("chat-log");
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
+
+const messagesRef = db.ref("messages");
 
 function addChat(user, text) {
   const div = document.createElement("div");
@@ -192,31 +305,27 @@ function addChat(user, text) {
   chatLog.scrollTop = chatLog.scrollHeight;
 }
 
-const messagesRef = db.ref("messages");
-
-// Send
+// Send chat
 chatForm.addEventListener("submit", e => {
   e.preventDefault();
-  const text = chatInput.value.trim();
-  if (!text) return;
+  const msg = chatInput.value.trim();
+  if (!msg) return;
 
-  messagesRef.push({ user: playerName, text });
-  window.handleCommand(text, playerName);
+  messagesRef.push({ user: playerName, text: msg });
+  window.handleCommand(msg, playerName);
 
   chatInput.value = "";
 });
 
-// Receive
+// Receive chat
 messagesRef.limitToLast(100).on("child_added", snap => {
-  const data = snap.val();
-  if (!data) return;
-  addChat(data.user, data.text);
+  const d = snap.val();
+  if (d) addChat(d.user, d.text);
 });
 
-// YEAR
-document.getElementById("year").textContent = new Date().getFullYear();
-
-// TAB SWITCHING
+// =========================================
+// TABS
+// =========================================
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -226,9 +335,36 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     document.getElementById(btn.dataset.target).classList.add("active");
   });
 });
+
+// =========================================
+// CASEFILES — MODAL
+// =========================================
+const posterNames = [
+  "Summoning Circle Incident",
+  "Dragged From the Van",
+  "Voodoo Doll Tackle",
+  "Ouija Board Chaos",
+  "Running from the Ghost",
+  "Ghost Writing in Basement"
+];
+
+window.openPoster = function(num) {
+  document.getElementById("poster-modal-img").src = `assets/posters/poster${num}.png`;
+  document.getElementById("poster-caption").textContent = posterNames[num - 1];
+  document.getElementById("poster-modal").style.display = "block";
+};
+
+window.closePoster = function() {
+  document.getElementById("poster-modal").style.display = "none";
+};
+
+// =========================================
+// YEAR
+// =========================================
+document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 
-<script src="scripts/animations.js"></script>
+<!-- MODULES -->
 <script src="scripts/commands.js"></script>
 <script src="scripts/hunt.js"></script>
 
