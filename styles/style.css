@@ -1,130 +1,255 @@
-/* ================================
-   GLOBAL DARK THEME (Phasmo-style)
-   ================================ */
+/* =====================================================
+   STYLE.CSS — VERSION B (HOLOGRAPHIC UI)
+   Phasmophobia Broads HQ — Full UI Layout
+   ===================================================== */
+
+/* GLOBAL ------------------------------------------------ */
+:root {
+  --bg: #090114;
+  --panel: #150826;
+  --panel-soft: #1d0b33;
+  --border: #32185a;
+  --accent: #a86dff;
+  --accent-soft: #5b2fa3;
+  --text-main: #f0e4ff;
+  --text-soft: #c9b6ff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Trebuchet MS", system-ui, sans-serif;
+}
 
 body {
-  margin: 0;
-  background: #000;
-  color: #eee;
+  background: radial-gradient(circle at top, #17072e, #090114 60%, #000 100%);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER ------------------------------------------------ */
+header {
+  padding: 20px 24px;
+  border-bottom: 2px solid var(--accent-soft);
+  background: linear-gradient(to right, #0a0319, #20053a, #0a0319);
+  box-shadow: 0 0 35px #000 inset;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   font-family: "Courier New", monospace;
+  text-shadow: 0 0 12px var(--accent);
 }
 
-/* Layout wrapper */
-.wrapper {
+/* NAVIGATION ------------------------------------------- */
+nav {
   display: flex;
-  height: 100vh;
+  gap: 10px;
+  padding: 12px 24px;
+  background: #0d0318;
+  border-bottom: 1px solid #341a55;
+  overflow-x: auto;
 }
 
-/* ================================
-   SIDEBAR
-   ================================ */
-
-.sidebar {
-  width: 200px;
-  background: #0a0a0d;
-  border-right: 2px solid #222;
-  padding: 15px;
-  box-sizing: border-box;
-}
-
-.sidebar h2 {
-  color: #9c5bff;
-  font-size: 1.2rem;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.sidebar button {
-  width: 100%;
-  margin: 8px 0;
-  padding: 10px;
-  background: #111;
-  color: #bbb;
-  border: 1px solid #333;
+nav button {
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: #17082b;
+  border: 1px solid #311a52;
+  color: var(--text-soft);
   cursor: pointer;
-  transition: 0.2s;
+  font-size: 0.9rem;
+  transition: 0.2s ease;
+  white-space: nowrap;
 }
 
-.sidebar button:hover {
-  background: #1a1a1a;
-  color: #fff;
-  border-color: #9c5bff;
+nav button:hover {
+  background: #230d41;
 }
 
-/* ================================
-   MAIN PANEL
-   ================================ */
+nav button.active {
+  background: var(--accent-soft);
+  color: white;
+  border-color: var(--accent);
+  box-shadow: 0 0 10px #a86dff88;
+}
 
-.main-panel {
+/* MAIN PANELS ------------------------------------------- */
+main {
   flex: 1;
-  padding: 15px;
-  box-sizing: border-box;
-  background: #0d0d12;
+  padding: 20px;
 }
 
-/* ================================
-   CHAT AREA
-   ================================ */
+.panel {
+  display: none;
+  background: var(--panel);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 0 30px #000 inset;
+  max-width: 1150px;
+  margin: 0 auto;
+}
 
-#messages {
-  height: calc(100vh - 160px);
+.panel.active {
+  display: block;
+}
+
+.panel h2 {
+  font-family: "Courier New", monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border);
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent);
+}
+
+/* CHAT --------------------------------------------------- */
+#chat-log {
+  height: 350px;
   overflow-y: auto;
-  padding-right: 10px;
-  box-sizing: border-box;
-  border: 1px solid #222;
-  background: #08080b;
-}
-
-.message-entry {
-  margin: 10px 0;
+  background: #0b0416;
+  border: 1px solid #2e1850;
+  border-radius: 8px;
   padding: 10px;
-  background: #111;
-  border-left: 4px solid #9c5bff;
-  color: #eee;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  scroll-behavior: auto;
 }
 
-/* ================================
-   INPUT AREA
-   ================================ */
+.chat-line {
+  margin-bottom: 5px;
+}
 
-.input-row {
+.chat-line span.user {
+  color: #ffb3ff;
+}
+
+#chat-form {
+  margin-top: 12px;
   display: flex;
-  margin-top: 10px;
+  gap: 10px;
 }
 
-#chatInput {
+#chat-form input {
   flex: 1;
   padding: 10px;
-  background: #121214;
-  border: 1px solid #333;
-  color: #eee;
+  border-radius: 8px;
+  border: 1px solid #311a52;
+  background: #120725;
+  color: white;
 }
 
-#sendBtn {
-  padding: 10px 15px;
-  background: #9c5bff;
-  color: #000;
-  border: none;
+#chat-form button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  color: white;
   cursor: pointer;
   transition: 0.2s;
 }
 
-#sendBtn:hover {
-  background: #b784ff;
+#chat-form button:hover {
+  background: var(--accent);
 }
 
-/* ================================
-   RESPONSIVE
-   ================================ */
-@media (max-width: 700px) {
-  .wrapper {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 2px solid #222;
-  }
+/* LIST SECTIONS (Evidence / Status / Locations) ----------- */
+.list {
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  line-height: 1.5;
 }
-/* style */
+
+.list-item {
+  background: var(--panel-soft);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.tag {
+  display: inline-block;
+  background: #20093c;
+  border-radius: 999px;
+  padding: 3px 10px;
+  border: 1px solid var(--accent-soft);
+  font-size: 0.75rem;
+  margin-right: 6px;
+  color: var(--accent);
+}
+
+/* CASEFILES PANEL --------------------------------------- */
+.case-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+.case-card {
+  background: var(--panel-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.case-card:hover {
+  background: #240d43;
+  box-shadow: 0 0 10px #a86dff55;
+}
+
+/* POSTER MODAL ------------------------------------------- */
+#posterModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  backdrop-filter: blur(5px);
+}
+
+#posterModal img {
+  width: 60%;
+  max-width: 650px;
+  border-radius: 12px;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 25px #a86dffaa;
+}
+
+#posterModal.visible {
+  display: flex;
+}
+
+#posterModalClose {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 2rem;
+  cursor: pointer;
+  color: white;
+  text-shadow: 0 0 10px red;
+}
+
+/* FOOTER -------------------------------------------------- */
+footer {
+  text-align: center;
+  padding: 12px;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  opacity: 0.8;
+}
