@@ -1,244 +1,90 @@
 /* ============================================================
-   style.css — Version B
-   Main UI Styling for Phasmophobia Broads HQ
+   ghostEvents.js — Version B
+   Optional ambient ghost activity engine
+   Works with uiEffects.js and main panels
    ============================================================ */
 
-:root {
-    --bg: #05030a;
-    --panel: #12091f;
-    --accent: #9b5bff;
-    --accent-soft: #5b2fa3;
-    --text-main: #f1e6ff;
-    --text-soft: #c5b3ff;
+import { flicker, shake, frost, coldBreathFX } from "./uiEffects.js";
+
+/* ------------------------------------------------------------
+   Helper: Add text to Ghost Log panel
+------------------------------------------------------------ */
+function logGhost(text) {
+    const box = document.getElementById("ghost-log");
+    if (!box) return;
+
+    const p = document.createElement("p");
+    p.textContent = text;
+    box.appendChild(p);
 }
 
 /* ------------------------------------------------------------
-   GLOBAL PAGE
+   Ghost Writing popup effect
 ------------------------------------------------------------ */
-body {
-    margin: 0;
-    font-family: "Trebuchet MS", system-ui, sans-serif;
-    background: radial-gradient(circle at top, #120a2a 0%, #05030a 60%, #000 100%);
-    color: var(--text-main);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+function ghostWrite(message = "RUN") {
+    const wrap = document.createElement("div");
+    wrap.className = "ghost-writing-popup";
 
-header {
-    padding: 20px;
-    text-align: center;
-    border-bottom: 2px solid var(--accent-soft);
-    background: linear-gradient(to right, #080413, #140827, #080413);
-    box-shadow: 0 0 25px #000;
-}
+    const text = document.createElement("div");
+    text.className = "ghost-writing-text";
+    text.textContent = message;
 
-header h1 {
-    margin: 0;
-    font-size: 1.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-family: "Courier New", monospace;
-    text-shadow: 0 0 8px var(--accent);
-}
+    wrap.appendChild(text);
+    document.body.appendChild(wrap);
 
-header p {
-    margin-top: 6px;
-    color: var(--text-soft);
+    setTimeout(() => wrap.classList.add("fade"), 2500);
+    setTimeout(() => wrap.remove(), 4500);
 }
-
 
 /* ------------------------------------------------------------
-   NAVIGATION TABS
+   Trigger a single randomized ghost event
 ------------------------------------------------------------ */
-nav {
-    display: flex;
-    gap: 8px;
-    padding: 12px;
-    background: #060312;
-    border-bottom: 1px solid #271444;
-    overflow-x: auto;
-}
+export function triggerGhostEvent() {
+    const eventType = Math.floor(Math.random() * 6) + 1;
 
-nav button {
-    background: #120824;
-    color: var(--text-soft);
-    border: 1px solid #2f174a;
-    border-radius: 999px;
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: 0.2s ease;
-}
+    switch (eventType) {
+        case 1:
+            flicker();
+            logGhost("💡 Lights flicker softly…");
+            break;
 
-nav button:hover {
-    background: #1b0f35;
-}
+        case 2:
+            coldBreathFX();
+            frost();
+            logGhost("❄ Cold breath detected nearby…");
+            break;
 
-nav button.active {
-    background: var(--accent-soft);
-    color: #fff;
-    border-color: var(--accent);
-    box-shadow: 0 0 10px #9b5bff88;
-}
+        case 3:
+            shake();
+            logGhost("👻 A shadow moves behind you…");
+            break;
 
+        case 4:
+            flicker("red");
+            shake();
+            logGhost("🔥 The ghost grows aggressive!");
+            break;
+
+        case 5:
+            ghostWrite("RUN");
+            logGhost("✏ Ghost Writing appeared on the wall!");
+            break;
+
+        case 6:
+            flicker("pulse");
+            logGhost("📡 EMF spike detected…");
+            break;
+    }
+}
 
 /* ------------------------------------------------------------
-   PANELS
+   Automatic loop every 2–4 minutes (optional)
 ------------------------------------------------------------ */
-main {
-    padding: 18px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+export function startGhostLoop() {
+    const delay = 120000 + Math.random() * 120000; // 2–4 minutes
 
-.panel {
-    display: none;
-    background: radial-gradient(circle at top left, #22113f 0%, #12091f 40%, #05030a 100%);
-    border-radius: 12px;
-    padding: 18px;
-    border: 1px solid #2c1744;
-    box-shadow: 0 0 20px #000;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.panel.active {
-    display: block;
-}
-
-.panel h2 {
-    font-size: 1rem;
-    margin-top: 0;
-    text-transform: uppercase;
-    color: var(--accent);
-    letter-spacing: 0.1em;
-    font-family: "Courier New", monospace;
-    border-bottom: 1px solid #2c1744;
-    padding-bottom: 6px;
-    margin-bottom: 10px;
-}
-
-
-/* ------------------------------------------------------------
-   CHAT
------------------------------------------------------------- */
-#chat-log {
-    background: #05020c;
-    border-radius: 10px;
-    border: 1px solid #27153f;
-    padding: 10px;
-    height: 260px;
-    overflow-y: auto;
-    font-size: 0.9rem;
-}
-
-.chat-line {
-    margin-bottom: 5px;
-}
-
-.chat-line span.user {
-    color: #ffb3ff;
-}
-
-
-/* ------------------------------------------------------------
-   TAGS + LIST ITEMS
------------------------------------------------------------- */
-.tag {
-    display: inline-block;
-    padding: 3px 10px;
-    background: #1a0f2d;
-    color: var(--text-soft);
-    border-radius: 999px;
-    border: 1px solid #3a235a;
-    font-size: 0.75rem;
-    margin-right: 6px;
-}
-
-
-/* ------------------------------------------------------------
-   CASE FILES GRID
------------------------------------------------------------- */
-.case-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 16px;
-    margin-top: 10px;
-}
-
-.case-card {
-    background: #0b0615;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #281638;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.case-card:hover {
-    transform: scale(1.04);
-    box-shadow: 0 0 12px #9b5bff55;
-}
-
-.case-card img {
-    width: 100%;
-    border-radius: 8px;
-    margin-bottom: 8px;
-}
-
-
-/* ------------------------------------------------------------
-   POSTER MODAL
------------------------------------------------------------- */
-.poster-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(10, 0, 20, 0.85);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 99999;
-}
-
-.poster-modal img {
-    max-width: 80%;
-    max-height: 70%;
-    border-radius: 8px;
-    box-shadow: 0 0 20px #000;
-}
-
-.poster-close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    font-size: 2.3rem;
-    color: var(--text-main);
-    cursor: pointer;
-}
-
-#poster-caption {
-    color: var(--text-soft);
-    font-size: 1rem;
-    margin-top: 12px;
-}
-
-
-/* ------------------------------------------------------------
-   FOOTER
------------------------------------------------------------- */
-footer {
-    text-align: center;
-    padding: 12px;
-    font-size: 0.8rem;
-    color: #8f7bb9;
-    opacity: 0.85;
+    setTimeout(() => {
+        triggerGhostEvent();
+        startGhostLoop();
+    }, delay);
 }
