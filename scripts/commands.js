@@ -1,110 +1,78 @@
-// =============================
-// COMMANDS.JS — GHOST EVENTS + MULTIPLAYER
-// Syncs Evidence, Status, Locations, Ghost Log
-// =============================
+// ===========================================
+// COMMANDS.JS — FULL MULTIPLAYER GHOST ENGINE
+// ===========================================
 
-// Firebase references from index.html
-let db = null;
-let evidenceRef = null;
-let statusRef = null;
-let locationRef = null;
-let ghostRef = null;
+const db = window.__DB;
 
-// Called from index.html after Firebase initializes
-window.setupCommandRefs = function(firebaseDB) {
-  db = firebaseDB;
-  evidenceRef = db.ref("evidence");
-  statusRef   = db.ref("status");
-  locationRef = db.ref("locations");
-  ghostRef    = db.ref("ghostlog");
-};
+const evidenceRef = db.ref("evidence");
+const statusRef   = db.ref("status");
+const locationRef = db.ref("locations");
+const ghostRef    = db.ref("ghostlog");
 
-// -----------------------------------
-// MAIN COMMAND HANDLER
-// -----------------------------------
-window.handleCommand = function(rawText, playerName = "Player") {
-  if (!rawText.startsWith("!")) return;
-  const text = rawText.trim();
+// Ghost Event System
+const liveEventRef = db.ref("ghostEvent/live");
+const historyRef   = db.ref("ghostEvent/history");
 
-  // ---------------- HELP ----------------
-  if (text === "!help") {
-    ghostRef.push(`${playerName} opened help: Commands → !evidence:  !dead:  !revive:  !location:  !hunt  !event  !manifest  !flicker  !slam  !curse`);
-    return;
-  }
+function triggerGlobalEvent(type, player, extra = "") {
+  const eventObj = {
+    type,
+    by: player,
+    time: Date.now(),
+    extra
+  };
 
-  // ---------------- EVIDENCE ----------------
-  if (text.startsWith("!evidence:")) {
-    const ev = text.split(":")[1]?.trim();
+  // history
+  historyRef.push(eventObj);
+
+  // live event triggers animation for everyone
+  liveEventRef.set(eventObj);
+}
+
+window.handleCommand = function (raw, player = "Player") {
+  if (!raw.startsWith("!")) return;
+
+  const cmd = raw.trim();
+
+  // ----- EVIDENCE -----
+  if (cmd.startsWith("!evidence:")) {
+    const ev = cmd.split(":")[1]?.trim();
     if (!ev) return;
-    evidenceRef.push({ by: playerName, text: ev });
+    evidenceRef.push({ by: player, text: ev });
     return;
   }
 
-  // ---------------- DEAD ----------------
-  if (text.startsWith("!dead:")) {
-    const who = text.split(":")[1]?.trim();
-    if (!who) return;
-    statusRef.push({ text: `<span class="tag">💀 Dead</span> ${who}`, by: playerName });
+  // ----- DEAD -----
+  if (cmd.startsWith("!dead:")) {
+    const who = cmd.split(":")[1]?.trim();
+    statusRef.push({ by: player, text: `💀 Dead: ${who}` });
     return;
   }
 
-  // ---------------- REVIVE ----------------
-  if (text.startsWith("!revive:")) {
-    const who = text.split(":")[1]?.trim();
-    if (!who) return;
-    statusRef.push({ text: `<span class="tag">❤️ Revived</span> ${who}`, by: playerName });
+  // ----- REVIVE -----
+  if (cmd.startsWith("!revive:")) {
+    const who = cmd.split(":")[1]?.trim();
+    statusRef.push({ by: player, text: `❤️ Revived: ${who}` });
     return;
   }
 
-  // ---------------- LOCATION ----------------
-  if (text.startsWith("!location:")) {
-    const info = text.split(":")[1]?.trim();
-    if (!info) return;
-    locationRef.push({ text: info, by: playerName });
+  // ----- LOCATION -----
+  if (cmd.startsWith("!location:")) {
+    const info = cmd.split(":")[1]?.trim();
+    locationRef.push({ by: player, text: info });
     return;
   }
 
-  // =================================================
-  // 🔥 GHOST EVENT COMMANDS
-  // =================================================
+  // ========================================
+  // GHOST EVENTS
+  // ========================================
 
-  // ---------------- HUNT MODE (fixed) ----------------
-  if (text === "!hunt") {
-    ghostRef.push(`👹 The ghost has started a HUNT triggered by ${playerName}! RUN!`);
-    triggerHunt(playerName);
-    return;
-  }
+  if (cmd === "!hunt")      return triggerGlobalEvent("hunt", player);
+  if (cmd === "!flicker")   return triggerGlobalEvent("flicker", player);
+  if (cmd === "!manifest")  return triggerGlobalEvent("manifest", player);
+  if (cmd === "!slam")      return triggerGlobalEvent("slam", player);
+  if (cmd === "!curse")     return triggerGlobalEvent("curse", player);
+  if (cmd === "!event")     return triggerGlobalEvent("event", player);
 
-  // RANDOM EVENT
-  if (text === "!event") {
-    ghostRef.push(`👻 A ghost event just happened near ${playerName}…`);
-    return;
-  }
-
-  // MANIFEST
-  if (text === "!manifest") {
-    ghostRef.push(`🫥 The ghost is manifesting in front of ${playerName}!`);
-    return;
-  }
-
-  // LIGHT FLICKER
-  if (text === "!flicker") {
-    ghostRef.push(`💡 The lights begin flickering violently! (${playerName})`);
-    return;
-  }
-
-  // DOOR SLAM
-  if (text === "!slam") {
-    ghostRef.push(`🚪 A door SLAMS shut behind ${playerName}!`);
-    return;
-  }
-
-  // CURSED EVENT
-  if (text === "!curse") {
-    ghostRef.push(`🔮 A cursed presence surrounds ${playerName}… something feels WRONG.`);
-    return;
-  }
-
-  // ---------------- UNKNOWN ----------------
-  ghostRef.push(`Unknown command from ${playerName}: ${text}`);
+  // Unknown
+  ghostRef.push(`Unknown command from ${player}: ${cmd}`);
 };
