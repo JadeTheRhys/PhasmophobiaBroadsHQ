@@ -1,70 +1,90 @@
-// =======================================================================
-// uiEffects.js — Version B (Non-Module Safe Build)
-// Visual effects for ghost events, hunts, flicker, shake, frost, breathing
-// All functions attached to window.* for global access
-// =======================================================================
+/* ============================================================
+   uiEffects.js — Version B
+   Shared ghost visual effects used by commands.js + hunt.js
+   ============================================================ */
 
+/* ------------------------------------------------------------
+   UTILITY: Add + auto-remove CSS class
+------------------------------------------------------------ */
+function applyTempClass(target, className, duration = 1200) {
+    if (!target) return;
+    target.classList.add(className);
+    setTimeout(() => target.classList.remove(className), duration);
+}
 
-// ------------------------------------------------------------
-// SCREEN FLICKER EFFECT
-// ------------------------------------------------------------
-window.flicker = function (color = "white") {
-    const overlay = document.createElement("div");
-    overlay.className = "flicker-overlay";
+/* ------------------------------------------------------------
+   LIGHT FLICKER EFFECT
+------------------------------------------------------------ */
+export function flicker(colorMode = "normal") {
+    const body = document.body;
 
-    if (color === "red") overlay.classList.add("flicker-red");
-    if (color === "pulse") overlay.classList.add("flicker-pulse");
+    if (colorMode === "red") {
+        applyTempClass(body, "lights-flicker-red", 1500);
+        return;
+    }
 
-    document.body.appendChild(overlay);
+    if (colorMode === "pulse") {
+        applyTempClass(body, "lights-flicker-pulse", 1500);
+        return;
+    }
 
-    setTimeout(() => overlay.remove(), 500);
-};
+    applyTempClass(body, "lights-flicker", 1500);
+}
 
+/* ------------------------------------------------------------
+   SCREEN SHAKE
+------------------------------------------------------------ */
+export function shake(duration = 900) {
+    applyTempClass(document.body, "screen-shake", duration);
+}
 
-// ------------------------------------------------------------
-// SCREEN SHAKE EFFECT
-// ------------------------------------------------------------
-window.shake = function () {
-    document.body.classList.add("shake-effect");
+/* ------------------------------------------------------------
+   FROSTED SCREEN EFFECT
+------------------------------------------------------------ */
+export function frost() {
+    let frostLayer = document.getElementById("frost-overlay");
+
+    if (!frostLayer) {
+        frostLayer = document.createElement("div");
+        frostLayer.id = "frost-overlay";
+        frostLayer.style.position = "fixed";
+        frostLayer.style.top = 0;
+        frostLayer.style.left = 0;
+        frostLayer.style.width = "100%";
+        frostLayer.style.height = "100%";
+        frostLayer.style.zIndex = "9997";
+        frostLayer.style.pointerEvents = "none";
+        frostLayer.style.background = "rgba(180, 210, 255, 0.15)";
+        frostLayer.style.backdropFilter = "blur(1px)";
+        frostLayer.style.transition = "opacity 0.4s ease-out";
+        document.body.appendChild(frostLayer);
+    }
+
+    frostLayer.style.opacity = "1";
 
     setTimeout(() => {
-        document.body.classList.remove("shake-effect");
-    }, 600);
-};
+        frostLayer.style.opacity = "0";
+    }, 1600);
+}
 
+/* ------------------------------------------------------------
+   COLD BREATH EFFECT
+------------------------------------------------------------ */
+export function coldBreathFX() {
+    const fx = document.createElement("div");
+    fx.className = "cold-breath-fx";
 
-// ------------------------------------------------------------
-// COLD BREATH PARTICLE FX
-// ------------------------------------------------------------
-window.coldBreathFX = function () {
-    for (let i = 0; i < 15; i++) {
-        const puff = document.createElement("div");
-        puff.className = "cold-breath";
+    fx.style.position = "fixed";
+    fx.style.left = "50%";
+    fx.style.top = "60%";
+    fx.style.transform = "translate(-50%, -50%)";
+    fx.style.color = "rgba(200,240,255,0.7)";
+    fx.style.fontSize = "2rem";
+    fx.style.userSelect = "none";
+    fx.style.pointerEvents = "none";
+    fx.textContent = "❄";
 
-        puff.style.left = `${50 + (Math.random() * 40 - 20)}vw`;
-        puff.style.top = `${50 + (Math.random() * 40 - 20)}vh`;
+    document.body.appendChild(fx);
 
-        document.body.appendChild(puff);
-
-        setTimeout(() => puff.remove(), 2000);
-    }
-};
-
-
-// ------------------------------------------------------------
-// FROST OVERLAY EFFECT
-// ------------------------------------------------------------
-window.frost = function () {
-    const frostLayer = document.createElement("div");
-    frostLayer.className = "frost-overlay";
-    document.body.appendChild(frostLayer);
-
-    setTimeout(() => frostLayer.classList.add("fade"), 1500);
-    setTimeout(() => frostLayer.remove(), 3000);
-};
-
-
-// ------------------------------------------------------------
-// DEBUG LOAD FLAG
-// ------------------------------------------------------------
-console.log("✨ uiEffects.js (Version B) loaded.");
+    setTimeout(() => fx.remove(), 900);
+}
