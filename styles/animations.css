@@ -1,95 +1,102 @@
-/* ============================================================
-   animations.css — SAFE GLOBAL GHOST ANIMATION STYLES
-   Matches hunt.js EXACTLY
-   ============================================================ */
+/* =====================================================================
+   animations.css — VERSION B (Full UI + Ghost Event FX)
+   Works with commands.js + hunt.js + index.html (Version B)
+   ===================================================================== */
 
-/* ------------------------------------------------------------
-   1. HUNT MODE (Red pulsing danger overlay)
-   ------------------------------------------------------------ */
-.hunt-active {
-  animation: huntPulse 0.8s infinite alternate;
-  background: rgba(90, 0, 0, 0.4) !important;
+/* ----------------------------------------------------
+   GLOBAL ANIMATION HELPERS
+---------------------------------------------------- */
+
+@keyframes screenShake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-8px, 5px); }
+  40%  { transform: translate(6px, -6px); }
+  60%  { transform: translate(-5px, 4px); }
+  80%  { transform: translate(4px, -3px); }
+  100% { transform: translate(0, 0); }
 }
 
-@keyframes huntPulse {
-  0% {
-    background: rgba(90, 0, 0, 0.15);
-  }
-  100% {
-    background: rgba(255, 0, 0, 0.35);
-  }
+@keyframes pulseRed {
+  0%   { background: rgba(90, 0, 0, 0.25); }
+  100% { background: rgba(255, 0, 0, 0.45); }
 }
 
-
-/* ------------------------------------------------------------
-   2. LIGHTS FLICKER
-   ------------------------------------------------------------ */
-.lights-flicker {
-  animation: flickerFlash 0.15s infinite;
-}
-
-@keyframes flickerFlash {
-  0% { opacity: 0.4; }
-  50% { opacity: 1; }
+@keyframes flickerLights {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 1;   }
   100% { opacity: 0.4; }
 }
 
-
-/* ------------------------------------------------------------
-   3. GHOST MANIFEST (white flash)
-   ------------------------------------------------------------ */
-.ghost-manifest {
-  animation: manifestFlash 0.35s ease-out forwards;
-  background: rgba(255, 255, 255, 0.7);
-}
-
-@keyframes manifestFlash {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-
-/* ------------------------------------------------------------
-   4. DOOR SLAM (screen shake)
-   ------------------------------------------------------------ */
-.door-slam {
-  animation: screenShake 0.6s ease-out;
-}
-
-@keyframes screenShake {
-  0%   { transform: translate(0px, 0px); }
-  20%  { transform: translate(-8px, 3px); }
-  40%  { transform: translate(5px, -5px); }
-  60%  { transform: translate(-6px, 4px); }
-  80%  { transform: translate(3px, -3px); }
-  100% { transform: translate(0px, 0px); }
-}
-
-
-/* ------------------------------------------------------------
-   5. CURSE EFFECT (purple static distortion)
-   ------------------------------------------------------------ */
-.curse-effect {
-  animation: curseDistort 0.15s infinite;
-  filter: hue-rotate(270deg) contrast(1.4);
+@keyframes manifestPulse {
+  0%   { opacity: 0.2; transform: scale(1); }
+  100% { opacity: 0.6; transform: scale(1.05); }
 }
 
 @keyframes curseDistort {
-  0% { transform: scale(1); filter: blur(1px); }
-  50% { transform: scale(1.02); filter: blur(2px); }
-  100% { transform: scale(1); filter: blur(1px); }
+  0%   { filter: blur(0px) brightness(1); }
+  50%  { filter: blur(2px) brightness(0.7); }
+  100% { filter: blur(0px) brightness(1); }
 }
 
+/* ----------------------------------------------------
+   HUNT MODE — Red emergency overlay
+---------------------------------------------------- */
 
-/* ------------------------------------------------------------
-   6. RANDOM EVENT (ghostly flash)
-   ------------------------------------------------------------ */
-.ghost-event {
-  animation: ghostFlash 0.3s ease-out forwards;
-  background: rgba(180, 180, 255, 0.4);
+.hunt-active {
+  animation: pulseRed 0.7s infinite alternate;
+  backdrop-filter: blur(3px);
 }
 
-@keyframes ghostFlash {
-  0% { opacity: 0.9; }
+/* ----------------------------------------------------
+   LIGHT FLICKER
+---------------------------------------------------- */
+
+.lights-flicker {
+  animation: flickerLights 0.15s infinite;
+}
+
+/* ----------------------------------------------------
+   GHOST MANIFEST — spooky visual distortion
+---------------------------------------------------- */
+
+.ghost-manifest {
+  backdrop-filter: blur(4px) brightness(0.6);
+  animation: manifestPulse 0.8s infinite alternate;
+}
+
+/* ----------------------------------------------------
+   DOOR SLAM — bright white flash
+---------------------------------------------------- */
+
+.door-slam::before {
+  content: "";
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.85);
+  animation: slamFlash 0.25s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes slamFlash {
+  0%   { opacity: 1; }
   100% { opacity: 0; }
+}
+
+/* ----------------------------------------------------
+   CURSE EFFECT — screen distortion
+---------------------------------------------------- */
+
+.curse-effect {
+  animation: curseDistort 0.25s infinite;
+}
+
+/* ----------------------------------------------------
+   RANDOM GHOST EVENT — camera shake
+---------------------------------------------------- */
+
+.ghost-event {
+  animation: screenShake 0.65s ease-out;
 }
