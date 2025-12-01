@@ -1,40 +1,55 @@
-// =====================================================
-// commands.js — Global Ghost Commands + Player Sync
-// SAFE VERSION (NO duplicate db declarations)
-// =====================================================
+// =======================================================
+// commands.js — FINAL SAFE VERSION
+// Handles ALL player commands + ghost events
+// Fully synced with index.html and hunt.js
+// =======================================================
 
-// Pull DB reference created in index.html
-const cmdDB = window.__DB;  // renamed to avoid conflicts
+// Pull global DB reference created in index.html
+const db = window.__DB;
 
-// Firebase database paths
-const evidenceRef  = cmdDB.ref("evidence");
-const statusRef    = cmdDB.ref("status");
-const locationRef  = cmdDB.ref("locations");
-const ghostLogRef  = cmdDB.ref("ghostlog");
-const eventRef     = cmdDB.ref("ghostEvent/live");
+// Firebase paths
+const evidenceRef  = db.ref("evidence");
+const statusRef    = db.ref("status");
+const locationRef  = db.ref("locations");
+const ghostLogRef  = db.ref("ghostlog");
+const eventRef     = db.ref("ghostEvent/live");
 
-// =====================================================
+// =======================================================
+// HELPER — Send a live ghost event to hunt.js
+// =======================================================
+function triggerGhostEvent(type, playerName) {
+  ghostLogRef.push(`👻 ${type.toUpperCase()} triggered by ${playerName}`);
+  eventRef.set({
+    type,
+    by: playerName,
+    time: Date.now()
+  });
+}
+
+// =======================================================
 // MAIN COMMAND HANDLER
-// index.html calls window.handleCommand()
-// =====================================================
-window.handleCommand = function(raw, playerName = "Player") {
-  if (!raw.startsWith("!")) return;
+// Called by index.html → window.handleCommand()
+// =======================================================
+window.handleCommand = function (rawInput, playerName = "Player") {
 
-  const text = raw.trim().toLowerCase();
+  if (!rawInput.startsWith("!")) return;
 
-  // ----------------------
+  const input = rawInput.trim();
+  const rawLower = input.toLowerCase();
+
+  // -------------------------------------------------------
   // HELP
-  // ----------------------
-  if (text === "!help") {
-    ghostLogRef.push(`${playerName} checked the help menu.`);
+  // -------------------------------------------------------
+  if (rawLower === "!help") {
+    ghostLogRef.push(`${playerName} opened the help menu.`);
     return;
   }
 
-  // ----------------------
+  // -------------------------------------------------------
   // EVIDENCE
-  // ----------------------
-  if (text.startsWith("!evidence:")) {
-    const ev = text.split(":")[1]?.trim();
+  // -------------------------------------------------------
+  if (rawLower.startsWith("!evidence:")) {
+    const ev = input.split(":")[1]?.trim();
     if (!ev) return;
 
     evidenceRef.push({
@@ -42,15 +57,15 @@ window.handleCommand = function(raw, playerName = "Player") {
       text: ev
     });
 
-    ghostLogRef.push(`📘 Evidence updated by ${playerName}: ${ev}`);
+    ghostLogRef.push(`📘 Evidence by ${playerName}: ${ev}`);
     return;
   }
 
-  // ----------------------
+  // -------------------------------------------------------
   // DEAD
-  // ----------------------
-  if (text.startsWith("!dead:")) {
-    const who = text.split(":")[1]?.trim();
+  // -------------------------------------------------------
+  if (rawLower.startsWith("!dead:")) {
+    const who = input.split(":")[1]?.trim();
     if (!who) return;
 
     statusRef.push({
@@ -58,15 +73,15 @@ window.handleCommand = function(raw, playerName = "Player") {
       text: `<span class="tag">💀 Dead</span> ${who}`
     });
 
-    ghostLogRef.push(`💀 ${who} died! Reported by ${playerName}`);
+    ghostLogRef.push(`💀 ${who} is dead (reported by ${playerName})`);
     return;
   }
 
-  // ----------------------
+  // -------------------------------------------------------
   // REVIVE
-  // ----------------------
-  if (text.startsWith("!revive:")) {
-    const who = text.split(":")[1]?.trim();
+  // -------------------------------------------------------
+  if (rawLower.startsWith("!revive:")) {
+    const who = input.split(":")[1]?.trim();
     if (!who) return;
 
     statusRef.push({
@@ -74,15 +89,15 @@ window.handleCommand = function(raw, playerName = "Player") {
       text: `<span class="tag">❤️ Revived</span> ${who}`
     });
 
-    ghostLogRef.push(`❤️ ${who} was revived by ${playerName}`);
+    ghostLogRef.push(`❤️ ${who} revived by ${playerName}`);
     return;
   }
 
-  // ----------------------
+  // -------------------------------------------------------
   // LOCATION
-  // ----------------------
-  if (text.startsWith("!location:")) {
-    const loc = text.split(":")[1]?.trim();
+  // -------------------------------------------------------
+  if (rawLower.startsWith("!location:")) {
+    const loc = input.split(":")[1]?.trim();
     if (!loc) return;
 
     locationRef.push({
@@ -90,32 +105,46 @@ window.handleCommand = function(raw, playerName = "Player") {
       text: loc
     });
 
-    ghostLogRef.push(`📍 ${playerName} moved to → ${loc}`);
+    ghostLogRef.push(`📍 Location update from ${playerName}: ${loc}`);
     return;
   }
 
-  // =====================================================
-  // ⭐ GHOST EVENT COMMANDS (Sync to ALL players)
-  // =====================================================
-  function ghostEvent(type) {
-    ghostLogRef.push(`👻 ${type.toUpperCase()} triggered by ${playerName}`);
-    eventRef.set({
-      type,
-      by: playerName,
-      time: Date.now()
-    });
-  }
+  // =======================================================
+  // ⭐ GHOST EVENT COMMANDS (connect directly to hunt.js)
+  // =======================================================
 
-  // Supported ghost commands
-  const ghostCommands = ["hunt", "manifest", "flicker", "slam", "curse", "event"];
-
-  if (ghostCommands.includes(text.substring(1))) {
-    ghostEvent(text.substring(1));
+  if (rawLower === "!hunt") {
+    triggerGhostEvent("hunt", playerName);
     return;
   }
 
-  // ----------------------
+  if (rawLower === "!manifest") {
+    triggerGhostEvent("manifest", playerName);
+    return;
+  }
+
+  if (rawLower === "!flicker") {
+    triggerGhostEvent("flicker", playerName);
+    return;
+  }
+
+  if (rawLower === "!slam") {
+    triggerGhostEvent("slam", playerName);
+    return;
+  }
+
+  if (rawLower === "!curse") {
+    triggerGhostEvent("curse", playerName);
+    return;
+  }
+
+  if (rawLower === "!event") {
+    triggerGhostEvent("event", playerName);
+    return;
+  }
+
+  // -------------------------------------------------------
   // UNKNOWN COMMAND
-  // ----------------------
-  ghostLogRef.push(`Unknown command from ${playerName}: ${raw}`);
+  // -------------------------------------------------------
+  ghostLogRef.push(`Unknown command from ${playerName}: ${input}`);
 };
