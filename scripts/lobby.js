@@ -1,42 +1,91 @@
-// ========================================
-// LOBBY.JS — FINAL VERSION
-// Simple room selector (frontend only)
-// ========================================
+/* ============================================================
+   PHASMOPHOBIA BROADS — LOBBY SYSTEM (FINAL FIX)
+   Firebase room list + create/join UI
+   ============================================================ */
 
-// Open the lobby overlay
+import { db } from './firebase.js';
+import { ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+/* ============================================================
+   DOM ELEMENTS
+   ============================================================ */
+const lobbyScreen = document.getElementById('lobby-screen');
+const roomList = document.getElementById('roomList');
+const newRoomName = document.getElementById('newRoomName');
+const createRoomBtn = document.getElementById('createRoomBtn');
+
+// Firebase path
+const roomsRef = ref(db, 'rooms');
+
+// Expose globally for HTML/main.js
+window.openLobby = openLobby;
+window.closeLobby = closeLobby;
+
+/* ============================================================
+   OPEN + CLOSE LOBBY
+   ============================================================ */
 export function openLobby() {
-  const lobby = document.getElementById("lobby-screen");
-  if (lobby) lobby.style.display = "flex";
+  // Use the 'display: flex' style from your provided code
+  if (lobbyScreen) lobbyScreen.style.display = 'flex';
 }
 
-// Close lobby overlay
 export function closeLobby() {
-  const lobby = document.getElementById("lobby-screen");
-  if (lobby) lobby.style.display = "none";
+  if (lobbyScreen) lobbyScreen.style.display = 'none';
 }
 
-// Create or join room
-const createBtn = document.getElementById("createRoomBtn");
-const nameInput = document.getElementById("newRoomName");
+/* ============================================================
+   CREATE ROOM
+   (This pushes the new room name to Firebase)
+   ============================================================ */
+if (createRoomBtn && newRoomName) {
+  createRoomBtn.addEventListener('click', () => {
+    const name = newRoomName.value.trim();
+    if (!name) return;
 
-if (createBtn && nameInput) {
-  createBtn.addEventListener("click", () => {
-    const room = nameInput.value.trim();
-    if (!room) return;
-
-    // Store room name in localStorage
-    localStorage.setItem("phasmo-room", room);
-
-    // Close lobby
+    // Push the room name to the Firebase database
+    push(roomsRef, { name });
+    newRoomName.value = '';
+    
+    // Store the created room name locally and close
+    localStorage.setItem("phasmo-room", name);
     closeLobby();
-
-    // Notify user locally
-    const messages = document.getElementById("messages");
-    const div = document.createElement("div");
-    div.className = "message-entry";
-    div.style.opacity = "0.7";
-    div.textContent = `Joined room: ${room}`;
-    messages.appendChild(div);
   });
 }
-// lobby js
+
+/* ============================================================
+   DISPLAY ROOMS (Listens to Firebase for new rooms)
+   ============================================================ */
+onChildAdded(roomsRef, snap => {
+  const data = snap.val();
+  // Ensure the data has a name property
+  if (data && data.name) {
+    addRoomToList(data.name);
+  }
+});
+
+function addRoomToList(name) {
+  if (!roomList) return;
+
+  const li = document.createElement('li');
+  li.textContent = name;
+
+  // Add event listener to join the room
+  li.addEventListener('click', () => {
+    // Store the room name locally
+    localStorage.setItem("phasmo-room", name);
+    closeLobby();
+
+    // Optionally notify the user in the chat log (if messages element exists)
+    const messages = document.getElementById("messages");
+    if (messages) {
+      const div = document.createElement("div");
+      div.className = "message-entry";
+      div.style.opacity = "0.7";
+      div.textContent = `Joined room: ${name}`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+  });
+
+  roomList.appendChild(li);
+}
