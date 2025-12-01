@@ -107,13 +107,16 @@
         .log-entry-event { color: #ff5d5d; /* Red for danger */ }
 
         /* --- Dropdown Fix (Guaranteed Visibility) --- */
+        /* This forces the select element to have white text on a dark background */
         select {
-            color: white !important;
-            background-color: #111827 !important; /* Force dark gray/black background */
+            color: #ffffff !important;
+            background-color: #1f2937 !important; /* Dark gray background */
+            border: 1px solid var(--neon-purple) !important;
         }
-        select option {
-            color: white !important;
-            background-color: #111827 !important;
+        /* This ensures the dropdown options themselves are also styled correctly */
+        option {
+            color: #ffffff !important;
+            background-color: #1f2937 !important;
         }
 
 
@@ -265,7 +268,7 @@
                         <!-- Tab: Ghost Log (Profiles) -->
                         <div id="tab-log" class="tab-page hidden">
                             <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Known Ghost Profiles</h3>
-                            <!-- Fixed Dropdown Styling -->
+                            <!-- Added style tag to force colors -->
                             <select id="ghost-select" class="w-full p-3 rounded-md mb-3 border border-neon-purple focus:ring-soft-cyan focus:border-soft-cyan font-mono-data text-white bg-gray-900" onchange="displayGhostInfo()">
                                 <option value="">--- Select Ghost Type ---</option>
                                 <!-- Options populated by JS -->
@@ -353,13 +356,31 @@
 
         // Global variables provided by the canvas environment
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
+        // FIX: Hardcoded fallback config based on user input
+        const userProvidedConfig = {
+            apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
+            authDomain: "phasmophobiabroads.firebaseapp.com",
+            projectId: "phasmophobiabroads",
+            storageBucket: "phasmophobiabroads.firebasestorage.app",
+            messagingSenderId: "503659624108",
+            appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
+        };
+
         let firebaseConfig = {};
         try {
-            firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            const envConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+             // If envConfig is empty (missing keys), use the user provided one
+            if (Object.keys(envConfig).length === 0) {
+                 firebaseConfig = userProvidedConfig;
+            } else {
+                 firebaseConfig = envConfig;
+            }
         } catch (e) {
-            // Non-fatal error, logging only
-            console.error("Config Parsing Error:", e);
+            console.warn("Config Parsing Error, using fallback:", e);
+            firebaseConfig = userProvidedConfig;
         }
+        
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         let app, db, auth;
@@ -370,15 +391,15 @@
         
         // --- MAP LOCATIONS DATA (NEW) ---
         const MAP_LOCATIONS = {
-            "Grafton": { url: 'uploaded:download (6).jpg-db6767d7-4f0b-4867-aeb6-51020bc57f79', name: "Grafton Farmhouse" },
-            "Tanglewood": { url: 'uploaded:download (3).jpg-eacb7319-40d0-4b4e-8340-cb4379983c58', name: "Tanglewood Street House" },
-            "Edgefield": { url: 'uploaded:download (2).jpg-a1ea7086-bfc1-4de3-b5f2-e5517fcc6421', name: "Edgefield Street House" },
-            "Ridgeview": { url: 'uploaded:download (4).jpg-b276ed4f-d026-4056-a09a-ef1b43aba0d7', name: "Ridgeview Road House" },
-            "Willow": { url: 'uploaded:download (5).jpg-1470f8c8-7034-4fd1-89b8-c2052b86c9bb', name: "Willow Street House" },
-            "Bleasdale": { url: 'uploaded:download (1).jpg-ef3fd895-2f15-460a-b088-daf22c2ec1d9', name: "Bleasdale Farmhouse" },
-            "Brownstone": { url: 'uploaded:ChatGPT Image Nov 30, 2025, 09_01_36 AM.jpg-2ad147c1-1370-4711-889d-b198370f2616', name: "Brownstone High School" },
-            "Asylum": { url: 'uploaded:ChatGPT Image Nov 30, 2025, 09_01_36 AM.jpg-2ad147c1-1370-4711-889d-b198370f2616', name: "Sunny Meadows" },
-            "Camp": { url: 'uploaded:download (1).jpg-ef3fd895-2f15-460a-b088-daf22c2ec1d9', name: "Camp Woodwind" }
+            "Grafton": { url: 'assets/map_grafton.jpg', name: "Grafton Farmhouse" },
+            "Tanglewood": { url: 'assets/map_tanglewood.jpg', name: "Tanglewood Street House" },
+            "Edgefield": { url: 'assets/map_edgefield.jpg', name: "Edgefield Street House" }, // Placeholder if image not available
+            "Ridgeview": { url: 'assets/map_ridgeview.jpg', name: "Ridgeview Road House" },
+            "Willow": { url: 'assets/map_willow.jpg', name: "Willow Street House" },
+            "Bleasdale": { url: 'assets/map_bleasdale.jpg', name: "Bleasdale Farmhouse" },
+            "Brownstone": { url: 'assets/case_file_01.jpg', name: "Brownstone High School" }, // Using relevant image
+            "Asylum": { url: 'assets/map_asylum.jpg', name: "Sunny Meadows" },
+            "Camp": { url: 'assets/map_camp.jpg', name: "Camp Woodwind" }
         };
 
 
@@ -424,7 +445,7 @@
         /** Gets the user's profile photo URL, falling back to a placeholder. */
         const getPhotoUrl = (userId) => {
             const profile = allUserProfiles[userId];
-            return profile && profile.photoUrl ? profile.photoUrl : 'https://placehold.co/50x50/111827/5dfdff?text=U';
+            return profile && profile.photoUrl ? profile.photoUrl : 'https://placehold.co/50x50/50x50/5dfdff/111827?text=U';
         };
         
         /** Routes the command to the correct handler function. */
