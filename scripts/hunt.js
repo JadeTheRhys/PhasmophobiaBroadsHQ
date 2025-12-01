@@ -1,72 +1,48 @@
-// =============================
-// HUNT MODE — animations + sync
-// =============================
+// =============================================
+// HUNT.JS — GLOBAL GHOST EVENT ANIMATION HANDLER
+// =============================================
 
-// Firebase reference
-let huntRef = null;
+const db = window.__DB;
+const liveEventRef = db.ref("ghostEvent/live");
 
-// Setup from index.html
-window.setupHuntRef = function(db) {
-  huntRef = db.ref("hunt");
-};
+function playEffect(type, by) {
+  console.log("Playing effect:", type, "by", by);
 
-// Listen for hunt events
-if (!window.huntListenerAdded) {
-  window.huntListenerAdded = true;
+  if (type === "hunt") {
+    document.body.classList.add("hunt-active");
+    setTimeout(() => document.body.classList.remove("hunt-active"), 5000);
+  }
 
-  firebase.database().ref("hunt").on("child_added", snap => {
-    const event = snap.val();
-    if (!event) return;
+  if (type === "flicker") {
+    document.body.classList.add("lights-flicker");
+    setTimeout(() => document.body.classList.remove("lights-flicker"), 1500);
+  }
 
-    if (event.type === "start") startHuntAnimation(event.by);
-    if (event.type === "stop") stopHuntAnimation(event.by);
-  });
+  if (type === "manifest") {
+    document.body.classList.add("ghost-manifest");
+    setTimeout(() => document.body.classList.remove("ghost-manifest"), 3000);
+  }
+
+  if (type === "slam") {
+    document.body.classList.add("door-slam");
+    setTimeout(() => document.body.classList.remove("door-slam"), 1500);
+  }
+
+  if (type === "curse") {
+    document.body.classList.add("curse-effect");
+    setTimeout(() => document.body.classList.remove("curse-effect"), 4000);
+  }
+
+  if (type === "event") {
+    document.body.classList.add("ghost-event");
+    setTimeout(() => document.body.classList.remove("ghost-event"), 2000);
+  }
 }
 
-// ------------------------------
-// ✦ Triggered by command.js
-// ------------------------------
-window.triggerHunt = function(playerName) {
-  huntRef.push({
-    type: "start",
-    by: playerName,
-    time: Date.now()
-  });
+// Listen for ghost events
+liveEventRef.on("value", snap => {
+  const data = snap.val();
+  if (!data) return;
 
-  // Auto-stop hunt after 7 seconds
-  setTimeout(() => {
-    huntRef.push({
-      type: "stop",
-      by: playerName,
-      time: Date.now()
-    });
-  }, 7000);
-};
-
-// ------------------------------
-// VISUAL EFFECTS
-// ------------------------------
-function startHuntAnimation(playerName) {
-  console.log("Hunt started by", playerName);
-
-  document.body.classList.add("hunt-active");
-
-  // Add log entry
-  const log = document.getElementById("ghost-log");
-  const p = document.createElement("p");
-  p.innerHTML = `💥 <strong>HUNT!</strong> The ghost begins its chase! (Triggered by ${playerName})`;
-  log.appendChild(p);
-  log.scrollTop = log.scrollHeight;
-}
-
-function stopHuntAnimation(playerName) {
-  console.log("Hunt stopped by", playerName);
-
-  document.body.classList.remove("hunt-active");
-
-  const log = document.getElementById("ghost-log");
-  const p = document.createElement("p");
-  p.innerHTML = `😮‍💨 The hunt ends… (Stopped by ${playerName})`;
-  log.appendChild(p);
-  log.scrollTop = log.scrollHeight;
-}
+  playEffect(data.type, data.by);
+});
