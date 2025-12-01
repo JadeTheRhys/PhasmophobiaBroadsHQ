@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phasmophobia Broads HQ</title>
 
-  <!-- 🔮 GLOBAL STYLES -->
+  <!-- 🔮 GLOBAL EVENT & HUNT ANIMATION CSS -->
   <link rel="stylesheet" href="styles/animations.css" />
   <link rel="stylesheet" href="styles/hunt.css" />
 
@@ -122,7 +122,8 @@
     <div id="chat-log"></div>
 
     <form id="chat-form">
-      <input id="chat-input" type="text" autocomplete="off" placeholder="Type or use commands (!hunt, !manifest, !flicker, etc)" />
+      <input id="chat-input" type="text" autocomplete="off"
+             placeholder="Type or use commands (!hunt, !slam, !flicker, !manifest, !curse…)" />
       <button type="submit">Send</button>
     </form>
   </section>
@@ -174,8 +175,12 @@ firebase.initializeApp({
 
 const db = firebase.database();
 
-// Attach DB to command + hunt modules
+// Attach DB globally for hunt.js and commands.js
 window.__DB = db;
+
+// MUST initialize modules
+window.setupHuntRef(db);
+window.setupCommandRefs(db);
 
 // ================ CHAT ===================
 const chatLog = document.getElementById("chat-log");
@@ -226,9 +231,11 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
   });
 });
 </script>
+
+<!-- ORDER MATTERS!!! DO NOT CHANGE THIS ORDER -->
 <script src="scripts/animations.js"></script>
-<script src="scripts/commands.js"></script>
 <script src="scripts/hunt.js"></script>
+<script src="scripts/commands.js"></script>
 
 </body>
 </html>
