@@ -31,3 +31,38 @@ window.playHunt = function() {
     document.body.classList.remove("shake");
   }, 4500);
 };
+// WHISPER EFFECT
+db.ref("effects/whisper").on("value", snap => {
+  if (!snap.val()) return;
+  playWhisperEffect();
+});
+
+// SHADOW FIGURE
+db.ref("effects/shadow").on("value", snap => {
+  if (!snap.val()) return;
+  playShadowFigure();
+});
+
+// EXPLOSION
+db.ref("effects/explode").on("value", snap => {
+  if (!snap.val()) return;
+  playExplosion();
+});
+
+// CRAWLING GHOST
+db.ref("effects/crawl").on("value", snap => {
+  if (!snap.val()) return;
+  playCrawlGhost();
+});
+
+// COLD BREATH
+db.ref("effects/breath").on("value", snap => {
+  if (!snap.val()) return;
+  playColdBreath();
+});
+
+// ELECTRICAL DISTORTION
+db.ref("effects/electro").on("value", snap => {
+  if (!snap.val()) return;
+  playElectroDistortion();
+});
