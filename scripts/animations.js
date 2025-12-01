@@ -66,3 +66,41 @@ db.ref("effects/electro").on("value", snap => {
   if (!snap.val()) return;
   playElectroDistortion();
 });
+function playWhisperEffect() {
+  const w = document.createElement("div");
+  w.className = "whisperFX";
+  w.textContent = "psssst...";
+  document.body.appendChild(w);
+  setTimeout(()=> w.remove(), 2000);
+}
+
+function playShadowFigure() {
+  const s = document.createElement("div");
+  s.className = "shadowFigure";
+  document.body.appendChild(s);
+  setTimeout(()=> s.remove(), 3000);
+}
+
+function playExplosion() {
+  document.body.classList.add("screenShake");
+  setTimeout(()=> document.body.classList.remove("screenShake"), 800);
+}
+
+function playCrawlGhost() {
+  const g = document.createElement("div");
+  g.className = "crawlGhost";
+  document.body.appendChild(g);
+  setTimeout(()=> g.remove(), 4000);
+}
+
+function playColdBreath() {
+  const fog = document.createElement("div");
+  fog.className = "coldBreath";
+  document.body.appendChild(fog);
+  setTimeout(()=> fog.remove(), 2500);
+}
+
+function playElectroDistortion() {
+  document.body.classList.add("electroFX");
+  setTimeout(()=> document.body.classList.remove("electroFX"), 1000);
+}
