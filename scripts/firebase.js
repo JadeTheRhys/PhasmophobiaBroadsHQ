@@ -1,58 +1,48 @@
 // ============================================================
-// firebase.js — Version B (ES Module)
-// Initializes Firebase + Database Reference
-// Used by main.js, commands.js, hunt.js
+// firebase.js — Version B
+// Initializes Firebase + exposes db + playerName globally
 // ============================================================
 
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
-import {
-    getDatabase
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-// ============================================================
-// YOUR FIREBASE CONFIG (LIVE + CORRECT)
-// ============================================================
-
+// ----------------------
+// CONFIG
+// ----------------------
 const firebaseConfig = {
-    apiKey: "AIzaSyByDJrpdTFS5kEOZYa1mkhmCjZV5QWdOQM",
-    authDomain: "phasmophobia-broads-hq.firebaseapp.com",
-    databaseURL: "https://phasmophobia-broads-hq-default-rtdb.firebaseio.com",
-    projectId: "phasmophobia-broads-hq",
-    storageBucket: "phasmophobia-broads-hq.appspot.com",
-    messagingSenderId: "315034928967",
-    appId: "1:315034928967:web:f197bc535b798abba8956c"
+    apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
+    authDomain: "phasmophobiabroads.firebaseapp.com",
+    databaseURL: "https://phasmophobiabroads-default-rtdb.firebaseio.com",
+    projectId: "phasmophobiabroads",
+    storageBucket: "phasmophobiabroads.firebasestorage.app",
+    messagingSenderId: "503659624108",
+    appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
 };
 
-// ============================================================
-// INIT APP + DATABASE
-// ============================================================
+// ----------------------
+// INIT FIREBASE
+// ----------------------
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-export const app = initializeApp(firebaseConfig);
-export const db = getDatabase(app);
+console.log("🔥 Firebase initialized (Version B)");
 
-// Global fallback (non-module scripts)
-window.__DB = db;
 
-// ============================================================
-// PLAYER NAME HANDLING
-// ============================================================
+// ----------------------
+// PLAYER NAME
+// ----------------------
+let playerName = localStorage.getItem("playerName");
 
-// Pull name from localStorage OR ask user
-let storedName = localStorage.getItem("playerName");
-
-if (!storedName) {
-    storedName = prompt("Enter your ghost hunter name:");
-    if (!storedName) storedName = "Player";
-    localStorage.setItem("playerName", storedName);
+if (!playerName) {
+    playerName = prompt("Enter your name:") || "Player";
+    localStorage.setItem("playerName", playerName);
 }
 
-// Export it
-export const playerName = storedName;
+console.log("🎮 Player:", playerName);
 
-// Expose globally
-window.PLAYER_NAME = storedName;
 
-console.log("🔥 Firebase + Player Name Loaded:", storedName);
+// ----------------------
+// EXPORTS for ES modules
+// ----------------------
+export { app, db, playerName };
+
+// Also expose globals for non-module scripts (commands.js + hunt.js)
+window.__DB = db;
+window.PLAYER_NAME = playerName;
