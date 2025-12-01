@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phasmophobia Broads HQ</title>
 
-  <!-- CORE STYLES -->
+  <!-- 🔮 GLOBAL STYLES -->
   <link rel="stylesheet" href="styles/animations.css" />
   <link rel="stylesheet" href="styles/hunt.css" />
 
@@ -14,17 +14,14 @@
       --bg: #05030a;
       --panel: #11091f;
       --accent: #9b5bff;
-      --accent-soft: #5b2fa3;
       --text-main: #f1e6ff;
       --text-soft: #c5b3ff;
     }
 
-    * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      font-family: "Trebuchet MS", system-ui, sans-serif;
-      background: radial-gradient(circle at top, #120a2a, #05030a 60%, #000 100%);
+      font-family: "Trebuchet MS", system-ui;
+      background: radial-gradient(circle at top, #120a2a, #05030a 70%);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -33,18 +30,8 @@
 
     header {
       padding: 16px 20px;
-      border-bottom: 2px solid var(--accent-soft);
-      background: linear-gradient(to right, #080413, #140827, #080413);
-      box-shadow: 0 0 20px #000;
-    }
-
-    header h1 {
-      margin: 0;
-      font-family: "Courier New", monospace;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      font-size: 1.3rem;
-      text-shadow: 0 0 10px var(--accent);
+      border-bottom: 2px solid #5b2fa3;
+      background: linear-gradient(to right, #080413, #140827);
     }
 
     nav {
@@ -63,49 +50,40 @@
       border-radius: 999px;
       padding: 7px 14px;
       cursor: pointer;
-      font-size: 0.85rem;
       transition: 0.2s;
     }
 
     nav button.active {
-      background: var(--accent-soft);
-      color: white;
-      border-color: var(--accent);
-      box-shadow: 0 0 10px #9b5bff88;
+      background: var(--accent);
+      color: #fff;
     }
 
     .panel {
       display: none;
-      background: radial-gradient(circle, #22113f, #12091f 40%, #05030a 100%);
+      background: #12091f;
       border-radius: 12px;
-      border: 1px solid #2c1744;
-      box-shadow: 0 0 25px #000;
       padding: 16px;
-      max-width: 900px;
-      margin: 0 auto;
+      max-width: 1000px;
+      margin: 20px auto;
+      border: 1px solid #2c1744;
     }
 
-    .panel.active { display: block; }
+    .panel.active {
+      display: block;
+    }
 
     #chat-log {
-      background: #05020c;
-      border-radius: 10px;
-      border: 1px solid #27153f;
-      padding: 8px;
       height: 260px;
       overflow-y: auto;
-      font-size: 0.9rem;
+      padding: 8px;
+      background: #0a0417;
+      border-radius: 10px;
+      border: 1px solid #27153f;
     }
 
-    .chat-line {
-      margin-bottom: 6px;
-    }
     .chat-line span.user {
       color: #ffb3ff;
-      font-weight: bold;
     }
-
-    .list { font-size: 0.9rem; color: var(--text-soft); }
 
     .tag {
       background: #1a0f2d;
@@ -113,35 +91,11 @@
       padding: 3px 10px;
       border: 1px solid #3a235a;
       font-size: 0.75rem;
-    }
-
-    /* Poster Modal */
-    .poster-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.9);
-      text-align: center;
-      z-index: 99999;
-    }
-    .poster-modal-img {
-      max-width: 90%;
-      max-height: 80%;
-      margin-top: 40px;
-      border-radius: 12px;
-      border: 2px solid var(--accent);
-    }
-    .poster-close {
-      position: absolute;
-      top: 15px;
-      right: 25px;
-      font-size: 2rem;
-      cursor: pointer;
-      color: white;
+      color: var(--text-soft);
     }
   </style>
 
-  <!-- FIREBASE -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
@@ -153,124 +107,128 @@
 </header>
 
 <nav>
-  <button class="tab-btn active" data-target="panel-chat">Chat</button>
-  <button class="tab-btn" data-target="panel-evidence">Evidence</button>
-  <button class="tab-btn" data-target="panel-status">Status</button>
-  <button class="tab-btn" data-target="panel-locations">Locations</button>
-  <button class="tab-btn" data-target="panel-ghostlog">Ghost Log</button>
+  <button class="tab-btn active" data-target="chat">Chat</button>
+  <button class="tab-btn" data-target="evidence">Evidence</button>
+  <button class="tab-btn" data-target="status">Player Status</button>
+  <button class="tab-btn" data-target="locations">Locations</button>
+  <button class="tab-btn" data-target="ghostlog">Ghost Log</button>
 </nav>
 
 <main>
 
   <!-- CHAT -->
-  <section id="panel-chat" class="panel active">
-    <h2>Van Radio</h2>
+  <section id="chat" class="panel active">
+    <h2>Ghost Radio Chat</h2>
     <div id="chat-log"></div>
 
     <form id="chat-form">
-      <input id="chat-input" type="text" placeholder="Type or use commands (!hunt)" />
+      <input id="chat-input" type="text" autocomplete="off" placeholder="Type or use commands (!hunt, !manifest, !flicker, etc)" />
       <button type="submit">Send</button>
     </form>
   </section>
 
-  <!-- Evidence -->
-  <section id="panel-evidence" class="panel">
-    <h2>Evidence</h2>
+  <!-- EVIDENCE -->
+  <section id="evidence" class="panel">
+    <h2>Evidence Tracker</h2>
     <div id="evidence-list"></div>
   </section>
 
-  <!-- Status -->
-  <section id="panel-status" class="panel">
-    <h2>Player Status</h2>
+  <!-- STATUS -->
+  <section id="status" class="panel">
+    <h2>Status</h2>
     <div id="status-list"></div>
   </section>
 
-  <!-- Locations -->
-  <section id="panel-locations" class="panel">
+  <!-- LOCATIONS -->
+  <section id="locations" class="panel">
     <h2>Player Locations</h2>
     <div id="location-list"></div>
   </section>
 
-  <!-- Ghost Log -->
-  <section id="panel-ghostlog" class="panel">
-    <h2>Ghost Activity Log</h2>
+  <!-- GHOST LOG -->
+  <section id="ghostlog" class="panel">
+    <h2>Ghost Log</h2>
     <div id="ghost-log"></div>
   </section>
 
 </main>
 
-<!-- HUNT OVERLAY -->
-<div id="hunt-overlay"></div>
+<footer>
+  <p>© <span id="year"></span> Phasmophobia Broads HQ</p>
+</footer>
 
-<!-- MAIN SCRIPT -->
-<script type="module">
+<script>
+// ================= USERNAME =================
+let playerName = prompt("Enter your name:") || "Player";
 
-  let playerName = prompt("Enter your name:") || "Player";
+// ================ FIREBASE ===================
+firebase.initializeApp({
+  apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
+  authDomain: "phasmophobiabroads.firebaseapp.com",
+  databaseURL: "https://phasmophobiabroads-default-rtdb.firebaseio.com",
+  projectId: "phasmophobiabroads",
+  storageBucket: "phasmophobiabroads.firebasestorage.app",
+  messagingSenderId: "503659624108",
+  appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
+});
 
-  /* FIREBASE INIT */
-  firebase.initializeApp({
-    apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
-    authDomain: "phasmophobiabroads.firebaseapp.com",
-    databaseURL: "https://phasmophobiabroads-default-rtdb.firebaseio.com",
-    projectId: "phasmophobiabroads",
-    storageBucket: "phasmophobiabroads.firebasestorage.app",
-    messagingSenderId: "503659624108",
-    appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
+const db = firebase.database();
+
+// Attach DB to command + hunt modules
+window.__DB = db;
+
+// ================ CHAT ===================
+const chatLog = document.getElementById("chat-log");
+const chatForm = document.getElementById("chat-form");
+const chatInput = document.getElementById("chat-input");
+
+function addChat(user, text) {
+  const div = document.createElement("div");
+  div.className = "chat-line";
+  div.innerHTML = `<span class="user">[${user}]</span> ${text}`;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+const messagesRef = db.ref("messages");
+
+// Send
+chatForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  messagesRef.push({ user: playerName, text });
+
+  window.handleCommand(text, playerName);
+
+  chatInput.value = "";
+});
+
+// Receive
+messagesRef.limitToLast(100).on("child_added", snap => {
+  const data = snap.val();
+  if (!data) return;
+  addChat(data.user, data.text);
+});
+
+// YEAR
+document.getElementById("year").textContent = new Date().getFullYear();
+
+// TABS
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.target).classList.add("active");
   });
-
-  const db = firebase.database();
-  const messagesRef = db.ref("messages");
-
-  setupCommandRefs(db);
-  setupHuntRef(db);
-
-  const chatLog = document.getElementById("chat-log");
-  const chatForm = document.getElementById("chat-form");
-  const chatInput = document.getElementById("chat-input");
-
-  function addChatLine(user, text) {
-    const line = document.createElement("div");
-    line.className = "chat-line";
-    line.innerHTML = `<span class="user">[${user}]</span> ${text}`;
-    chatLog.appendChild(line);
-    chatLog.scrollTop = chatLog.scrollHeight;
-  }
-
-  chatForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const text = chatInput.value.trim();
-    if (!text) return;
-
-    messagesRef.push({ user: playerName, text });
-    handleCommand(text, playerName);
-
-    chatInput.value = "";
-  });
-
-  messagesRef.limitToLast(100).on("child_added", snap => {
-    const data = snap.val();
-    addChatLine(data.user, data.text);
-  });
-
-  // Tabs
-  const tabBtns = document.querySelectorAll(".tab-btn");
-  const panels = document.querySelectorAll(".panel");
-
-  tabBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      tabBtns.forEach(b => b.classList.remove("active"));
-      panels.forEach(p => p.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById(btn.dataset.target).classList.add("active");
-    });
-  });
-
+});
 </script>
 
-<!-- SCRIPTS -->
-<script src="scripts/animations.js"></script>
-<script src="scripts/hunt.js"></script>
 <script src="scripts/commands.js"></script>
+<script src="scripts/hunt.js"></script>
 
 </body>
 </html>
