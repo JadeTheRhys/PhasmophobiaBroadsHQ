@@ -103,6 +103,11 @@ window.handleCommand = function(rawText, playerName = "Player") {
     ghostRef.push(`🔮 A cursed presence surrounds ${playerName}… something feels WRONG.`);
     return;
   }
+// ---------------- HUNT MODE ----------------
+if (text === "!hunt") {
+  triggerHunt(playerName);
+  return;
+}
 
   // ---------------- UNKNOWN ----------------
   ghostRef.push(`Unknown command from ${playerName}: ${text}`);
