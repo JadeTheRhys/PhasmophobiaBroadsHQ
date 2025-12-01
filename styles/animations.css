@@ -1,5 +1,5 @@
 /* ============================================================
-   animations.css — Version B
+   animations.css — Version B (FIXED)
    Ghost Event Visual Effects for hunt.js + commands.js
    ============================================================ */
 
@@ -17,10 +17,10 @@
     z-index: 9998;
 }
 
-
 /* ============================================================
    🔥 HUNT EFFECT — Red pulse + shaking screen
 ============================================================ */
+/* This is primarily intended to be applied to a full-screen overlay or the body */
 .hunt-active {
     animation: huntPulse 0.8s infinite alternate ease-in-out,
                screenShake 0.6s infinite ease-in-out;
@@ -40,6 +40,83 @@
     100% { transform: translate(0,0); }
 }
 
+/* ============================================================
+   💡 FLICKER EFFECTS (Used by flicker() in uiEffects.js)
+   ============================================================ */
+
+/* Base Flicker */
+.lights-flicker {
+    animation: flickerFlash 0.15s infinite;
+}
+
+@keyframes flickerFlash {
+    0%   { opacity: 0.3; }
+    50%  { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+/* Red Flicker (Used by flicker('red')) */
+.lights-flicker-red {
+    animation: flickerFlash 0.1s infinite,
+               redTint 0.5s forwards;
+}
+@keyframes redTint {
+    from { filter: saturate(1.5) hue-rotate(0deg); }
+    to   { filter: saturate(2) hue-rotate(-20deg); }
+}
+
+/* Pulse Flicker (Used by flicker('pulse')) */
+.lights-flicker-pulse {
+    animation: flickerFlash 0.3s infinite alternate,
+               pulseGlow 0.6s infinite alternate;
+}
+@keyframes pulseGlow {
+    from { box-shadow: 0 0 10px rgba(155, 91, 255, 0.5); }
+    to   { box-shadow: 0 0 20px rgba(155, 91, 255, 1); }
+}
+
+
+/* ============================================================
+   👻 SCREEN SHAKE (Used by shake() in uiEffects.js)
+   ============================================================ */
+.screen-shake {
+    /* Uses the existing screenShake keyframes */
+    animation: screenShake 0.35s ease-out;
+}
+
+
+/* ============================================================
+   ✏ GHOST WRITING POPUP (Used by ghostWrite() in ghostEvents.js)
+   ============================================================ */
+.ghost-writing-popup {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 2s ease-out;
+}
+
+.ghost-writing-popup.fade {
+    opacity: 0;
+}
+
+.ghost-writing-text {
+    /* This style assumes the text is huge and creepy */
+    font-family: 'Courier New', monospace;
+    font-size: 8vw; 
+    color: red;
+    text-shadow: 0 0 20px red;
+    animation: writingAppear 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes writingAppear {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
 
 /* ============================================================
    👻 MANIFEST — brightness pulse (ghost showing)
@@ -52,20 +129,6 @@
     0%   { filter: brightness(0.6); }
     50%  { filter: brightness(1.2) contrast(1.4); }
     100% { filter: brightness(1); }
-}
-
-
-/* ============================================================
-   💡 FLICKER — rapid light flickering
-============================================================ */
-.lights-flicker {
-    animation: flickerFlash 0.15s infinite;
-}
-
-@keyframes flickerFlash {
-    0%   { opacity: 0.3; }
-    50%  { opacity: 1; }
-    100% { opacity: 0.3; }
 }
 
 
