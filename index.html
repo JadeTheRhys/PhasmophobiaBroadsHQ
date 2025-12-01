@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phasmophobia Broads HQ</title>
 
-  <!-- PHASMO DARK PURPLE STYLE -->
+  <!-- CORE STYLES -->
+  <link rel="stylesheet" href="styles/animations.css" />
+  <link rel="stylesheet" href="styles/hunt.css" />
+
   <style>
     :root {
       --bg: #05030a;
@@ -21,7 +24,7 @@
     body {
       margin: 0;
       font-family: "Trebuchet MS", system-ui, sans-serif;
-      background: radial-gradient(circle at top, #120a2a 0, #05030a 60%, #000 100%);
+      background: radial-gradient(circle at top, #120a2a, #05030a 60%, #000 100%);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -44,13 +47,6 @@
       text-shadow: 0 0 10px var(--accent);
     }
 
-    header p {
-      margin: 4px 0 0;
-      font-size: 0.85rem;
-      color: var(--text-soft);
-      opacity: 0.9;
-    }
-
     nav {
       display: flex;
       gap: 8px;
@@ -66,58 +62,31 @@
       border: 1px solid #2f174a;
       border-radius: 999px;
       padding: 7px 14px;
-      font-size: 0.85rem;
       cursor: pointer;
-      white-space: nowrap;
+      font-size: 0.85rem;
       transition: 0.2s;
     }
 
     nav button.active {
       background: var(--accent-soft);
-      color: #fff;
+      color: white;
       border-color: var(--accent);
       box-shadow: 0 0 10px #9b5bff88;
     }
 
-    nav button:hover {
-      background: #1b0f35;
-    }
-
-    main {
-      flex: 1;
-      padding: 16px 20px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
     .panel {
       display: none;
-      background: radial-gradient(circle at top left, #22113f 0, #12091f 30%, #05030a 100%);
+      background: radial-gradient(circle, #22113f, #12091f 40%, #05030a 100%);
       border-radius: 12px;
       border: 1px solid #2c1744;
       box-shadow: 0 0 25px #000;
       padding: 16px;
-      max-width: 1000px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
     .panel.active { display: block; }
 
-    .panel h2 {
-      margin-top: 0;
-      font-family: "Courier New", monospace;
-      text-transform: uppercase;
-      font-size: 1rem;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      text-shadow: 0 0 8px #9b5bff;
-      border-bottom: 1px solid #2c1744;
-      padding-bottom: 6px;
-      margin-bottom: 10px;
-    }
-
-    /* CHAT */
     #chat-log {
       background: #05020c;
       border-radius: 10px;
@@ -128,114 +97,117 @@
       font-size: 0.9rem;
     }
 
-    .chat-line { margin-bottom: 4px; }
-    .chat-line span.user { color: #ffb3ff; }
+    .chat-line {
+      margin-bottom: 6px;
+    }
+    .chat-line span.user {
+      color: #ffb3ff;
+      font-weight: bold;
+    }
 
     .list { font-size: 0.9rem; color: var(--text-soft); }
 
     .tag {
-      display: inline-block;
       background: #1a0f2d;
       border-radius: 999px;
       padding: 3px 10px;
-      margin: 2px;
       border: 1px solid #3a235a;
       font-size: 0.75rem;
-      color: var(--text-soft);
     }
 
-    /* CASE FILES GRID */
-    .case-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-      margin-top: 8px;
+    /* Poster Modal */
+    .poster-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      text-align: center;
+      z-index: 99999;
+    }
+    .poster-modal-img {
+      max-width: 90%;
+      max-height: 80%;
+      margin-top: 40px;
+      border-radius: 12px;
+      border: 2px solid var(--accent);
+    }
+    .poster-close {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: white;
     }
   </style>
 
-  <!-- Firebase compat -->
+  <!-- FIREBASE -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
-  <!-- Styles for animations + hunt mode -->
-  <link rel="stylesheet" href="styles/animations.css" />
-  <link rel="stylesheet" href="styles/hunt.css" />
 </head>
 
 <body>
 
 <header>
   <h1>PHASMOPHOBIA BROADS HQ</h1>
-  <p>Private ghost-hunting hub for you & your crew.</p>
 </header>
 
 <nav>
   <button class="tab-btn active" data-target="panel-chat">Chat</button>
   <button class="tab-btn" data-target="panel-evidence">Evidence</button>
-  <button class="tab-btn" data-target="panel-status">Player Status</button>
+  <button class="tab-btn" data-target="panel-status">Status</button>
   <button class="tab-btn" data-target="panel-locations">Locations</button>
   <button class="tab-btn" data-target="panel-ghostlog">Ghost Log</button>
-  <button class="tab-btn" data-target="panel-casefiles">Case Files</button>
-  <button class="tab-btn" data-target="panel-lobby">Lobby / Voice</button>
 </nav>
 
 <main>
 
-  <!-- CHAT PANEL -->
+  <!-- CHAT -->
   <section id="panel-chat" class="panel active">
-    <h2>Van Radio Chat</h2>
+    <h2>Van Radio</h2>
     <div id="chat-log"></div>
 
     <form id="chat-form">
-      <input id="chat-input" type="text" placeholder="Type a message or ghost command (e.g. !hunt)" autocomplete="off" />
+      <input id="chat-input" type="text" placeholder="Type or use commands (!hunt)" />
       <button type="submit">Send</button>
     </form>
   </section>
 
-  <!-- EVIDENCE PANEL -->
+  <!-- Evidence -->
   <section id="panel-evidence" class="panel">
-    <h2>Evidence Tracker</h2>
-    <div class="list">
-      <p>Use chat commands like <code>!evidence: EMF 5</code></p>
-      <div id="evidence-list"></div>
-    </div>
+    <h2>Evidence</h2>
+    <div id="evidence-list"></div>
   </section>
 
-  <!-- STATUS PANEL -->
+  <!-- Status -->
   <section id="panel-status" class="panel">
     <h2>Player Status</h2>
-    <div class="list">
-      <p>Use <code>!dead: NAME</code> or <code>!revive: NAME</code></p>
-      <div id="status-list"></div>
-    </div>
+    <div id="status-list"></div>
   </section>
 
-  <!-- LOCATIONS PANEL -->
+  <!-- Locations -->
   <section id="panel-locations" class="panel">
     <h2>Player Locations</h2>
-    <div class="list">
-      <p>Use <code>!location: Starla -> Basement</code></p>
-      <div id="location-list"></div>
-    </div>
+    <div id="location-list"></div>
   </section>
 
-  <!-- GHOST LOG -->
+  <!-- Ghost Log -->
   <section id="panel-ghostlog" class="panel">
     <h2>Ghost Activity Log</h2>
-    <div id="ghost-log" class="list"></div>
+    <div id="ghost-log"></div>
   </section>
 
 </main>
 
-<footer>Phasmophobia Broads HQ © <span id="year"></span></footer>
+<!-- HUNT OVERLAY -->
+<div id="hunt-overlay"></div>
 
-<!-- MAIN LOGIC -->
+<!-- MAIN SCRIPT -->
 <script type="module">
 
-  // ================= USERNAME POP-UP =================
   let playerName = prompt("Enter your name:") || "Player";
 
-  // ================= FIREBASE INIT =================
+  /* FIREBASE INIT */
   firebase.initializeApp({
     apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
     authDomain: "phasmophobiabroads.firebaseapp.com",
@@ -247,17 +219,14 @@
   });
 
   const db = firebase.database();
+  const messagesRef = db.ref("messages");
 
-  // Setup command + hunt references
   setupCommandRefs(db);
   setupHuntRef(db);
 
-  const messagesRef = db.ref("messages");
-
-  // ================= CHAT =================
-  const chatLog  = document.getElementById("chat-log");
+  const chatLog = document.getElementById("chat-log");
   const chatForm = document.getElementById("chat-form");
-  const chatInput= document.getElementById("chat-input");
+  const chatInput = document.getElementById("chat-input");
 
   function addChatLine(user, text) {
     const line = document.createElement("div");
@@ -280,13 +249,25 @@
 
   messagesRef.limitToLast(100).on("child_added", snap => {
     const data = snap.val();
-    if (!data) return;
-    addChatLine(data.user || "Player", data.text);
+    addChatLine(data.user, data.text);
+  });
+
+  // Tabs
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const panels = document.querySelectorAll(".panel");
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("active"));
+      panels.forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.target).classList.add("active");
+    });
   });
 
 </script>
 
-<!-- Scripts -->
+<!-- SCRIPTS -->
 <script src="scripts/animations.js"></script>
 <script src="scripts/hunt.js"></script>
 <script src="scripts/commands.js"></script>
