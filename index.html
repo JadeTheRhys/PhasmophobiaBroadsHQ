@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Phasmophobia Broads HQ</title>
 
-    <!-- Tailwind CDN -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- GLOBAL APP ID FOR FIREBASE -->
+    <script>
+        window.__app_id = "phasmophobia-hq"; 
+    </script>
 
     <!-- Neon + HQ Theme -->
     <style>
@@ -15,12 +20,10 @@
             color: #e0e0f8;
             font-family: Arial, sans-serif;
         }
-
         .active-tab {
             background-color: #5dfdff !important;
             color: #0a0a0f !important;
         }
-
         .tab-btn {
             padding: 8px 14px;
             border-radius: 6px;
@@ -28,19 +31,15 @@
             cursor: pointer;
             transition: 0.2s;
         }
-
         .tab-btn:hover {
             background: #5dfdff33;
         }
-
         .scare-flicker {
             animation: flicker 0.8s ease;
         }
-
         .scare-shake {
             animation: shake 0.6s ease;
         }
-
         @keyframes flicker {
             0% { opacity: 1; }
             20% { opacity: 0.4; }
@@ -49,7 +48,6 @@
             80% { opacity: 1; }
             100% { opacity: 0.6; }
         }
-
         @keyframes shake {
             0% { transform: translate(0px); }
             25% { transform: translate(4px); }
@@ -80,61 +78,86 @@
     </div>
 
     <!-- TAB CONTENTS -->
+
+    <!-- CHAT -->
     <div id="tab-chat" class="hidden">
         <h2 class="text-xl mb-3">Squad Radio</h2>
 
-        <div id="chat-messages" class="h-80 overflow-y-scroll bg-black/40 p-3 rounded border border-soft-cyan mb-3"></div>
+        <div id="chat-messages"
+             class="h-80 overflow-y-scroll bg-black/40 p-3 rounded border border-soft-cyan mb-3"></div>
 
         <input id="chat-input"
                placeholder="Type message or command (!hunt:now)"
                class="w-full p-2 rounded bg-black/60 border border-soft-cyan" />
     </div>
 
+    <!-- GHOST LOGS -->
     <div id="tab-ghosts" class="hidden">
         <h2 class="text-xl mb-3">Ghost Activity Log</h2>
-        <div id="ghost-activity-log" class="h-96 overflow-y-scroll bg-black/40 p-3 rounded border border-neon-purple"></div>
+        <div id="ghost-activity-log"
+             class="h-96 overflow-y-scroll bg-black/40 p-3 rounded border border-neon-purple"></div>
     </div>
 
+    <!-- EVIDENCE -->
     <div id="tab-evidence" class="hidden">
         <h2 class="text-xl mb-3">Evidence Tracker</h2>
         <div id="evidence-display" class="space-y-3"></div>
     </div>
 
+    <!-- STATUS -->
     <div id="tab-status" class="hidden">
         <h2 class="text-xl mb-3">Squad Status</h2>
         <div id="status-display" class="space-y-3"></div>
     </div>
 
+    <!-- MAP -->
     <div id="tab-maps" class="hidden">
         <h2 class="text-xl mb-3">Investigation Map</h2>
-        <img id="map-location-image" class="w-full rounded border border-soft-cyan" src="" alt="Map" />
+        <img id="map-location-image"
+             class="w-full rounded border border-soft-cyan"
+             src="/assets/maps/tanglewood.jpg"
+             alt="Map" />
     </div>
 
+    <!-- CASE FILES -->
     <div id="tab-casefiles" class="hidden">
         <h2 class="text-xl mb-3">Case Files</h2>
         <div id="case-files-gallery" class="grid grid-cols-2 gap-4"></div>
     </div>
 
+    <!-- JITSI -->
     <div id="tab-jitsi" class="hidden">
         <h2 class="text-xl mb-3">HQ Video Room</h2>
         <p class="mb-2">Click below to enter the squad's encrypted HQ meeting room:</p>
-        <a href="https://meet.jit.si/PhasmophobiaBroadsHQ" target="_blank"
-           class="text-neon-purple underline">Join Jitsi Room</a>
+
+        <a href="https://meet.jit.si/PhasmophobiaBroadsHQ"
+           target="_blank"
+           class="text-neon-purple underline">
+           Join Jitsi Room
+        </a>
     </div>
 
+    <!-- PROFILE -->
     <div id="tab-profile" class="hidden">
         <h2 class="text-xl mb-3">Your Profile</h2>
 
         <label>Name:</label>
-        <input id="display-name-input" class="w-full p-2 rounded mb-3 bg-black/50 border border-soft-cyan" />
+        <input id="display-name-input"
+               class="w-full p-2 rounded mb-3 bg-black/50 border border-soft-cyan" />
 
         <label>Profile Photo:</label>
-        <select id="photo-select" class="w-full p-2 rounded mb-3 bg-black/50 border border-soft-cyan">
-            <option value="/assets/images/default1.png">Default 1</option>
-            <option value="/assets/images/default2.png">Default 2</option>
+        <select id="photo-select"
+                class="w-full p-2 rounded mb-3 bg-black/50 border border-soft-cyan">
+            <option value="/assets/profiles/case1.jpg">Case File 1</option>
+            <option value="/assets/profiles/case2.jpg">Case File 2</option>
+            <option value="/assets/profiles/case3.jpg">Case File 3</option>
+            <option value="/assets/profiles/case4.jpg">Case File 4</option>
+            <option value="/assets/profiles/case5.jpg">Case File 5</option>
+            <option value="/assets/profiles/case6.jpg">Case File 6</option>
         </select>
 
-        <img id="profile-preview" class="w-20 h-20 rounded-full mb-3 border-2 border-neon-purple" />
+        <img id="profile-preview"
+             class="w-20 h-20 rounded-full mb-3 border-2 border-neon-purple" />
 
         <button id="profile-save-btn"
                 class="px-4 py-2 bg-neon-purple text-black rounded font-bold">
@@ -149,14 +172,36 @@
             <img id="modal-image" class="w-full rounded mb-3" />
             <h3 id="modal-title" class="text-xl text-soft-cyan mb-2"></h3>
             <p id="modal-description" class="text-gray-300 mb-4"></p>
-            <button onclick="document.getElementById('case-file-modal').classList.add('hidden')"
+            <button onclick="closeModal()"
                     class="px-3 py-2 bg-soft-cyan text-black rounded font-bold">
                 Close
             </button>
         </div>
     </div>
 
-    <!-- SCRIPT IMPORTS — MUST REMAIN IN THIS EXACT ORDER -->
-    <script type="module" src="/js/main.js"></script>
+    <!-- TAB SWITCHING SCRIPT -->
+    <script>
+        const tabs = [
+            "chat", "ghosts", "evidence", "status",
+            "maps", "casefiles", "jitsi", "profile"
+        ];
+
+        tabs.forEach(name => {
+            document.getElementById(`tab-btn-${name}`).addEventListener("click", () => {
+
+                tabs.forEach(t => {
+                    document.getElementById(`tab-${t}`).classList.add("hidden");
+                    document.getElementById(`tab-btn-${t}`).classList.remove("active-tab");
+                });
+
+                document.getElementById(`tab-${name}`).classList.remove("hidden");
+                document.getElementById(`tab-btn-${name}`).classList.add("active-tab");
+            });
+        });
+    </script>
+
+    <!-- MAIN INIT SCRIPT -->
+    <script type="module" src="/js/main.js" defer></script>
+
 </body>
 </html>
