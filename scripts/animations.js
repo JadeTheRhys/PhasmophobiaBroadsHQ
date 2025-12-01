@@ -1,6 +1,18 @@
-// ===========================
-// ANIMATIONS — Triggered by Ghost Commands
-// ===========================
+// ============================================================
+// ANIMATIONS.JS — FINAL MODULAR FIX
+// Converts old SDK syntax (db.ref) to new modular syntax (ref, onValue)
+// ============================================================
+
+// ----------------------
+// MODULAR IMPORTS
+// ----------------------
+import { db } from "./firebase.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+
+// ============================================================
+// VISUAL ANIMATION LOGIC (UNCHANGED)
+// ============================================================
 
 window.playFlicker = function() {
   document.body.classList.add("flicker-effect");
@@ -31,41 +43,7 @@ window.playHunt = function() {
     document.body.classList.remove("shake");
   }, 4500);
 };
-// WHISPER EFFECT
-db.ref("effects/whisper").on("value", snap => {
-  if (!snap.val()) return;
-  playWhisperEffect();
-});
 
-// SHADOW FIGURE
-db.ref("effects/shadow").on("value", snap => {
-  if (!snap.val()) return;
-  playShadowFigure();
-});
-
-// EXPLOSION
-db.ref("effects/explode").on("value", snap => {
-  if (!snap.val()) return;
-  playExplosion();
-});
-
-// CRAWLING GHOST
-db.ref("effects/crawl").on("value", snap => {
-  if (!snap.val()) return;
-  playCrawlGhost();
-});
-
-// COLD BREATH
-db.ref("effects/breath").on("value", snap => {
-  if (!snap.val()) return;
-  playColdBreath();
-});
-
-// ELECTRICAL DISTORTION
-db.ref("effects/electro").on("value", snap => {
-  if (!snap.val()) return;
-  playElectroDistortion();
-});
 function playWhisperEffect() {
   const w = document.createElement("div");
   w.className = "whisperFX";
@@ -104,3 +82,44 @@ function playElectroDistortion() {
   document.body.classList.add("electroFX");
   setTimeout(()=> document.body.classList.remove("electroFX"), 1000);
 }
+
+
+// ============================================================
+// FIREBASE LISTENERS (CONVERTED TO MODULAR SYNTAX)
+// ============================================================
+
+// WHISPER EFFECT
+onValue(ref(db, "effects/whisper"), snap => {
+  if (!snap.val()) return;
+  playWhisperEffect();
+});
+
+// SHADOW FIGURE
+onValue(ref(db, "effects/shadow"), snap => {
+  if (!snap.val()) return;
+  playShadowFigure();
+});
+
+// EXPLOSION
+onValue(ref(db, "effects/explode"), snap => {
+  if (!snap.val()) return;
+  playExplosion();
+});
+
+// CRAWLING GHOST
+onValue(ref(db, "effects/crawl"), snap => {
+  if (!snap.val()) return;
+  playCrawlGhost();
+});
+
+// COLD BREATH
+onValue(ref(db, "effects/breath"), snap => {
+  if (!snap.val()) return;
+  playColdBreath();
+});
+
+// ELECTRICAL DISTORTION
+onValue(ref(db, "effects/electro"), snap => {
+  if (!snap.val()) return;
+  playElectroDistortion();
+});
