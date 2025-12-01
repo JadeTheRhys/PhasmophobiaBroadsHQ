@@ -1,12 +1,12 @@
 /* ============================================================
    animations.css — Version B
-   All ghost event visual effects used by hunt.js + commands.js
+   Ghost Event Visual Effects for hunt.js + commands.js
    ============================================================ */
 
-/* -------------------------
-   GLOBAL SCREEN EFFECT BASE
-   ------------------------- */
 
+/* ------------------------------------------------------------
+   GLOBAL EFFECT OVERLAY (all screen-based animations use this)
+------------------------------------------------------------ */
 .effect-layer {
     position: fixed;
     top: 0;
@@ -17,10 +17,10 @@
     z-index: 9998;
 }
 
-/* ============================================================
-   🔥 HUNT EFFECT — Red pulse + panic shake
-   ============================================================ */
 
+/* ============================================================
+   🔥 HUNT EFFECT — Red pulse + shaking screen
+============================================================ */
 .hunt-active {
     animation: huntPulse 0.8s infinite alternate ease-in-out,
                screenShake 0.6s infinite ease-in-out;
@@ -40,10 +40,10 @@
     100% { transform: translate(0,0); }
 }
 
-/* ============================================================
-   👻 MANIFEST — darkening + ghostly fade overlay
-   ============================================================ */
 
+/* ============================================================
+   👻 MANIFEST — brightness pulse (ghost showing)
+============================================================ */
 .ghost-manifest {
     animation: manifestFade 3s ease-out;
 }
@@ -54,10 +54,10 @@
     100% { filter: brightness(1); }
 }
 
+
 /* ============================================================
    💡 FLICKER — rapid light flickering
-   ============================================================ */
-
+============================================================ */
 .lights-flicker {
     animation: flickerFlash 0.15s infinite;
 }
@@ -68,10 +68,10 @@
     100% { opacity: 0.3; }
 }
 
-/* ============================================================
-   🚪 DOOR SLAM — bright flash + shake
-   ============================================================ */
 
+/* ============================================================
+   🚪 DOOR SLAM — white flash + short shake
+============================================================ */
 .door-slam {
     animation: slamFlash 0.35s ease-out,
                slamShake 0.5s ease-out;
@@ -90,10 +90,10 @@
     100% { transform: translate(0,0); }
 }
 
-/* ============================================================
-   🔮 CURSE — purple distortion + blur pulse
-   ============================================================ */
 
+/* ============================================================
+   🔮 CURSE — purple hue distortion + blur pulse
+============================================================ */
 .curse-effect {
     animation: cursePulse 3s ease-in-out;
 }
@@ -104,10 +104,10 @@
     100% { filter: blur(0px) brightness(1); }
 }
 
-/* ============================================================
-   🎲 RANDOM GHOST EVENT — jitter flash
-   ============================================================ */
 
+/* ============================================================
+   🎲 RANDOM EVENT — rapid jitter
+============================================================ */
 .ghost-event {
     animation: randomFlash 0.2s alternate 8;
 }
