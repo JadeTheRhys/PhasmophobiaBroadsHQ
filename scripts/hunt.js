@@ -1,14 +1,20 @@
 // ======================================================================
-// hunt.js — Version B
+// hunt.js — Version B (MODULAR FIX)
 // Global Ghost Event Animation Engine
 // Listens for ghostEvent/live in Firebase + triggers animations
-// Works with animations.css + commands.js + main.js
 // ======================================================================
 
 // ============================================================
-// 1. GET FIREBASE DB (from firebase.js via window.__DB)
+// 1. MODULAR IMPORTS
+// We import db directly, replacing the old window.__DB method.
+// We import the correct functions from uiEffects.js.
 // ============================================================
-const db = window.__DB;
+import { db } from "./firebase.js";
+import { flicker, shake, curseFX, manifestFX } from "./uiEffects.js"; 
+import { logGhostActivity } from './ghostEvents.js';
+
+// Get the correct Realtime Database functions
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 // Safety check
 if (!db) console.error("❌ hunt.js: Firebase DB missing!");
@@ -17,79 +23,98 @@ if (!db) console.error("❌ hunt.js: Firebase DB missing!");
 // ============================================================
 // 2. LISTEN FOR LIVE GHOST EVENTS
 // ============================================================
-const liveEventRef = db.ref("ghostEvent/live");
+const liveEventRef = ref(db, "ghostEvent/live");
 
-liveEventRef.on("value", snap => {
-    const data = snap.val();
-    if (!data) return;
+onValue(liveEventRef, (snapshot) => {
+    const data = snapshot.val();
+    // Only proceed if data exists and is a complex object (not just null/true)
+    if (!data || typeof data !== 'object') return; 
 
     console.log("👻 Ghost Event Received:", data.type, "by", data.by);
+    
+    // Log the activity to the Ghost Log panel
+    logGhostActivity(`Real-time Event: ${data.type.toUpperCase()} by ${data.by}`);
+    
     playGhostEffect(data.type);
 });
 
 
 // ============================================================
 // 3. MASTER EFFECT CONTROLLER
+// We simplify this by leveraging the functions in commands.js / uiEffects.js
 // ============================================================
 function playGhostEffect(type) {
+    const body = document.body;
 
     switch(type) {
-
+        
         // ------------------------------------------------------
-        // 🔥 HUNT
+        // 🔥 HUNT (Use the specialized hunt-active class)
         // ------------------------------------------------------
         case "hunt":
-            addEffect("hunt-active", 5000);
+            // 5000ms duration from original code
+            addEffect(body, "hunt-active", 5000); 
             break;
 
         // ------------------------------------------------------
-        // 👻 MANIFEST (dark pulse)
+        // 👻 MANIFEST (Use the dedicated function from uiEffects)
         // ------------------------------------------------------
         case "manifest":
-            addEffect("ghost-manifest", 3000);
+            // Assume manifestFX applies 'ghost-manifest' and duration is handled in uiEffects
+            // If you need specific control, you can call addEffect(body, "ghost-manifest", 3000);
+            manifestFX(); 
             break;
 
         // ------------------------------------------------------
-        // 💡 FLICKER (lights flash)
+        // 💡 FLICKER (Use the dedicated function from uiEffects)
         // ------------------------------------------------------
         case "flicker":
-            addEffect("lights-flicker", 1500);
+            flicker();
             break;
 
         // ------------------------------------------------------
-        // 🚪 DOOR SLAM (white flash + shake)
+        // 🚪 DOOR SLAM (Use the specialized door-slam class)
         // ------------------------------------------------------
         case "slam":
-            addEffect("door-slam", 1200);
+            // 1200ms duration from original code
+            addEffect(body, "door-slam", 1200); 
             break;
 
         // ------------------------------------------------------
-        // 🔮 CURSE (purple ripple effect)
+        // 🔮 CURSE (Use the dedicated function or class)
         // ------------------------------------------------------
         case "curse":
-            addEffect("curse-effect", 3500);
+            // Assume curseFX applies 'curse-effect' and duration is handled in uiEffects
+            curseFX(); 
             break;
 
         // ------------------------------------------------------
-        // 🎲 RANDOM EVENT
+        // 🎲 RANDOM EVENT (Use the specialized ghost-event class)
         // ------------------------------------------------------
         case "event":
-            addEffect("ghost-event", 1600);
+            // 1600ms duration from original code
+            addEffect(body, "ghost-event", 1600);
+            break;
+            
+        // ------------------------------------------------------
+        // ⚡ DEFAULT/OTHERS (We can use shake for unknown/generic)
+        // ------------------------------------------------------
+        default:
+            shake();
             break;
     }
 }
 
 
 // ============================================================
-// 4. EFFECT EXECUTION
-// Adds a class to <body> → waits → removes it
+// 4. EFFECT EXECUTION (Helper)
+// NOTE: Modified to accept the target element (body)
 // ============================================================
-function addEffect(className, duration) {
-
-    document.body.classList.add(className);
+function addEffect(target, className, duration) {
+    target.classList.add(className);
 
     setTimeout(() => {
-        document.body.classList.remove(className);
+        target.classList.remove(className);
     }, duration);
 }
 
