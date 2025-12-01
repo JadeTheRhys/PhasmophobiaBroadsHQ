@@ -1,59 +1,55 @@
 // =======================================================
 // hunt.js — Global Ghost Event Animation Engine
-// Works for ALL connected players
+// SAFE VERSION (NO duplicate db declarations)
 // =======================================================
 
-// Pull DB reference from index.html
-const db = window.__DB;
+// Pull DB reference created in index.html
+const huntDB = window.__DB;   // renamed to avoid conflicts
 
 // Firebase event path
-const liveEventRef = db.ref("ghostEvent/live");
+const liveEventRef = huntDB.ref("ghostEvent/live");
 
 // =======================================================
-// PLAY EFFECT — runs the screen animation based on command
+// PLAY EFFECT — runs screen animation based on ghost command
 // =======================================================
 function playEffect(type, by) {
-  console.log("🔥 Ghost event:", type, "by", by);
+  console.log("🔥 Ghost event:", type, "triggered by", by);
 
-  // ---- HUNT ----
-  if (type === "hunt") {
-    document.body.classList.add("hunt-active");
-    setTimeout(() => document.body.classList.remove("hunt-active"), 5000);
-  }
+  switch (type) {
+    case "hunt":
+      document.body.classList.add("hunt-active");
+      setTimeout(() => document.body.classList.remove("hunt-active"), 5000);
+      break;
 
-  // ---- FLICKER ----
-  if (type === "flicker") {
-    document.body.classList.add("lights-flicker");
-    setTimeout(() => document.body.classList.remove("lights-flicker"), 1500);
-  }
+    case "flicker":
+      document.body.classList.add("lights-flicker");
+      setTimeout(() => document.body.classList.remove("lights-flicker"), 1500);
+      break;
 
-  // ---- MANIFEST ----
-  if (type === "manifest") {
-    document.body.classList.add("ghost-manifest");
-    setTimeout(() => document.body.classList.remove("ghost-manifest"), 3000);
-  }
+    case "manifest":
+      document.body.classList.add("ghost-manifest");
+      setTimeout(() => document.body.classList.remove("ghost-manifest"), 3000);
+      break;
 
-  // ---- DOOR SLAM ----
-  if (type === "slam") {
-    document.body.classList.add("door-slam");
-    setTimeout(() => document.body.classList.remove("door-slam"), 1500);
-  }
+    case "slam":
+      document.body.classList.add("door-slam");
+      setTimeout(() => document.body.classList.remove("door-slam"), 1500);
+      break;
 
-  // ---- CURSE ----
-  if (type === "curse") {
-    document.body.classList.add("curse-effect");
-    setTimeout(() => document.body.classList.remove("curse-effect"), 4000);
-  }
+    case "curse":
+      document.body.classList.add("curse-effect");
+      setTimeout(() => document.body.classList.remove("curse-effect"), 4000);
+      break;
 
-  // ---- RANDOM EVENT ----
-  if (type === "event") {
-    document.body.classList.add("ghost-event");
-    setTimeout(() => document.body.classList.remove("ghost-event"), 2000);
+    case "event":
+      document.body.classList.add("ghost-event");
+      setTimeout(() => document.body.classList.remove("ghost-event"), 2000);
+      break;
   }
 }
 
 // =======================================================
-// LISTEN FOR LIVE GHOST EVENTS FROM FIREBASE
+// LISTEN FOR LIVE GHOST EVENTS
 // =======================================================
 liveEventRef.on("value", snap => {
   const data = snap.val();
