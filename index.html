@@ -5,131 +5,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phasmophobia Broads HQ</title>
 
-  <!-- GLOBAL HOLOGRAPHIC VERSION B STYLES -->
+  <!-- Core Styles -->
   <link rel="stylesheet" href="styles/style.css" />
   <link rel="stylesheet" href="styles/animations.css" />
+  <link rel="stylesheet" href="styles/chatrooms.css" />
   <link rel="stylesheet" href="styles/hunt.css" />
 
   <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <!-- Global DB reference created early -->
+  <script defer src="scripts/firebase.js"></script>
 </head>
 
 <body>
+  <header>
+    <h1>PHASMOPHOBIA BROADS HQ</h1>
+  </header>
 
-<header>
-  <h1>PHASMOPHOBIA BROADS HQ</h1>
-</header>
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <button data-tab="chat">Chat</button>
+    <button data-tab="evidence">Evidence</button>
+    <button data-tab="status">Player Status</button>
+    <button data-tab="locations">Locations</button>
+    <button data-tab="log">Ghost Log</button>
+    <button data-tab="casefiles">Case Files</button>
+    <button data-tab="posters">Posters</button>
+    <button data-tab="meeting">Live Meeting</button>
+  </nav>
 
-<nav>
-  <button class="tab-btn active" data-target="panel-chat">Chat</button>
-  <button class="tab-btn" data-target="panel-evidence">Evidence</button>
-  <button class="tab-btn" data-target="panel-status">Player Status</button>
-  <button class="tab-btn" data-target="panel-locations">Locations</button>
-  <button class="tab-btn" data-target="panel-ghostlog">Ghost Log</button>
-  <button class="tab-btn" data-target="panel-casefiles">Case Files</button>
-  <button class="tab-btn" data-target="panel-lobby">Lobby / Voice</button>
-</nav>
+  <!-- Main Content -->
+  <main>
+    <!-- CHAT -->
+    <section id="chat" class="tab-section active">
+      <div class="panel">
+        <h2>Ghost Radio Chat</h2>
+        <div id="chatBox" class="chat-box"></div>
 
-<main>
+        <div class="chat-input">
+          <input id="chatInput" placeholder="Type or use commands (!hunt, !flicker...)" />
+          <button id="sendChat">Send</button>
+        </div>
+      </div>
+    </section>
 
-  <!-- CHAT PANEL -->
-  <section id="panel-chat" class="panel active">
-    <h2>Ghost Radio Chat</h2>
-    <div id="chat-log"></div>
+    <!-- EVIDENCE -->
+    <section id="evidence" class="tab-section">
+      <div class="panel">
+        <h2>Evidence Tracker</h2>
+        <ul id="evidenceList"></ul>
+      </div>
+    </section>
 
-    <form id="chat-form">
-      <input id="chat-input" type="text" placeholder="Type commands like !hunt, !manifest, !curse…" autocomplete="off" />
-      <button type="submit">Send</button>
-    </form>
-  </section>
+    <!-- PLAYER STATUS -->
+    <section id="status" class="tab-section">
+      <div class="panel">
+        <h2>Player Status</h2>
+        <ul id="statusList"></ul>
+      </div>
+    </section>
 
-  <!-- EVIDENCE PANEL -->
-  <section id="panel-evidence" class="panel">
-    <h2>Evidence Tracker</h2>
-    <div id="evidence-list" class="list"></div>
-  </section>
+    <!-- LOCATIONS -->
+    <section id="locations" class="tab-section">
+      <div class="panel">
+        <h2>Player Locations</h2>
+        <ul id="locationList"></ul>
+      </div>
+    </section>
 
-  <!-- STATUS PANEL -->
-  <section id="panel-status" class="panel">
-    <h2>Player Status</h2>
-    <div id="status-list" class="list"></div>
-  </section>
+    <!-- GHOST LOG -->
+    <section id="log" class="tab-section">
+      <div class="panel">
+        <h2>Ghost Log</h2>
+        <ul id="ghostLogList"></ul>
+      </div>
+    </section>
 
-  <!-- LOCATIONS PANEL -->
-  <section id="panel-locations" class="panel">
-    <h2>Player Locations</h2>
-    <div id="location-list" class="list"></div>
-  </section>
+    <!-- CASE FILES -->
+    <section id="casefiles" class="tab-section">
+      <div class="panel">
+        <h2>Case Files</h2>
+        <div id="caseFilesContainer"></div>
+      </div>
+    </section>
 
-  <!-- GHOST LOG PANEL -->
-  <section id="panel-ghostlog" class="panel">
-    <h2>Ghost Activity Log</h2>
-    <div id="ghost-log" class="list"></div>
-  </section>
+    <!-- POSTERS (Option A — Grid Gallery) -->
+    <section id="posters" class="tab-section">
+      <div class="panel">
+        <h2>Posters</h2>
+        <div id="posterGrid" class="poster-grid"></div>
+      </div>
+    </section>
 
-  <!-- CASE FILES PANEL -->
-  <section id="panel-casefiles" class="panel">
-    <h2>Case Files</h2>
+    <!-- LIVE MEETING -->
+    <section id="meeting" class="tab-section">
+      <div class="panel">
+        <h2>Live Meeting</h2>
+        <p>Click below to join:</p>
+        <a class="jitsi-btn" href="https://meet.jit.si/PhasmoBroadsHQ" target="_blank">Join Jitsi Room</a>
+      </div>
+    </section>
+  </main>
 
-    <div class="case-grid" id="case-grid">
-      <!-- Auto-generated by casefiles.js -->
-    </div>
-  </section>
+  <!-- Poster Modal -->
+  <div id="posterModal" class="modal hidden">
+    <span id="modalClose">&times;</span>
+    <img id="modalImage" src="" />
+  </div>
 
-  <!-- LOBBY / VOICE / FUTURE EXPANSION -->
-  <section id="panel-lobby" class="panel">
-    <h2>Lobby & Voice</h2>
-    <p>Voice chat controls and lobby system will appear here.</p>
-    <div id="voice-status"></div>
-  </section>
+  <footer>
+    <p>© 2025 Phasmophobia Broads HQ</p>
+  </footer>
 
-</main>
-
-<!-- POSTER MODAL -->
-<div id="posterModal">
-  <span id="posterModalClose">✖</span>
-  <img id="posterModalImg" src="" />
-</div>
-
-<footer>
-  © <span id="year"></span> Phasmophobia Broads HQ
-</footer>
-
-
-<!-- ============================= -->
-<!-- FIREBASE INIT                -->
-<!-- ============================= -->
-<script src="scripts/firebase.js"></script>
-
-<!-- ============================= -->
-<!-- MAIN FUNCTIONAL SCRIPTS      -->
-<!-- ============================= -->
-<script src="scripts/chat.js"></script>
-<script src="scripts/commands.js"></script>
-<script src="scripts/hunt.js"></script>
-<script src="scripts/ghostEvents.js"></script>
-<script src="scripts/casefiles.js"></script>
-<script src="scripts/lobby.js"></script>
-<script src="scripts/voice.js"></script>
-<script src="scripts/uiEffects.js"></script>
-<script src="scripts/main.js"></script>
-
-<script>
-  // YEAR DISPLAY
-  document.getElementById("year").textContent = new Date().getFullYear();
-
-  // TABS FUNCTIONALITY
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-
-      btn.classList.add("active");
-      document.getElementById(btn.dataset.target).classList.add("active");
-    });
-  });
-</script>
-
+  <!-- Interaction Scripts -->
+  <script defer src="scripts/main.js"></script>
+  <script defer src="scripts/uiEffects.js"></script>
+  <script defer src="scripts/chat.js"></script>
+  <script defer src="scripts/commands.js"></script>
+  <script defer src="scripts/hunt.js"></script>
+  <script defer src="scripts/ghostEvents.js"></script>
+  <script defer src="scripts/casefiles.js"></script>
+  <script defer src="scripts/posters.js"></script>
 </body>
 </html>
