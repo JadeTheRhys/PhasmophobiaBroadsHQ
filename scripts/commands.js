@@ -28,7 +28,7 @@ window.handleCommand = function(rawText, playerName = "Player") {
 
   // ---------------- HELP ----------------
   if (text === "!help") {
-    ghostRef.push(`${playerName} opened help: Commands → !evidence:  !dead:  !revive:  !location:  !hunt  !event  !manifest  !flicker  !slam`);
+    ghostRef.push(`${playerName} opened help: Commands → !evidence:  !dead:  !revive:  !location:  !hunt  !event  !manifest  !flicker  !slam  !curse`);
     return;
   }
 
@@ -68,9 +68,10 @@ window.handleCommand = function(rawText, playerName = "Player") {
   // 🔥 GHOST EVENT COMMANDS
   // =================================================
 
-  // HUNT
+  // ---------------- HUNT MODE (fixed) ----------------
   if (text === "!hunt") {
     ghostRef.push(`👹 The ghost has started a HUNT triggered by ${playerName}! RUN!`);
+    triggerHunt(playerName);
     return;
   }
 
@@ -103,11 +104,6 @@ window.handleCommand = function(rawText, playerName = "Player") {
     ghostRef.push(`🔮 A cursed presence surrounds ${playerName}… something feels WRONG.`);
     return;
   }
-// ---------------- HUNT MODE ----------------
-if (text === "!hunt") {
-  triggerHunt(playerName);
-  return;
-}
 
   // ---------------- UNKNOWN ----------------
   ghostRef.push(`Unknown command from ${playerName}: ${text}`);
