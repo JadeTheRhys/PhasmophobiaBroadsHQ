@@ -1,90 +1,90 @@
 /* ============================================================
-   GHOST EVENTS ENGINE — FINAL BUILD
-   Random ghost events, writing, logging
+   ghostEvents.js — Version B
+   Optional ambient ghost activity engine
+   Works with uiEffects.js and main panels
    ============================================================ */
 
-import { flicker, shake, frost, coldBreathFX } from './uiEffects.js';
+import { flicker, shake, frost, coldBreathFX } from "./uiEffects.js";
 
-/* -----------------------------  
-   LOGGING  
------------------------------ */
-export function logGhostActivity(text){
-  const list = document.getElementById('ghostLog');
-  if(!list) return;
+/* ------------------------------------------------------------
+   Helper: Add text to Ghost Log panel
+------------------------------------------------------------ */
+function logGhost(text) {
+    const box = document.getElementById("ghost-log");
+    if (!box) return;
 
-  const li = document.createElement('li');
-  li.textContent = text;
-  list.appendChild(li);
+    const p = document.createElement("p");
+    p.textContent = text;
+    box.appendChild(p);
 }
 
-/* -----------------------------  
-   GHOST WRITING  
------------------------------ */
-export function ghostWrite(message){
-  const wrap = document.createElement('div');
-  wrap.className = 'ghost-writing-container';
+/* ------------------------------------------------------------
+   Ghost Writing popup effect
+------------------------------------------------------------ */
+function ghostWrite(message = "RUN") {
+    const wrap = document.createElement("div");
+    wrap.className = "ghost-writing-popup";
 
-  const msg = document.createElement('div');
-  msg.className = 'ghost-writing-text';
-  msg.textContent = message;
+    const text = document.createElement("div");
+    text.className = "ghost-writing-text";
+    text.textContent = message;
 
-  wrap.appendChild(msg);
-  document.body.appendChild(wrap);
+    wrap.appendChild(text);
+    document.body.appendChild(wrap);
 
-  setTimeout(() => wrap.classList.add('fade'), 2500);
-  setTimeout(() => wrap.remove(), 4500);
+    setTimeout(() => wrap.classList.add("fade"), 2500);
+    setTimeout(() => wrap.remove(), 4500);
 }
 
-/* -----------------------------  
-   RANDOM EVENT  
------------------------------ */
-export function triggerGhostEvent(){
-  const type = Math.floor(Math.random() * 6) + 1;
+/* ------------------------------------------------------------
+   Trigger a single randomized ghost event
+------------------------------------------------------------ */
+export function triggerGhostEvent() {
+    const eventType = Math.floor(Math.random() * 6) + 1;
 
-  switch(type){
-    case 1:
-      flicker();
-      logGhostActivity('A soft whisper passes...');
-      break;
+    switch (eventType) {
+        case 1:
+            flicker();
+            logGhost("💡 Lights flicker softly…");
+            break;
 
-    case 2:
-      coldBreathFX();
-      frost();
-      logGhostActivity('Cold breath detected...');
-      break;
+        case 2:
+            coldBreathFX();
+            frost();
+            logGhost("❄ Cold breath detected nearby…");
+            break;
 
-    case 3:
-      shake();
-      logGhostActivity('The ghost manifested briefly.');
-      break;
+        case 3:
+            shake();
+            logGhost("👻 A shadow moves behind you…");
+            break;
 
-    case 4:
-      flicker('red');
-      shake();
-      logGhostActivity('The ghost grows angry...');
-      break;
+        case 4:
+            flicker("red");
+            shake();
+            logGhost("🔥 The ghost grows aggressive!");
+            break;
 
-    case 5:
-      ghostWrite('RUN');
-      logGhostActivity('Ghost writing appeared.');
-      break;
+        case 5:
+            ghostWrite("RUN");
+            logGhost("✏ Ghost Writing appeared on the wall!");
+            break;
 
-    case 6:
-      flicker('pulse');
-      logGhostActivity('Ghost energy spike.');
-      break;
-  }
+        case 6:
+            flicker("pulse");
+            logGhost("📡 EMF spike detected…");
+            break;
+    }
 }
 
-/* -----------------------------  
-   LOOP  
------------------------------ */
-export function startGhostLoop(){
-  const delay = 120000 + Math.random() * 120000; // 2–4 minutes
+/* ------------------------------------------------------------
+   Automatic loop every 2–4 minutes (optional)
+------------------------------------------------------------ */
+export function startGhostLoop() {
+    const delay = 120000 + Math.random() * 120000; // 2–4 minutes
 
-  setTimeout(() => {
-    triggerGhostEvent();
-    startGhostLoop();
-  }, delay);
+    setTimeout(() => {
+        triggerGhostEvent();
+        startGhostLoop();
+    }, delay);
 }
-// Placeholder ghostEvents.js
