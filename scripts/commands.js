@@ -72,6 +72,47 @@ window.handleCommand = function (raw, player = "Player") {
   if (cmd === "!slam")      return triggerGlobalEvent("slam", player);
   if (cmd === "!curse")     return triggerGlobalEvent("curse", player);
   if (cmd === "!event")     return triggerGlobalEvent("event", player);
+// WHISPER
+if (text === "!whisper") {
+  ghostRef.push(`🫥 A ghost whispers into ${playerName}'s ear...`);
+  db.ref("effects/whisper").set({ by: playerName, time: Date.now() });
+  return;
+}
+
+// SHADOW FIGURE
+if (text === "!shadow") {
+  ghostRef.push(`👤 A shadowy figure appears in the hallway near ${playerName}!`);
+  db.ref("effects/shadow").set({ by: playerName, time: Date.now() });
+  return;
+}
+
+// ELECTRICAL EXPLOSION
+if (text === "!explode") {
+  ghostRef.push(`⚡ Lights BURST violently! (${playerName})`);
+  db.ref("effects/explode").set({ by: playerName, time: Date.now() });
+  return;
+}
+
+// CRAWLING GHOST
+if (text === "!crawl") {
+  ghostRef.push(`🕷 A crawling ghost scurries near ${playerName}!`);
+  db.ref("effects/crawl").set({ by: playerName, time: Date.now() });
+  return;
+}
+
+// COLD BREATH
+if (text === "!breath") {
+  ghostRef.push(`❄ You see ghostly breath forming around ${playerName}...`);
+  db.ref("effects/breath").set({ by: playerName, time: Date.now() });
+  return;
+}
+
+// ELECTROMAGNETIC DISTORTION
+if (text === "!electro") {
+  ghostRef.push(`🔌 EMF spikes! The environment distorts violently around ${playerName}!`);
+  db.ref("effects/electro").set({ by: playerName, time: Date.now() });
+  return;
+}
 
   // Unknown
   ghostRef.push(`Unknown command from ${player}: ${cmd}`);
