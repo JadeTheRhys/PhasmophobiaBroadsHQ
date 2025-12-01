@@ -5,128 +5,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phasmophobia Broads HQ</title>
 
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="styles/style.css" />
+  <!-- 🔮 GLOBAL STYLES -->
   <link rel="stylesheet" href="styles/animations.css" />
-  <link rel="stylesheet" href="styles/chatrooms.css" />
   <link rel="stylesheet" href="styles/hunt.css" />
+  <link rel="stylesheet" href="styles/style.css" /> <!-- Your main UI styles -->
 
-  <!-- Firebase -->
-  <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-  <!-- Global DB reference created early -->
-  <script defer src="scripts/firebase.js"></script>
+  <!-- 🟣 Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 
 <body>
-  <header>
-    <h1>PHASMOPHOBIA BROADS HQ</h1>
-  </header>
 
-  <!-- Navigation -->
-  <nav class="top-nav">
-    <button data-tab="chat">Chat</button>
-    <button data-tab="evidence">Evidence</button>
-    <button data-tab="status">Player Status</button>
-    <button data-tab="locations">Locations</button>
-    <button data-tab="log">Ghost Log</button>
-    <button data-tab="casefiles">Case Files</button>
-    <button data-tab="posters">Posters</button>
-    <button data-tab="meeting">Live Meeting</button>
-  </nav>
+<header>
+  <h1>PHASMOPHOBIA BROADS HQ</h1>
+  <p>Private ghost-hunting hub for your squad.</p>
+</header>
 
-  <!-- Main Content -->
-  <main>
-    <!-- CHAT -->
-    <section id="chat" class="tab-section active">
-      <div class="panel">
-        <h2>Ghost Radio Chat</h2>
-        <div id="chatBox" class="chat-box"></div>
+<!-- ===================== NAVIGATION ====================== -->
+<nav>
+  <button class="tab-btn active" data-target="panel-chat">Chat</button>
+  <button class="tab-btn" data-target="panel-evidence">Evidence</button>
+  <button class="tab-btn" data-target="panel-status">Player Status</button>
+  <button class="tab-btn" data-target="panel-locations">Locations</button>
+  <button class="tab-btn" data-target="panel-ghostlog">Ghost Log</button>
+  <button class="tab-btn" data-target="panel-casefiles">Case Files</button>
+  <button class="tab-btn" data-target="panel-lobby">Lobby / Voice</button>
+</nav>
 
-        <div class="chat-input">
-          <input id="chatInput" placeholder="Type or use commands (!hunt, !flicker...)" />
-          <button id="sendChat">Send</button>
-        </div>
+<main>
+
+  <!-- ===================== CHAT ====================== -->
+  <section id="panel-chat" class="panel active">
+    <h2>Van Radio Chat</h2>
+
+    <div id="chat-log"></div>
+
+    <form id="chat-form">
+      <input id="chat-input" type="text" autocomplete="off"
+             placeholder="Type a message or command: !hunt !flicker !manifest etc." />
+      <button type="submit">Send</button>
+    </form>
+  </section>
+
+  <!-- ===================== EVIDENCE ====================== -->
+  <section id="panel-evidence" class="panel">
+    <h2>Evidence Tracker</h2>
+    <p>Example: <code>!evidence: EMF 5</code></p>
+    <div id="evidence-list"></div>
+  </section>
+
+  <!-- ===================== STATUS ====================== -->
+  <section id="panel-status" class="panel">
+    <h2>Player Status</h2>
+    <p>Use: <code>!dead: NAME</code> or <code>!revive: NAME</code></p>
+    <div id="status-list"></div>
+  </section>
+
+  <!-- ===================== LOCATIONS ====================== -->
+  <section id="panel-locations" class="panel">
+    <h2>Player Locations</h2>
+    <p>Example: <code>!location: Starla → Basement</code></p>
+    <div id="location-list"></div>
+  </section>
+
+  <!-- ===================== GHOST LOG ====================== -->
+  <section id="panel-ghostlog" class="panel">
+    <h2>Ghost Activity Log</h2>
+    <div id="ghost-log"></div>
+  </section>
+
+  <!-- ===================== CASE FILES ====================== -->
+  <section id="panel-casefiles" class="panel">
+    <h2>Case Files</h2>
+
+    <div class="case-grid">
+
+      <div class="case-card" onclick="openPoster(1)">
+        <img src="assets/posters/poster1.png" />
+        <div>Summoning Circle</div>
       </div>
-    </section>
 
-    <!-- EVIDENCE -->
-    <section id="evidence" class="tab-section">
-      <div class="panel">
-        <h2>Evidence Tracker</h2>
-        <ul id="evidenceList"></ul>
+      <div class="case-card" onclick="openPoster(2)">
+        <img src="assets/posters/poster2.png" />
+        <div>Dragged From the Van</div>
       </div>
-    </section>
 
-    <!-- PLAYER STATUS -->
-    <section id="status" class="tab-section">
-      <div class="panel">
-        <h2>Player Status</h2>
-        <ul id="statusList"></ul>
+      <div class="case-card" onclick="openPoster(3)">
+        <img src="assets/posters/poster3.png" />
+        <div>Voodoo Doll Tackle</div>
       </div>
-    </section>
 
-    <!-- LOCATIONS -->
-    <section id="locations" class="tab-section">
-      <div class="panel">
-        <h2>Player Locations</h2>
-        <ul id="locationList"></ul>
+      <div class="case-card" onclick="openPoster(4)">
+        <img src="assets/posters/poster4.png" />
+        <div>Ouija Board Chaos</div>
       </div>
-    </section>
 
-    <!-- GHOST LOG -->
-    <section id="log" class="tab-section">
-      <div class="panel">
-        <h2>Ghost Log</h2>
-        <ul id="ghostLogList"></ul>
+      <div class="case-card" onclick="openPoster(5)">
+        <img src="assets/posters/poster5.png" />
+        <div>Running From Ghost</div>
       </div>
-    </section>
 
-    <!-- CASE FILES -->
-    <section id="casefiles" class="tab-section">
-      <div class="panel">
-        <h2>Case Files</h2>
-        <div id="caseFilesContainer"></div>
+      <div class="case-card" onclick="openPoster(6)">
+        <img src="assets/posters/poster6.png" />
+        <div>Ghost Writing</div>
       </div>
-    </section>
 
-    <!-- POSTERS (Option A — Grid Gallery) -->
-    <section id="posters" class="tab-section">
-      <div class="panel">
-        <h2>Posters</h2>
-        <div id="posterGrid" class="poster-grid"></div>
-      </div>
-    </section>
+    </div>
 
-    <!-- LIVE MEETING -->
-    <section id="meeting" class="tab-section">
-      <div class="panel">
-        <h2>Live Meeting</h2>
-        <p>Click below to join:</p>
-        <a class="jitsi-btn" href="https://meet.jit.si/PhasmoBroadsHQ" target="_blank">Join Jitsi Room</a>
-      </div>
-    </section>
-  </main>
+    <!-- MODAL -->
+    <div id="poster-modal" class="poster-modal" onclick="closePoster()">
+      <span class="poster-close">&times;</span>
+      <img id="poster-modal-img" />
+      <p id="poster-caption"></p>
+    </div>
 
-  <!-- Poster Modal -->
-  <div id="posterModal" class="modal hidden">
-    <span id="modalClose">&times;</span>
-    <img id="modalImage" src="" />
-  </div>
+  </section>
 
-  <footer>
-    <p>© 2025 Phasmophobia Broads HQ</p>
-  </footer>
+  <!-- ===================== LOBBY / VOICE ====================== -->
+  <section id="panel-lobby" class="panel">
+    <h2>Lobby / Voice Chat</h2>
+    <button onclick="openJitsi()">Open Voice Channel</button>
+  </section>
 
-  <!-- Interaction Scripts -->
-  <script defer src="scripts/main.js"></script>
-  <script defer src="scripts/uiEffects.js"></script>
-  <script defer src="scripts/chat.js"></script>
-  <script defer src="scripts/commands.js"></script>
-  <script defer src="scripts/hunt.js"></script>
-  <script defer src="scripts/ghostEvents.js"></script>
-  <script defer src="scripts/casefiles.js"></script>
-  <script defer src="scripts/posters.js"></script>
+</main>
+
+<footer>
+  <p>© <span id="year"></span> Phasmophobia Broads HQ</p>
+</footer>
+
+<!-- ====================================================
+     FIREBASE + APP LOGIC
+======================================================== -->
+
+<script type="module">
+  import { app, db } from "./scripts/firebase.js";
+  import { initMain } from "./scripts/main.js";
+
+  window.__DB = db;
+
+  initMain();
+</script>
+
+<!-- NON-MODULE SCRIPTS -->
+<script src="scripts/commands.js"></script>
+<script src="scripts/hunt.js"></script>
+
+<script>
+  // Poster modal logic
+  function openPoster(num) {
+    const modal = document.getElementById("poster-modal");
+    const img = document.getElementById("poster-modal-img");
+    const caption = document.getElementById("poster-caption");
+
+    img.src = `assets/posters/poster${num}.png`;
+    caption.textContent = "";
+    modal.style.display = "block";
+  }
+
+  function closePoster() {
+    document.getElementById("poster-modal").style.display = "none";
+  }
+
+  // Jitsi
+  function openJitsi() {
+    window.open("https://meet.jit.si/PhasmophobiaBroadsHQ", "_blank");
+  }
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
 </body>
 </html>
