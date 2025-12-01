@@ -1,1 +1,56 @@
-// casefiles js
+// ============================================================
+// casefiles.js — FINAL MODULAR VERSION
+// Creates poster cards and handles the full-screen modal pop-up.
+// ============================================================
+
+// Poster data based on the file names and the labels in index.html
+const posterData = [
+  { file: "poster1.png", label: "Summoning Circle", num: 1 },
+  { file: "poster2.png", label: "Dragged From the Van", num: 2 },
+  { file: "poster3.png", label: "Voodoo Doll Tackle", num: 3 },
+  { file: "poster4.png", label: "Ouija Board Chaos", num: 4 },
+  { file: "poster5.png", label: "Running From Ghost", num: 5 },
+  { file: "poster6.png", label: "Ghost Writing", num: 6 }
+];
+
+// The container element where the grid of cards is placed (from index.html)
+const caseGrid = document.querySelector(".case-grid");
+
+// ============================================================
+// CARD CREATION LOGIC
+// ============================================================
+function buildCaseFiles() {
+  if (!caseGrid) return;
+  
+  caseGrid.innerHTML = ""; // Clear existing content
+
+  posterData.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "case-card";
+    
+    // Add the onclick handler to use the global function defined in index.html
+    card.setAttribute("onclick", `openPoster(${item.num})`);
+
+    const img = document.createElement("img");
+    // CRITICAL FIX: The image path must start from the root assets/posters
+    img.src = `assets/posters/${item.file}`; 
+
+    const caption = document.createElement("div");
+    caption.textContent = item.label;
+
+    card.appendChild(img);
+    card.appendChild(caption);
+    caseGrid.appendChild(card);
+  });
+}
+
+// ============================================================
+// INITIALIZE
+// ============================================================
+
+// Run the function to build the cards when the page loads
+window.addEventListener('load', buildCaseFiles);
+
+// Note: The openPoster() and closePoster() functions are already defined
+// at the bottom of your index.html file, so they don't need to be
+// redefined or exported here. This module just builds the cards.// casefiles js
