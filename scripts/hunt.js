@@ -1,62 +1,73 @@
-// =======================================================
-// hunt.js — GLOBAL Ghost Event Animation Engine
-// Works for ALL connected players
-// Reads events from Firebase in real time
-// =======================================================
+// ======================================================================
+// hunt.js — Version B (Full Ghost Event Engine)
+// Syncs animations across ALL connected players
+// Works with commands.js + animations.css + index.html
+// ======================================================================
 
-// Pull DB reference created in index.html
+// GLOBAL FIREBASE CONNECTION (injected from index.html)
 const db = window.__DB;
 
-// Firebase event path
+// Firebase path where commands.js triggers ghost events
 const liveEventRef = db.ref("ghostEvent/live");
 
-// =======================================================
-// PLAY EFFECT — Runs the correct animation on the screen
-// =======================================================
-function playEffect(type, by) {
-  console.log("🔥 Ghost event:", type, "| triggered by:", by);
+// ======================================================================
+// PLAY VISUAL EFFECT — runs the animation for everyone
+// ======================================================================
+function playGhostEffect(type, by) {
+  console.log("👻 Ghost Event Triggered:", type, "by", by);
 
-  // Remove ALL previous effects first (clean reset)
+  // Clear all classes first (prevents stacking)
   document.body.classList.remove(
     "hunt-active",
     "lights-flicker",
     "ghost-manifest",
     "door-slam",
     "curse-effect",
-    "ghost-event",
+    "ghost-event"
   );
 
-  // Then apply the new one
+  // Add event class depending on type
   switch (type) {
-
     case "hunt":
       document.body.classList.add("hunt-active");
-      setTimeout(() => document.body.classList.remove("hunt-active"), 5000);
+      setTimeout(() => {
+        document.body.classList.remove("hunt-active");
+      }, 6000); // HUNT lasts 6 seconds
       break;
 
     case "flicker":
       document.body.classList.add("lights-flicker");
-      setTimeout(() => document.body.classList.remove("lights-flicker"), 1500);
+      setTimeout(() => {
+        document.body.classList.remove("lights-flicker");
+      }, 1400);
       break;
 
     case "manifest":
       document.body.classList.add("ghost-manifest");
-      setTimeout(() => document.body.classList.remove("ghost-manifest"), 3000);
+      setTimeout(() => {
+        document.body.classList.remove("ghost-manifest");
+      }, 3000);
       break;
 
     case "slam":
       document.body.classList.add("door-slam");
-      setTimeout(() => document.body.classList.remove("door-slam"), 1500);
+      setTimeout(() => {
+        document.body.classList.remove("door-slam");
+      }, 1500);
       break;
 
     case "curse":
       document.body.classList.add("curse-effect");
-      setTimeout(() => document.body.classList.remove("curse-effect"), 4000);
+      setTimeout(() => {
+        document.body.classList.remove("curse-effect");
+      }, 4000);
       break;
 
     case "event":
       document.body.classList.add("ghost-event");
-      setTimeout(() => document.body.classList.remove("ghost-event"), 2000);
+      setTimeout(() => {
+        document.body.classList.remove("ghost-event");
+      }, 2000);
       break;
 
     default:
@@ -64,14 +75,15 @@ function playEffect(type, by) {
   }
 }
 
-// =======================================================
-// LISTEN FOR LIVE GHOST EVENTS FROM FIREBASE
-// =======================================================
-liveEventRef.on("value", snap => {
-  const data = snap.val();
-  if (!data) return;
+// ======================================================================
+// LISTEN FOR REALTIME GHOST EVENTS
+// Whenever commands.js sets an event → Every player runs animation
+// ======================================================================
+liveEventRef.on("value", snapshot => {
+  const event = snapshot.val();
+  if (!event) return;
 
-  const { type, by } = data;
+  const { type, by } = event;
 
-  playEffect(type, by);
+  playGhostEffect(type, by);
 });
