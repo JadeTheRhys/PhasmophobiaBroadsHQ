@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phasmophobia Broads HQ Command Center</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- Tailwind CSS and font imports -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/tone.min.js"></script>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="p-6 sm:p-10 min-h-screen">
+
+    <!-- Alert Box -->
+    <div id="alert-box" class="fixed top-6 right-6 z-50 p-4 rounded-lg shadow-xl hidden transition-opacity duration-300" role="alert"></div>
+
+    <div id="app-container" class="max-w-7xl mx-auto space-y-8">
+        <!-- HEADER -->
+        <div class="text-center phasmo-card py-6">
+            <h1 class="text-6xl font-extrabold uppercase font-orbitron phasmo-title mb-2 pb-0 tracking-widest">
+                Phasmophobia Broads HQ
+            </h1>
+            <p class="text-sm text-gray-400 font-mono-data mt-2">
+                Level 5 Command Center // STATUS: <span id="user-id-display" class="text-soft-cyan">AWAITING AUTHORIZATION...</span>
+            </p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- LEFT PANEL -->
+            <div class="col-span-1 flex flex-col space-y-6">
+                <!-- GHOST ACTIVITY MONITOR -->
+                <div class="phasmo-card">
+                    <h2 class="phasmo-subtitle text-xl font-orbitron mb-3 flex justify-between items-center">
+                        GHOST ACTIVITY MONITOR
+                        <span id="emf-level-text" class="text-soft-cyan text-2xl font-mono-data">OFF</span>
+                    </h2>
+                    <div class="emf-bar-container w-full h-6 rounded-sm overflow-hidden mb-4">
+                        <div id="emf-bar" class="emf-bar h-full" style="width: 0%;"></div>
+                    </div>
+                    <button id="btn-trigger-hunt" class="phasmo-btn bg-red-800 border-red-500 hover:bg-red-900 font-orbitron py-3 px-4 uppercase text-sm w-full shadow-red-500/50">
+                        <i class="fas fa-ghost mr-2"></i> Trigger Hunt Event (Global)
+                    </button>
+                </div>
+                <!-- GHOST LOG & COMMAND INPUT -->
+                <div class="phasmo-card flex-grow flex flex-col min-h-[40vh] lg:min-h-0">
+                    <h2 class="phasmo-subtitle text-xl font-orbitron mb-4">GHOST ACTIVITY LOG</h2>
+                    <div id="ghost-activity-log" class="log-container flex-grow overflow-y-auto space-y-1 font-mono-data text-sm">
+                        <p class="text-gray-400 log-entry">[SYSTEM] Awaiting initial authentication...</p>
+                    </div>
+                    <div class="mt-4">
+                        <input type="text" id="chat-input" placeholder="Type message or command (!hunt, !dead:NAME, etc.)" class="w-full p-3 bg-deep-black border-2 border-neon-purple rounded-lg focus:ring-soft-cyan focus:border-soft-cyan text-soft-cyan font-mono-data text-base shadow-lg">
+                        <div class="text-xs text-gray-500 font-mono-data mt-1">Available commands: !hunt, !flicker, !manifest, !curse, !slam, !event, !evidence:X, !dead:X, !revive:X, !location:X</div>
+                    </div>
+                </div>
+            </div>
+            <!-- RIGHT PANEL -->
+            <div class="col-span-1 flex flex-col space-y-6">
+                <!-- DATA TERMINAL (Tabs) -->
+                <div class="phasmo-card flex-grow flex flex-col min-h-[40vh] lg:min-h-0">
+                    <h2 class="phasmo-subtitle text-xl font-orbitron mb-4">DATA TERMINAL</h2>
+                    <div class="flex flex-wrap gap-2 mb-6 justify-center">
+                        <button id="tab-btn-chat" onclick="switchTab('chat')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                            <i class="fas fa-comments"></i> Chat
+                        </button>
+                        <button id="tab-btn-evidence" onclick="switchTab('evidence')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                            <i class="fas fa-fingerprint"></i> Evidence
+                        </button>
+                        <button id="tab-btn-log" onclick="switchTab('log')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                            <i class="fas fa-book"></i> Ghost Profile
+                        </button>
+                        <button id="tab-btn-casefiles" onclick="switchTab('casefiles')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                            <i class="fas fa-folder-open"></i> Cases
+                        </button>
+                        <button id="tab-btn-squad" onclick="switchTab('squad')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                            <i class="fas fa-users"></i> Squad
+                        </button>
+                        <button id="tab-btn-lobby" onclick="switchTab('lobby')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                            <i class="fas fa-id-card"></i> Profile
+                        </button>
+                    </div>
+                    <div id="tab-content" class="flex-grow">
+                        <!-- Chat Tab -->
+                        <div id="tab-chat" class="tab-page hidden">
+                            <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Squad Comms Log</h3>
+                            <div id="chat-messages" class="log-container h-[20rem] overflow-y-auto space-y-3 font-mono-data text-sm">
+                                <!-- Messages will be injected here -->
+                            </div>
+                        </div>
+                        <!-- Evidence Tab -->
+                        <div id="tab-evidence" class="tab-page hidden">
+                            <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Collected Evidence</h3>
+                            <div id="evidence-display" class="space-y-3 text-sm font-mono-data h-[20rem] overflow-y-auto log-container">
+                                <!-- Evidence items will be injected here -->
+                            </div>
+                        </div>
+                        <!-- Ghost Log Tab -->
+                        <div id="tab-log" class="tab-page hidden">
+                            <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Known Ghost Profiles</h3>
+                            <select id="ghost-select" class="w-full p-3 rounded-md mb-3 border border-neon-purple focus:ring-soft-cyan focus:border-soft-cyan font-mono-data text-white bg-gray-900">
+                                <option value="">--- Select Ghost Type ---</option>
+                            </select>
+                            <div id="ghost-info" class="text-sm h-[20rem] overflow-y-auto space-y-2 log-container">
+                                <p class="text-gray-400 font-mono-data">Select a ghost from the list above to view its profile, evidence, strengths, and weaknesses.</p>
+                            </div>
+                        </div>
+                        <!-- Case Files Tab -->
+                        <div id="tab-casefiles" class="tab-page hidden">
+                            <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Poster Case Files</h3>
+                            <div id="case-files-gallery" class="grid grid-cols-2 gap-4">
+                                <!-- Images injected here -->
+                            </div>
+                        </div>
+                        <!-- Lobby Tab -->
+                        <div id="tab-lobby" class="tab-page hidden">
+                            <h3 class="text-lg font-orbitron text-soft-cyan mb-3">User Profile Setup</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="display-name-input" class="block text-sm font-mono-data text-soft-cyan mb-1">Display Name</label>
+                                    <input type="text" id="display-name-input" placeholder="Enter investigator name" class="w-full p-2 bg-deep-black border border-neon-purple rounded-md focus:ring-soft-cyan focus:border-soft-cyan text-soft-cyan font-mono-data">
+                                </div>
+                                <div>
+                                    <label for="photo-select" class="block text-sm font-mono-data text-soft-cyan mb-1">Select Profile Photo</label>
+                                    <select id="photo-select" class="w-full p-3 bg-gray-900 border border-neon-purple rounded-md focus:ring-soft-cyan focus:border-soft-cyan text-white font-mono-data"></select>
+                                </div>
+                                <div class="flex justify-center items-center space-x-4">
+                                    <img id="profile-preview" class="w-16 h-16 rounded-full object-cover border-2 border-soft-cyan shadow-md" src="" alt="Profile Preview">
+                                    <button id="profile-save-btn" class="phasmo-btn font-orbitron py-2 px-4 uppercase text-sm">
+                                        Save Profile
+                                    </button>
+                                </div>
+                            </div>
+                            <h3 class="text-lg font-orbitron text-soft-cyan mt-6 mb-3">Voice Comms</h3>
+                            <button id="btn-open-jitsi" class="phasmo-btn font-orbitron py-3 px-4 uppercase text-sm w-full">
+                                <i class="fas fa-headset mr-2"></i> Open Voice Channel
+                            </button>
+                        </div>
+                        <!-- Squad Tab -->
+                        <div id="tab-squad" class="tab-page hidden">
+                            <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Map Location</h3>
+                            <div id="map-location-image-container" class="mb-4">
+                                <img id="map-location-image" src="https://placehold.co/600x300/0a0a0f/5dfdff?text=Current+Map+Not+Set+%21location" alt="Current Map Location" class="w-full h-auto object-cover rounded-lg border-2 border-soft-cyan shadow-xl">
+                                <div id="map-location-name" class="mt-2 text-center font-orbitron text-xl text-white tracking-wider">TRUCK COMMAND</div>
+                            </div>
+                            <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Squad Health & Location</h3>
+                            <div id="status-display" class="space-y-4 max-h-[15rem] overflow-y-auto">
+                                <!-- Status will be injected here -->
+                            </div>
+                            <p class="text-xs text-gray-500 font-mono-data mt-4">Cmds: <span class="text-soft-cyan">!dead: NAME</span>, <span class="text-soft-cyan">!location: MapName/Room</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for Case File Details -->
+    <div id="case-file-modal" class="modal-backdrop fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="modal-content p-8 max-w-lg w-full rounded-xl transform transition-all duration-300 scale-95 opacity-0">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-soft-cyan text-2xl hover:text-white transition duration-150">
+                <i class="fas fa-times-circle"></i>
+            </button>
+            <img id="modal-image" class="w-full h-auto object-cover rounded-lg mb-6 border-2 border-neon-purple shadow-xl" src="" alt="Case File">
+            <h3 id="modal-title" class="phasmo-title text-3xl font-orbitron mb-3 text-center"></h3>
+            <p id="modal-description" class="text-sm text-gray-300 font-mono-data text-center"></p>
+        </div>
+    </div>
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
