@@ -1,9 +1,3 @@
-// --------------------------------------------------------------
-// CASE FILE DATA MODULE — FINAL
-// Loads Phasmophobia Broads case-file images + descriptions.
-// Renderer (uiRenderer.js) uses window.__BROAD_IMAGES.
-// --------------------------------------------------------------
-
 export function loadCaseFiles() {
     window.__BROAD_IMAGES = [
         {
