@@ -60,22 +60,22 @@
                 <div class="phasmo-card flex-grow flex flex-col min-h-[40vh] lg:min-h-0">
                     <h2 class="phasmo-subtitle text-xl font-orbitron mb-4">DATA TERMINAL</h2>
                     <div class="flex flex-wrap gap-2 mb-6 justify-center">
-                        <button id="tab-btn-chat" onclick="switchTab('chat')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                        <button id="tab-btn-chat" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
                             <i class="fas fa-comments"></i> Chat
                         </button>
-                        <button id="tab-btn-evidence" onclick="switchTab('evidence')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                        <button id="tab-btn-evidence" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
                             <i class="fas fa-fingerprint"></i> Evidence
                         </button>
-                        <button id="tab-btn-log" onclick="switchTab('log')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                        <button id="tab-btn-log" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
                             <i class="fas fa-book"></i> Ghost Profile
                         </button>
-                        <button id="tab-btn-casefiles" onclick="switchTab('casefiles')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                        <button id="tab-btn-casefiles" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
                             <i class="fas fa-folder-open"></i> Cases
                         </button>
-                        <button id="tab-btn-squad" onclick="switchTab('squad')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                        <button id="tab-btn-squad" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
                             <i class="fas fa-users"></i> Squad
                         </button>
-                        <button id="tab-btn-lobby" onclick="switchTab('lobby')" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
+                        <button id="tab-btn-lobby" class="tab-button px-4 py-2 phasmo-btn text-sm font-semibold">
                             <i class="fas fa-id-card"></i> Profile
                         </button>
                     </div>
@@ -156,7 +156,7 @@
     <!-- Modal for Case File Details -->
     <div id="case-file-modal" class="modal-backdrop fixed inset-0 flex items-center justify-center z-50 hidden">
         <div class="modal-content p-8 max-w-lg w-full rounded-xl transform transition-all duration-300 scale-95 opacity-0">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-soft-cyan text-2xl hover:text-white transition duration-150">
+            <button class="absolute top-4 right-4 text-soft-cyan text-2xl hover:text-white transition duration-150">
                 <i class="fas fa-times-circle"></i>
             </button>
             <img id="modal-image" class="w-full h-auto object-cover rounded-lg mb-6 border-2 border-neon-purple shadow-xl" src="" alt="Case File">
@@ -165,6 +165,6 @@
         </div>
     </div>
     <!-- Scripts -->
-    <script src="./js/main.js"></script>
+    <script type="module" src="./js/main.js"></script>
 </body>
 </html>
