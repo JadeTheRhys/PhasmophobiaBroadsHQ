@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/tone.min.js"></script>
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body class="p-6 sm:p-10 min-h-screen">
 
@@ -49,8 +49,8 @@
                         <p class="text-gray-400 log-entry">[SYSTEM] Awaiting initial authentication...</p>
                     </div>
                     <div class="mt-4">
-                        <input type="text" id="chat-input" placeholder="Type message or command (!hunt, !dead:NAME, etc.)" class="w-full p-3 bg-deep-black border-2 border-neon-purple rounded-lg focus:ring-soft-cyan focus:border-soft-cyan text-soft-cyan font-mono-data text-base shadow-lg">
-                        <div class="text-xs text-gray-500 font-mono-data mt-1">Available commands: !hunt, !flicker, !manifest, !curse, !slam, !event, !evidence:X, !dead:X, !revive:X, !location:X</div>
+                        <input type="text" id="chat-input" placeholder="Type message or command (!hunt, !dead:NAME, etc.)" class="w-full p-3 bg-deep-black border-2 border-neon-purple rounded-lg fo[...]    
+                        <div class="text-xs text-gray-500 font-mono-data mt-1">Available commands: !hunt, !flicker, !manifest, !curse, !slam, !event, !evidence:X, !dead:X, !revive:X, !location:X</[...]
                     </div>
                 </div>
             </div>
@@ -97,7 +97,7 @@
                         <!-- Ghost Log Tab -->
                         <div id="tab-log" class="tab-page hidden">
                             <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Known Ghost Profiles</h3>
-                            <select id="ghost-select" class="w-full p-3 rounded-md mb-3 border border-neon-purple focus:ring-soft-cyan focus:border-soft-cyan font-mono-data text-white bg-gray-900">
+                            <select id="ghost-select" class="w-full p-3 rounded-md mb-3 border border-neon-purple focus:ring-soft-cyan focus:border-soft-cyan font-mono-data text-white bg-gray-900[...]>
                                 <option value="">--- Select Ghost Type ---</option>
                             </select>
                             <div id="ghost-info" class="text-sm h-[20rem] overflow-y-auto space-y-2 log-container">
@@ -117,11 +117,11 @@
                             <div class="space-y-4">
                                 <div>
                                     <label for="display-name-input" class="block text-sm font-mono-data text-soft-cyan mb-1">Display Name</label>
-                                    <input type="text" id="display-name-input" placeholder="Enter investigator name" class="w-full p-2 bg-deep-black border border-neon-purple rounded-md focus:ring-soft-cyan focus:border-soft-cyan text-soft-cyan font-mono-data">
+                                    <input type="text" id="display-name-input" placeholder="Enter investigator name" class="w-full p-2 bg-deep-black border border-neon-purple rounded-md focus:rin[...]>
                                 </div>
                                 <div>
                                     <label for="photo-select" class="block text-sm font-mono-data text-soft-cyan mb-1">Select Profile Photo</label>
-                                    <select id="photo-select" class="w-full p-3 bg-gray-900 border border-neon-purple rounded-md focus:ring-soft-cyan focus:border-soft-cyan text-white font-mono-data"></select>
+                                    <select id="photo-select" class="w-full p-3 bg-gray-900 border border-neon-purple rounded-md focus:ring-soft-cyan focus:border-soft-cyan text-white font-mono-d[...]>
                                 </div>
                                 <div class="flex justify-center items-center space-x-4">
                                     <img id="profile-preview" class="w-16 h-16 rounded-full object-cover border-2 border-soft-cyan shadow-md" src="" alt="Profile Preview">
@@ -139,14 +139,14 @@
                         <div id="tab-squad" class="tab-page hidden">
                             <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Map Location</h3>
                             <div id="map-location-image-container" class="mb-4">
-                                <img id="map-location-image" src="https://placehold.co/600x300/0a0a0f/5dfdff?text=Current+Map+Not+Set+%21location" alt="Current Map Location" class="w-full h-auto object-cover rounded-lg border-2 border-soft-cyan shadow-xl">
+                                <img id="map-location-image" src="https://placehold.co/600x300/0a0a0f/5dfdff?text=Current+Map+Not+Set+%21location" alt="Current Map Location" class="w-full h-auto [..]
                                 <div id="map-location-name" class="mt-2 text-center font-orbitron text-xl text-white tracking-wider">TRUCK COMMAND</div>
                             </div>
                             <h3 class="text-lg font-orbitron text-soft-cyan mb-3">Squad Health & Location</h3>
                             <div id="status-display" class="space-y-4 max-h-[15rem] overflow-y-auto">
                                 <!-- Status will be injected here -->
                             </div>
-                            <p class="text-xs text-gray-500 font-mono-data mt-4">Cmds: <span class="text-soft-cyan">!dead: NAME</span>, <span class="text-soft-cyan">!location: MapName/Room</span></p>
+                            <p class="text-xs text-gray-500 font-mono-data mt-4">Cmds: <span class="text-soft-cyan">!dead: NAME</span>, <span class="text-soft-cyan">!location: MapName/Room</span>[...]
                         </div>
                     </div>
                 </div>
