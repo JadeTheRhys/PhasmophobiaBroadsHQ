@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -192,8 +190,6 @@
       0%,100% { opacity: 1; }
       50% { opacity: 0.2; }
     }
-  </style>
-</head>
 <body class="p-4">
 
   <!-- Ambient floating ghost layer (CSS-only) -->
@@ -216,65 +212,92 @@
   <!-- WRAPPER -->
   <div class="container mx-auto max-w-3xl space-y-6">
 
+    <!-- ========================================================= -->
     <!-- CHAT TAB -->
+    <!-- ========================================================= -->
     <div class="tab-panel" id="tab-chat" data-tab="chat">
+
       <h2 class="text-xl font-bold mb-3">Team Chat</h2>
+
+      <!-- JITSI BUTTON (POPS OUT, NOT EMBEDDED) -->
       <button id="jitsi-btn"
               class="w-full mb-4 p-2 bg-cyan-400 text-black font-bold rounded shadow hover:bg-cyan-300">
         <i class="fas fa-video"></i> Start Voice/Video Call
       </button>
+
+      <!-- CHAT WINDOW -->
       <div id="chat-messages"
            class="h-64 overflow-y-auto bg-black/40 p-4 rounded mb-3"></div>
+
+      <!-- GHOST ACTIVITY LOG -->
       <div id="ghost-activity-log"
            class="h-24 overflow-y-auto bg-black/30 p-2 rounded mb-3 text-xs"></div>
+
+      <!-- INPUT -->
       <input id="chat-input"
              class="w-full p-2 bg-gray-900 rounded"
              placeholder="Type a message or !command" />
     </div>
 
-    <!-- GHOST PROFILES TAB -->
+    <!-- ========================================================= -->
+    <!-- GHOST PROFILES -->
+    <!-- ========================================================= -->
     <div class="tab-panel hidden" id="tab-ghost" data-tab="ghost">
       <h2 class="text-xl font-bold mb-3">Ghost Encyclopedia</h2>
       <select id="ghost-select" class="w-full p-2 rounded mb-4"></select>
       <div id="ghost-info" class="p-4 bg-black/40 rounded"></div>
     </div>
 
+    <!-- ========================================================= -->
     <!-- EVIDENCE TAB -->
+    <!-- ========================================================= -->
     <div class="tab-panel hidden" id="tab-evidence" data-tab="evidence">
       <h2 class="text-xl font-bold mb-3">Collected Evidence</h2>
       <div id="evidence-display" class="space-y-2"></div>
     </div>
 
-    <!-- CASE FILES TAB -->
+    <!-- ========================================================= -->
+    <!-- CASE FILES -->
+    <!-- ========================================================= -->
     <div class="tab-panel hidden" id="tab-cases" data-tab="cases">
       <h2 class="text-xl font-bold mb-3">Case Files Gallery</h2>
       <div id="case-files-gallery" class="grid grid-cols-2 gap-4"></div>
     </div>
 
-    <!-- SQUAD STATUS TAB -->
+    <!-- ========================================================= -->
+    <!-- SQUAD STATUS -->
+    <!-- ========================================================= -->
     <div class="tab-panel hidden" id="tab-status" data-tab="status">
       <h2 class="text-xl font-bold mb-3">Squad Status</h2>
       <div id="status-display" class="space-y-3"></div>
     </div>
 
+    <!-- ========================================================= -->
     <!-- MAP TAB -->
+    <!-- ========================================================= -->
     <div class="tab-panel hidden" id="tab-map" data-tab="map">
       <h2 class="text-xl font-bold mb-3">Current Investigation Map</h2>
       <img id="map-location-image" class="w-full rounded border border-cyan-400" />
     </div>
 
+    <!-- ========================================================= -->
     <!-- PROFILE TAB -->
+    <!-- ========================================================= -->
     <div class="tab-panel hidden" id="tab-profile" data-tab="profile">
       <h2 class="text-xl font-bold mb-3">Your Profile</h2>
+
       <div class="space-y-3">
         <input id="display-name-input"
                class="w-full p-2 rounded"
                placeholder="Display Name" />
+
         <select id="photo-select" class="w-full p-2 rounded">
           <option value="/assets/profiles/default.jpg">Default</option>
         </select>
+
         <img id="profile-preview"
              class="w-20 h-20 rounded-full border border-cyan-400" />
+
         <button id="profile-save-btn"
                 class="w-full bg-cyan-300 text-black p-2 rounded">
           Save Profile
@@ -284,7 +307,9 @@
 
   </div>
 
+  <!-- ========================================================= -->
   <!-- CASE FILE POPUP MODAL -->
+  <!-- ========================================================= -->
   <div id="case-file-modal"
        class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4">
     <div class="bg-gray-900 p-4 rounded w-full max-w-md">
@@ -297,411 +322,989 @@
       </button>
     </div>
   </div>
+<script type="module">
 
-  <script type="module">
-    /* ------------------------------------------------------------
-       FIREBASE IMPORTS
-    ------------------------------------------------------------ */
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      setDoc,
-      doc,
-      onSnapshot,
-      query,
-      orderBy
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+/* ------------------------------------------------------------
+   FIREBASE IMPORTS
+------------------------------------------------------------ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  setDoc,
+  doc,
+  onSnapshot,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    /* ------------------------------------------------------------
-       FIREBASE CONFIG
-    ------------------------------------------------------------ */
-    const firebaseConfig = {
-      apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
-      authDomain: "phasmophobiabroads.firebaseapp.com",
-      projectId: "phasmophobiabroads",
-      storageBucket: "phasmophobiabroads.appspot.com",
-      messagingSenderId: "503659624108",
-      appId: "1:503659624108:web:6e57fbc6bf36b0d5989109",
-    };
+/* ------------------------------------------------------------
+   FIREBASE CONFIG
+------------------------------------------------------------ */
+const firebaseConfig = {
+  apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
+  authDomain: "phasmophobiabroads.firebaseapp.com",
+  projectId: "phasmophobiabroads",
+  storageBucket: "phasmophobiabroads.appspot.com",
+  messagingSenderId: "503659624108",
+  appId: "1:503659624108:web:6e57fbc6bf36b0d5989109",
+};
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-    let CURRENT_USER_ID = null;
+let CURRENT_USER_ID = null;
 
-    /* ------------------------------------------------------------
-       AUTHENTICATION
-    ------------------------------------------------------------ */
-    async function ensureAuth() {
-      return new Promise((resolve, reject) => {
-        onAuthStateChanged(auth, async (user) => {
-          try {
-            if (!user) {
-              const anon = await signInAnonymously(auth);
-              CURRENT_USER_ID = anon.user.uid;
-            } else {
-              CURRENT_USER_ID = user.uid;
-            }
-            resolve(CURRENT_USER_ID);
-          } catch (err) {
-            console.error("Auth error:", err);
-            reject(err);
-          }
-        });
-      });
-    }
-
-    function safeUser() {
-      if (!CURRENT_USER_ID) {
-        console.warn("No authenticated user yet.");
-        return false;
+/* ------------------------------------------------------------
+   AUTHENTICATION
+------------------------------------------------------------ */
+async function ensureAuth() {
+  return new Promise((resolve, reject) => {
+    onAuthStateChanged(auth, async (user) => {
+      try {
+        if (!user) {
+          const anon = await signInAnonymously(auth);
+          CURRENT_USER_ID = anon.user.uid;
+        } else {
+          CURRENT_USER_ID = user.uid;
+        }
+        resolve(CURRENT_USER_ID);
+      } catch (err) {
+        console.error("Auth error:", err);
+        reject(err);
       }
-      return true;
-    }
+    });
+  });
+}
 
-    /* ------------------------------------------------------------
-       GHOST DATABASE
-    ------------------------------------------------------------ */
-    const GHOST_DATA = {
-      Spirit:{evidence:["EMF 5","Spirit Box","Writing"],strength:"No specific strengths.",weakness:"Smudge sticks stop attacks longer."},
-      Wraith:{evidence:["EMF 5","Spirit Box","DOTS"],strength:"Doesn't step on salt.",weakness:"Salt cripples it."},
-      Phantom:{evidence:["Spirit Box","Fingerprints","DOTS"],strength:"Looking at it drains sanity.",weakness:"Photo makes it vanish."},
-      Poltergeist:{evidence:["Spirit Box","Fingerprints","Writing"],strength:"Throws multiple objects.",weakness:"Weak in empty rooms."},
-      Banshee:{evidence:["Fingerprints","DOTS","Orb"],strength:"Targets a single player.",weakness:"Crucifix more effective."},
-      Jinn:{evidence:["EMF 5","Fingerprints","Freezing"],strength:"Fast at range.",weakness:"Power off makes it weaker."},
-      Mare:{evidence:["Spirit Box","Orb","Writing"],strength:"Thrives in darkness.",weakness:"Light reduces hunts."},
-      Revenant:{evidence:["Orb","Writing","Freezing"],strength:"Extremely fast during hunts.",weakness:"Slow when wandering."},
-      Shade:{evidence:["EMF 5","Writing","Freezing"],strength:"Shy ghost.",weakness:"Can't hunt if 2+ players near."},
-      Demon:{evidence:["Fingerprints","Writing","Freezing"],strength:"Very early hunts.",weakness:"Crucifix much stronger."},
-      Yurei:{evidence:["Orb","Freezing","DOTS"],strength:"Strong sanity drain.",weakness:"Smudging locks it inside room."},
-      Oni:{evidence:["EMF 5","Freezing","DOTS"],strength:"Very active.",weakness:"Easy to spot."},
-      Yokai:{evidence:["Spirit Box","Orb","DOTS"],strength:"Triggered by talking.",weakness:"Can't hear far voices."},
-      Hantu:{evidence:["Fingerprints","Orb","Freezing"],strength:"Fast in cold.",weakness:"Slow in warm."},
-      Goryo:{evidence:["EMF 5","Fingerprints","DOTS"],strength:"Only on-camera.",weakness:"Rarely leaves room."},
-      Myling:{evidence:["EMF 5","Fingerprints","Writing"],strength:"Quiet during hunts.",weakness:"Parabolic hears footsteps."},
-      Onryo:{evidence:["Spirit Box","Orb","Freezing"],strength:"Triggered by flames.",weakness:"Candles protect."},
-      Twins:{evidence:["Spirit Box","EMF 5","Freezing"],strength:"Two activity sources.",weakness:"Different EMF patterns."},
-      Raiju:{evidence:["EMF 5","DOTS","Orb"],strength:"Fast near electronics.",weakness:"Causes EMF surges."},
-      Obake:{evidence:["EMF 5","Fingerprints","Orb"],strength:"Mutates fingerprints.",weakness:"Fingerprints disappear quickly."},
-      Mimic:{evidence:["Spirit Box","Freezing","Fingerprints","Orb"],strength:"Copies any ghost.",weakness:"Always shows orbs."},
-      Moroi:{evidence:["Spirit Box","Writing","Freezing"],strength:"Curses players.",weakness:"Smudge blinds longer."},
-      Deogen:{evidence:["Spirit Box","Writing","DOTS"],strength:"Reads players.",weakness:"Slow up close."},
-      Thaye:{evidence:["Orb","Writing","DOTS"],strength:"Very active early.",weakness:"Weakens over time."}
-    };
+function safeUser() {
+  if (!CURRENT_USER_ID) {
+    console.warn("No authenticated user yet.");
+    return false;
+  }
+  return true;
+}
 
-    /* ------------------------------------------------------------
-       MAP DATABASE
-    ------------------------------------------------------------ */
-    const MAP_DATA = {
-      Grafton:{name:"Grafton Farmhouse",url:"/assets/maps/grafton.jpg"},
-      Tanglewood:{name:"Tanglewood Street House",url:"/assets/maps/tanglewood.jpg"},
-      Edgefield:{name:"Edgefield Street House",url:"/assets/maps/edgefield.jpg"},
-      Ridgeview:{name:"Ridgeview Road House",url:"/assets/maps/ridgeview.jpg"},
-      Willow:{name:"Willow Street House",url:"/assets/maps/willow.jpg"},
-      Bleasdale:{name:"Bleasdale Farmhouse",url:"/assets/maps/bleasdale.jpg"},
-      Brownstone:{name:"Brownstone High School",url:"/assets/maps/brownstone.jpg"}
-    };
+/* ------------------------------------------------------------
+   GHOST DATABASE
+------------------------------------------------------------ */
+const GHOST_DATA = {
+  Spirit:{evidence:["EMF 5","Spirit Box","Writing"],strength:"No specific strengths.",weakness:"Smudge sticks stop attacks longer."},
+  Wraith:{evidence:["EMF 5","Spirit Box","DOTS"],strength:"Doesn't step on salt.",weakness:"Salt cripples it."},
+  Phantom:{evidence:["Spirit Box","Fingerprints","DOTS"],strength:"Looking at it drains sanity.",weakness:"Photo makes it vanish."},
+  Poltergeist:{evidence:["Spirit Box","Fingerprints","Writing"],strength:"Throws multiple objects.",weakness:"Weak in empty rooms."},
+  Banshee:{evidence:["Fingerprints","DOTS","Orb"],strength:"Targets a single player.",weakness:"Crucifix more effective."},
+  Jinn:{evidence:["EMF 5","Fingerprints","Freezing"],strength:"Fast at range.",weakness:"Power off makes it weaker."},
+  Mare:{evidence:["Spirit Box","Orb","Writing"],strength:"Thrives in darkness.",weakness:"Light reduces hunts."},
+  Revenant:{evidence:["Orb","Writing","Freezing"],strength:"Extremely fast during hunts.",weakness:"Slow when wandering."},
+  Shade:{evidence:["EMF 5","Writing","Freezing"],strength:"Shy ghost.",weakness:"Can't hunt if 2+ players near."},
+  Demon:{evidence:["Fingerprints","Writing","Freezing"],strength:"Very early hunts.",weakness:"Crucifix much stronger."},
+  Yurei:{evidence:["Orb","Freezing","DOTS"],strength:"Strong sanity drain.",weakness:"Smudging locks it inside room."},
+  Oni:{evidence:["EMF 5","Freezing","DOTS"],strength:"Very active.",weakness:"Easy to spot."},
+  Yokai:{evidence:["Spirit Box","Orb","DOTS"],strength:"Triggered by talking.",weakness:"Can't hear far voices."},
+  Hantu:{evidence:["Fingerprints","Orb","Freezing"],strength:"Fast in cold.",weakness:"Slow in warm."},
+  Goryo:{evidence:["EMF 5","Fingerprints","DOTS"],strength:"Only on-camera.",weakness:"Rarely leaves room."},
+  Myling:{evidence:["EMF 5","Fingerprints","Writing"],strength:"Quiet during hunts.",weakness:"Parabolic hears footsteps."},
+  Onryo:{evidence:["Spirit Box","Orb","Freezing"],strength:"Triggered by flames.",weakness:"Candles protect."},
+  Twins:{evidence:["Spirit Box","EMF 5","Freezing"],strength:"Two activity sources.",weakness:"Different EMF patterns."},
+  Raiju:{evidence:["EMF 5","DOTS","Orb"],strength:"Fast near electronics.",weakness:"Causes EMF surges."},
+  Obake:{evidence:["EMF 5","Fingerprints","Orb"],strength:"Mutates fingerprints.",weakness:"Fingerprints disappear quickly."},
+  Mimic:{evidence:["Spirit Box","Freezing","Fingerprints","Orb"],strength:"Copies any ghost.",weakness:"Always shows orbs."},
+  Moroi:{evidence:["Spirit Box","Writing","Freezing"],strength:"Curses players.",weakness:"Smudge blinds longer."},
+  Deogen:{evidence:["Spirit Box","Writing","DOTS"],strength:"Reads players.",weakness:"Slow up close."},
+  Thaye:{evidence:["Orb","Writing","DOTS"],strength:"Very active early.",weakness:"Weakens over time."}
+};
 
-    const DEFAULT_MAP =
-      "https://placehold.co/600x300/0a0a0f/5dfdff?text=Map+Not+Set";
+/* ------------------------------------------------------------
+   MAP DATABASE
+------------------------------------------------------------ */
+const MAP_DATA = {
+  Grafton:{name:"Grafton Farmhouse",url:"/assets/maps/grafton.jpg"},
+  Tanglewood:{name:"Tanglewood Street House",url:"/assets/maps/tanglewood.jpg"},
+  Edgefield:{name:"Edgefield Street House",url:"/assets/maps/edgefield.jpg"},
+  Ridgeview:{name:"Ridgeview Road House",url:"/assets/maps/ridgeview.jpg"},
+  Willow:{name:"Willow Street House",url:"/assets/maps/willow.jpg"},
+  Bleasdale:{name:"Bleasdale Farmhouse",url:"/assets/maps/bleasdale.jpg"},
+  Brownstone:{name:"Brownstone High School",url:"/assets/maps/brownstone.jpg"}
+};
 
-    /* ------------------------------------------------------------
-       CASE FILE IMAGES
-    ------------------------------------------------------------ */
-    const BROAD_IMAGES = [
-      {url:"/assets/profiles/case1.jpg", title:"The Silent Approach", description:"Case File 001"},
-      {url:"/assets/profiles/case2.jpg", title:"Closet Panic", description:"Case File 002"},
-      {url:"/assets/profiles/case3.jpg", title:"Emergency Extraction", description:"Case File 003"},
-      {url:"/assets/profiles/case4.jpg", title:"Ouija Board Gamble", description:"Case File 004"},
-      {url:"/assets/profiles/case5.jpg", title:"The Voodoo Threat", description:"Case File 005"},
-      {url:"/assets/profiles/case6.jpg", title:"Circle of Summoning", description:"Case File 006"},
-    ];
+const DEFAULT_MAP =
+  "https://placehold.co/600x300/0a0a0f/5dfdff?text=Map+Not+Set";
 
-    /* ------------------------------------------------------------
-       UI RENDER FUNCTIONS
-    ------------------------------------------------------------ */
-    function renderChat(messages) {
-      const box = document.getElementById("chat-messages");
-      if (!box) return;
-      box.innerHTML = "";
-      messages.forEach(msg => {
-        const time = new Date(msg.timestamp).toLocaleTimeString("en-US",{hour12:false});
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <div class="flex items-start space-x-3 mb-2">
-            <img class="w-7 h-7 rounded-full border border-cyan-300"
-                 src="${msg.photoUrl || "/assets/profiles/default.jpg"}" />
-            <div class="flex-grow">
-              <span class="text-xs text-gray-500">${time}</span>
-              <span class="font-bold text-cyan-300 ml-2">
-                ${msg.displayName || "User"}:
-              </span>
-              <span class="${msg.isCommand ? "text-pink-400" : "text-gray-200"}">
-                ${msg.text}
-              </span>
-            </div>
-          </div>`;
-        box.appendChild(div);
-      });
-      box.scrollTop = box.scrollHeight;
-    }
+/* ------------------------------------------------------------
+   CASE FILE IMAGES
+------------------------------------------------------------ */
+const BROAD_IMAGES = [
+  {url:"/assets/profiles/case1.jpg", title:"The Silent Approach", description:"Case File 001"},
+  {url:"/assets/profiles/case2.jpg", title:"Closet Panic", description:"Case File 002"},
+  {url:"/assets/profiles/case3.jpg", title:"Emergency Extraction", description:"Case File 003"},
+  {url:"/assets/profiles/case4.jpg", title:"Ouija Board Gamble", description:"Case File 004"},
+  {url:"/assets/profiles/case5.jpg", title:"The Voodoo Threat", description:"Case File 005"},
+  {url:"/assets/profiles/case6.jpg", title:"Circle of Summoning", description:"Case File 006"},
+];
 
-    function renderEvidence(list) {
-      const box = document.getElementById("evidence-display");
-      if (!box) return;
-      box.innerHTML = "";
-      list.forEach(ev => {
-        box.innerHTML += `
-          <div class="p-3 border-l-4 border-cyan-300 bg-white/5 rounded-md flex justify-between">
-            <span class="text-cyan-300 font-bold">${ev.evidence}</span>
-            <span class="text-xs text-gray-400">By ${ev.displayName || "User"}</span>
-          </div>`;
-      });
-    }
+/* ------------------------------------------------------------
+   UI RENDER FUNCTIONS
+------------------------------------------------------------ */
 
-    function populateGhostDropdown() {
-      const sel = document.getElementById("ghost-select");
-      if (!sel) return;
-      sel.innerHTML = '<option value="">Select Ghost</option>';
-      Object.keys(GHOST_DATA).sort().forEach(name => {
-        const opt = document.createElement("option");
-        opt.value = name;
-        opt.textContent = name;
-        sel.appendChild(opt);
-      });
-    }
+function renderChat(messages) {
+  const box = document.getElementById("chat-messages");
+  if (!box) return;
 
-    function renderGhostProfile(name) {
-      const info = document.getElementById("ghost-info");
-      if (!info) return;
-      if (!name || !GHOST_DATA[name]) {
-        info.innerHTML = "<p class='text-gray-400'>Select a ghost.</p>";
-        return;
-      }
-      const g = GHOST_DATA[name];
-      info.innerHTML = `
-        <h4 class="text-xl font-bold text-cyan-300">${name}</h4>
-        <div class="border-b border-cyan-500/50 my-2"></div>
-        <p><span class="text-cyan-400 font-bold">Evidence:</span> ${g.evidence.join(", ")}</p>
-        <p><span class="text-cyan-400 font-bold">Strength:</span> ${g.strength}</p>
-        <p><span class="text-cyan-400 font-bold">Weakness:</span> ${g.weakness}</p>
-      `;
-    }
+  box.innerHTML = "";
+  messages.forEach(msg => {
+    const time = new Date(msg.timestamp).toLocaleTimeString("en-US",{hour12:false});
+    const div = document.createElement("div");
 
-    function populateCaseFiles() {
-      const g = document.getElementById("case-files-gallery");
-      if (!g) return;
-      g.innerHTML = "";
-      BROAD_IMAGES.forEach((item, i) => {
-        const img = document.createElement("img");
-        img.src = item.url;
-        img.className =
-          "w-full h-32 object-cover rounded-lg border-2 border-cyan-300 cursor-pointer hover:border-pink-400";
-        img.onclick = () => openCaseFileModal(i);
-        g.appendChild(img);
-      });
-    }
+    div.innerHTML = `
+      <div class="flex items-start space-x-3 mb-2">
+        <img class="w-7 h-7 rounded-full border border-cyan-300"
+             src="${msg.photoUrl || "/assets/profiles/default.jpg"}" />
+        <div class="flex-grow">
+          <span class="text-xs text-gray-500">${time}</span>
+          <span class="font-bold text-cyan-300 ml-2">
+            ${msg.displayName || "User"}:
+          </span>
+          <span class="${msg.isCommand ? "text-pink-400" : "text-gray-200"}">
+            ${msg.text}
+          </span>
+        </div>
+      </div>`;
+    box.appendChild(div);
+  });
 
-    function openCaseFileModal(i) {
-      const m = BROAD_IMAGES[i];
-      document.getElementById("modal-image").src = m.url;
-      document.getElementById("modal-title").textContent = m.title;
-      document.getElementById("modal-description").textContent = m.description;
-      document.getElementById("case-file-modal").classList.remove("hidden");
-    }
+  box.scrollTop = box.scrollHeight;
+}
 
-    window.closeModal = function () {
-      document.getElementById("case-file-modal").classList.add("hidden");
-    };
+function renderEvidence(list) {
+  const box = document.getElementById("evidence-display");
+  if (!box) return;
 
-    function renderSquadStatus(statuses, profiles) {
-      const box = document.getElementById("status-display");
-      box.innerHTML = "";
-      Object.values(statuses).forEach(st => {
-        const prof = profiles[st.userId] || {};
-        const dead = st.isDead;
-        box.innerHTML += `
-          <div class="flex items-center space-x-3 p-4 rounded border-2 ${
-            dead ? "border-red-500" : "border-green-500"
-          } bg-white/5">
-            <img class="w-10 h-10 rounded-full border border-cyan-300"
-                 src="${prof.photoUrl || "/assets/profiles/default.jpg"}" />
-            <div class="flex-grow">
-              <span class="font-bold text-white">${prof.displayName || "Unknown"}</span>
-              <div class="text-sm text-gray-400">
-                ${dead ? "DECEASED" : `${st.map || "Unknown Map"} — ${st.location || "Unknown Room"}`}
-              </div>
-            </div>
-            <i class="fas ${
-              dead ? "fa-skull text-red-500" : "fa-heartbeat text-green-500"
-            } text-2xl"></i>
-          </div>`;
-      });
-    }
+  box.innerHTML = "";
+  list.forEach(ev => {
+    box.innerHTML += `
+      <div class="p-3 border-l-4 border-cyan-300 bg-white/5 rounded-md flex justify-between">
+        <span class="text-cyan-300 font-bold">${ev.evidence}</span>
+        <span class="text-xs text-gray-400">By ${ev.displayName || "User"}</span>
+      </div>`;
+  });
+}
 
-    function renderMap(name) {
-      const img = document.getElementById("map-location-image");
-      img.src = MAP_DATA[name]?.url || DEFAULT_MAP;
-    }
+function populateGhostDropdown() {
+  const sel = document.getElementById("ghost-select");
+  if (!sel) return;
 
-    /* ------------------------------------------------------------
-       WRITE ACTIONS (CHAT, EVIDENCE, PROFILE, STATUS)
-    ------------------------------------------------------------ */
-    async function sendChatMessage(text, isCommand = false) {
-      if (!safeUser()) return;
-      await addDoc(collection(db, "/app/chat"), {
-        userId: CURRENT_USER_ID,
-        text,
-        isCommand,
-        timestamp: Date.now()
-      });
-    }
+  sel.innerHTML = '<option value="">Select Ghost</option>';
+  Object.keys(GHOST_DATA).sort().forEach(name => {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    sel.appendChild(opt);
+  });
+}
 
-    async function saveEvidence(evidence) {
-      if (!safeUser()) return;
-      await addDoc(collection(db, "/app/evidence"), {
-        userId: CURRENT_USER_ID,
-        evidence,
-        timestamp: Date.now()
-      });
-    }
+function renderGhostProfile(name) {
+  const info = document.getElementById("ghost-info");
+  if (!info) return;
 
-    async function updatePlayerStatus(updateObj) {
-      if (!safeUser()) return;
-      await setDoc(doc(db, "/app/status", CURRENT_USER_ID), {
-        ...updateObj,
-        userId: CURRENT_USER_ID,
-        timestamp: Date.now()
-      }, { merge: true });
-    }
+  if (!name || !GHOST_DATA[name]) {
+    info.innerHTML = "<p class='text-gray-400'>Select a ghost.</p>";
+    return;
+  }
 
-    async function saveUserProfile(name, photo) {
-      if (!safeUser()) return;
-      await setDoc(doc(db, "/app/profiles", CURRENT_USER_ID), {
-        displayName: name,
-        photoUrl: photo,
-        lastSeen: Date.now()
-      }, { merge: true });
-    }
+  const g = GHOST_DATA[name];
+  info.innerHTML = `
+    <h4 class="text-xl font-bold text-cyan-300">${name}</h4>
+    <div class="border-b border-cyan-500/50 my-2"></div>
+    <p><span class="text-cyan-400 font-bold">Evidence:</span> ${g.evidence.join(", ")}</p>
+    <p><span class="text-cyan-400 font-bold">Strength:</span> ${g.strength}</p>
+    <p><span class="text-cyan-400 font-bold">Weakness:</span> ${g.weakness}</p>
+  `;
+}
 
-    /* ------------------------------------------------------------
-       REALTIME LISTENERS
-    ------------------------------------------------------------ */
-    const latest = { profiles:{}, statuses:{} };
+function populateCaseFiles() {
+  const g = document.getElementById("case-files-gallery");
+  if (!g) return;
+  g.innerHTML = "";
 
-    function startRealtimeListeners() {
-      // CHAT
-      const chatRef = query(collection(db, "/app/chat"), orderBy("timestamp", "asc"));
-      onSnapshot(chatRef, snap => {
-        const msgs = [];
-        snap.forEach(d => msgs.push(d.data()));
-        renderChat(msgs);
-      });
-      // EVIDENCE
-      onSnapshot(collection(db, "/app/evidence"), snap => {
-        const list = [];
-        snap.forEach(d => list.push(d.data()));
-        renderEvidence(list);
-      });
-      // STATUS
-      onSnapshot(collection(db, "/app/status"), snap => {
-        const s = {};
-        snap.forEach(d => s[d.id] = d.data());
-        latest.statuses = s;
-        renderSquadStatus(s, latest.profiles);
-      });
-      // PROFILES
-      onSnapshot(collection(db, "/app/profiles"), snap => {
-        const p = {};
-        snap.forEach(d => p[d.id] = d.data());
-        latest.profiles = p;
-        renderSquadStatus(latest.statuses, p);
-        // update dropdown
-        const sel = document.getElementById("photo-select");
-        if (sel) {
-          sel.innerHTML = '<option value="/assets/profiles/default.jpg">Default</option>';
-          Object.entries(p).forEach(([uid, prof]) => {
-            if (prof.photoUrl) {
-              const opt = document.createElement("option");
-              opt.value = prof.photoUrl;
-              opt.textContent = prof.displayName || uid;
-              sel.appendChild(opt);
-            }
-          });
+  BROAD_IMAGES.forEach((item, i) => {
+    const img = document.createElement("img");
+    img.src = item.url;
+    img.className =
+      "w-full h-32 object-cover rounded-lg border-2 border-cyan-300 cursor-pointer hover:border-pink-400";
+    img.onclick = () => openCaseFileModal(i);
+    g.appendChild(img);
+  });
+}
+
+function openCaseFileModal(i) {
+  const m = BROAD_IMAGES[i];
+  document.getElementById("modal-image").src = m.url;
+  document.getElementById("modal-title").textContent = m.title;
+  document.getElementById("modal-description").textContent = m.description;
+  document.getElementById("case-file-modal").classList.remove("hidden");
+}
+
+window.closeModal = function () {
+  document.getElementById("case-file-modal").classList.add("hidden");
+};
+
+function renderSquadStatus(statuses, profiles) {
+  const box = document.getElementById("status-display");
+  box.innerHTML = "";
+
+  Object.values(statuses).forEach(st => {
+    const prof = profiles[st.userId] || {};
+    const dead = st.isDead;
+
+    box.innerHTML += `
+      <div class="flex items-center space-x-3 p-4 rounded border-2 ${
+        dead ? "border-red-500" : "border-green-500"
+      } bg-white/5">
+        <img class="w-10 h-10 rounded-full border border-cyan-300"
+             src="${prof.photoUrl || "/assets/profiles/default.jpg"}" />
+        <div class="flex-grow">
+          <span class="font-bold text-white">${prof.displayName || "Unknown"}</span>
+          <div class="text-sm text-gray-400">
+            ${dead ? "DECEASED" : `${st.map || "Unknown Map"} — ${st.location || "Unknown Room"}`}
+          </div>
+        </div>
+        <i class="fas ${
+          dead ? "fa-skull text-red-500" : "fa-heartbeat text-green-500"
+        } text-2xl"></i>
+      </div>`;
+  });
+}
+
+function renderMap(name) {
+  const img = document.getElementById("map-location-image");
+  img.src = MAP_DATA[name]?.url || DEFAULT_MAP;
+}
+
+/* ------------------------------------------------------------
+   WRITE ACTIONS (CHAT, EVIDENCE, PROFILE, STATUS)
+------------------------------------------------------------ */
+async function sendChatMessage(text, isCommand = false) {
+  if (!safeUser()) return;
+  await addDoc(collection(db, "/app/chat"), {
+    userId: CURRENT_USER_ID,
+    text,
+    isCommand,
+    timestamp: Date.now()
+  });
+}
+
+async function saveEvidence(evidence) {
+  if (!safeUser()) return;
+  await addDoc(collection(db, "/app/evidence"), {
+    userId: CURRENT_USER_ID,
+    evidence,
+    timestamp: Date.now()
+  });
+}
+
+async function updatePlayerStatus(updateObj) {
+  if (!safeUser()) return;
+  await setDoc(doc(db, "/app/status", CURRENT_USER_ID), {
+    ...updateObj,
+    userId: CURRENT_USER_ID,
+    timestamp: Date.now()
+  }, { merge: true });
+}
+
+async function saveUserProfile(name, photo) {
+  if (!safeUser()) return;
+  await setDoc(doc(db, "/app/profiles", CURRENT_USER_ID), {
+    displayName: name,
+    photoUrl: photo,
+    lastSeen: Date.now()
+  }, { merge: true });
+}
+
+/* ------------------------------------------------------------
+   REALTIME LISTENERS
+------------------------------------------------------------ */
+const latest = { profiles:{}, statuses:{} };
+
+function startRealtimeListeners() {
+
+  // CHAT
+  const chatRef = query(collection(db, "/app/chat"), orderBy("timestamp", "asc"));
+  onSnapshot(chatRef, snap => {
+    const msgs = [];
+    snap.forEach(d => msgs.push(d.data()));
+    renderChat(msgs);
+  });
+
+  // EVIDENCE
+  onSnapshot(collection(db, "/app/evidence"), snap => {
+    const list = [];
+    snap.forEach(d => list.push(d.data()));
+    renderEvidence(list);
+  });
+
+  // STATUS
+  onSnapshot(collection(db, "/app/status"), snap => {
+    const s = {};
+    snap.forEach(d => s[d.id] = d.data());
+    latest.statuses = s;
+    renderSquadStatus(s, latest.profiles);
+  });
+
+  // PROFILES
+  onSnapshot(collection(db, "/app/profiles"), snap => {
+    const p = {};
+    snap.forEach(d => p[d.id] = d.data());
+    latest.profiles = p;
+    renderSquadStatus(latest.statuses, p);
+
+    // update dropdown
+    const sel = document.getElementById("photo-select");
+    if (sel) {
+      sel.innerHTML = '<option value="/assets/profiles/default.jpg">Default</option>';
+      Object.entries(p).forEach(([uid, prof]) => {
+        if (prof.photoUrl) {
+          const opt = document.createElement("option");
+          opt.value = prof.photoUrl;
+          opt.textContent = prof.displayName || uid;
+          sel.appendChild(opt);
         }
       });
     }
+  });
+}
 
-    /* ------------------------------------------------------------
-       TAB SYSTEM
-    ------------------------------------------------------------ */
-    function switchTab(tabName) {
-      document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active-glitch"));
-      const panel = document.querySelector(`.tab-panel[data-tab="${tabName}"]`);
-      const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
-      if (panel) panel.classList.remove("hidden");
-      if (btn) btn.classList.add("active-glitch");
+/* ------------------------------------------------------------
+   TAB SYSTEM
+------------------------------------------------------------ */
+function switchTab(tabName) {
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active-glitch"));
+
+  const panel = document.querySelector(`.tab-panel[data-tab="${tabName}"]`);
+  const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+
+  if (panel) panel.classList.remove("hidden");
+  if (btn) btn.classList.add("active-glitch");
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+});
+
+switchTab("chat");
+
+/* ------------------------------------------------------------
+   JITSI POP-OUT BUTTON
+------------------------------------------------------------ */
+document.getElementById("jitsi-btn")?.addEventListener("click", () => {
+  window.open(
+    "https://meet.jit.si/PhasmophobiaBroadsHQ",
+    "_blank",
+    "width=900,height=650"
+  );
+});
+
+/* ------------------------------------------------------------
+   SETUP
+------------------------------------------------------------ */
+async function boot() {
+  await ensureAuth();
+  populateGhostDropdown();
+  populateCaseFiles();
+  startRealtimeListeners();
+}
+
+boot();
+
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phasmophobia Broads HQ — FULL SYSTEM</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, #09121a 0%, #05060a 60%, #010103 100%);
+      color:#e0faff;
+      font-family:'Orbitron',sans-serif;
+      letter-spacing:0.5px;
+      text-shadow:0 0 4px #00eaff;
     }
 
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-    });
-
-    switchTab("chat");
-
-    /* ------------------------------------------------------------
-       JITSI POP-OUT BUTTON
-    ------------------------------------------------------------ */
-    document.getElementById("jitsi-btn")?.addEventListener("click", () => {
-      window.open(
-        "https://meet.jit.si/PhasmophobiaBroadsHQ",
-        "_blank",
-        "width=900,height=650"
-      );
-    });
-
-    /* ------------------------------------------------------------
-       SETUP
-    ------------------------------------------------------------ */
-    async function boot() {
-      await ensureAuth();
-      populateGhostDropdown();
-      populateCaseFiles();
-      startRealtimeListeners();
+    .tab-btn{
+      padding:8px 14px;
+      background:#0a0f18;
+      border:1px solid #00eaff66;
+      border-radius:6px;
+      transition:0.25s;
+      position:relative;
+      overflow:hidden;
+      color:#dffaff;
+    }
+    .tab-btn:hover{
+      background:#0ff4f422;
+      box-shadow:0 0 14px #00faff;
+      filter:drop-shadow(0 0 6px #00faff) drop-shadow(0 0 12px #ff4ce1);
+    }
+    .tab-btn.active-glitch::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,#00eaff33,#ff4ce133);
+      animation:glitchFlash .35s steps(3) forwards;
     }
 
-    boot();
+    @keyframes glitchFlash{
+      0%{clip-path:inset(0 0 70% 0);}
+      33%{clip-path:inset(20% 0 30% 0);}
+      66%{clip-path:inset(60% 0 5% 0);}
+      100%{opacity:0;}
+    }
 
-    // GHOST PROFILE DROPDOWN HANDLER
-    document.getElementById("ghost-select")?.addEventListener("change", e => {
-      renderGhostProfile(e.target.value);
-    });
+    .tab-panel{
+      backdrop-filter:blur(6px);
+      background:rgba(0,10,20,0.45);
+      border:1px solid #0ff4f466;
+      border-radius:8px;
+      padding:12px;
+      box-shadow:inset 0 0 25px #00eaff33;
+      animation:panelPulse 4s infinite ease-in-out;
+    }
 
-    // PROFILE PREVIEW + SAVE
-    document.getElementById("photo-select")?.addEventListener("change", e => {
-      document.getElementById("profile-preview").src = e.target.value;
-    });
-    document.getElementById("profile-save-btn")?.addEventListener("click", () => {
-      const name = document.getElementById("display-name-input").value;
-      const photo = document.getElementById("photo-select").value;
-      saveUserProfile(name, photo);
-    });
+    @keyframes panelPulse{
+      0%{box-shadow:inset 0 0 20px #00eaff33;}
+      50%{box-shadow:inset 0 0 45px #00eaff66;}
+      100%{box-shadow:inset 0 0 20px #00eaff33;}
+    }
 
-    // CHAT INPUT HANDLER
-    document.getElementById("chat-input")?.addEventListener("keydown", e => {
-      if (e.key === "Enter" && e.target.value.trim()) {
-        const text = e.target.value.trim();
-        const isCommand = text.startsWith("!");
-        sendChatMessage(text, isCommand);
-        e.target.value = "";
+    #chat-messages,#evidence-display,#status-display{
+      background:rgba(0,0,0,0.45);
+      border:1px solid #00eaff55;
+      box-shadow:inset 0 0 12px #00eaff55;
+      height:300px;
+      overflow-y:auto;
+      padding:10px;
+      border-radius:6px;
+      position:relative;
+    }
+
+    #chat-input{
+      background:#050912;
+      border:1px solid #00eaff99;
+      color:#c8f9ff;
+      box-shadow:inset 0 0 10px #00d4ff55;
+    }
+
+    #ghost-info{
+      border:1px solid #00eaff66;
+      padding:10px;
+      animation:ghostInfoGlow 5s infinite ease-in-out;
+    }
+    @keyframes ghostInfoGlow{
+      0%{filter:brightness(1);}
+      50%{filter:brightness(1.25);}
+      100%{filter:brightness(1);}
+    }
+
+    /* Case file modal */
+    #case-file-modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.8);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+    }
+    #case-file-modal.active{ display:flex; }
+
+  </style>
+</head>
+
+<body class="p-6">
+
+  <h1 class="text-3xl text-center mb-6">Phasmophobia Broads HQ</h1>
+
+  <!-- TAB BUTTONS -->
+  <div class="flex gap-4 justify-center mb-8">
+    <button class="tab-btn" data-tab="chat">Chat</button>
+    <button class="tab-btn" data-tab="ghosts">Ghost Profiles</button>
+    <button class="tab-btn" data-tab="evidence">Evidence</button>
+    <button class="tab-btn" data-tab="cases">Case Files</button>
+    <button class="tab-btn" data-tab="status">Squad Status</button>
+    <button class="tab-btn" data-tab="map">Map</button>
+    <button class="tab-btn" data-tab="profile">Profile</button>
+  </div>
+
+  <!-- UI PANELS -->
+  <div class="max-w-3xl mx-auto space-y-6">
+
+    <!-- CHAT -->
+    <div class="tab-panel" data-tab="chat">
+      <h2 class="text-xl mb-3">Team Chat</h2>
+
+      <button id="jitsi-btn"
+        class="px-4 py-2 bg-cyan-300 text-black rounded mb-4 font-bold hover:bg-pink-300">
+        🔥 Start Jitsi Call (Pop-out)
+      </button>
+
+      <div id="chat-messages"></div>
+      <input id="chat-input" placeholder="Type message..." class="w-full mt-3 p-2 rounded" />
+    </div>
+
+    <!-- GHOSTS -->
+    <div class="tab-panel hidden" data-tab="ghosts">
+      <h2 class="text-xl mb-2">Ghost Encyclopedia</h2>
+      <select id="ghost-select" class="w-full p-2 bg-black border border-cyan-500 mb-3"></select>
+      <div id="ghost-info" class="rounded"></div>
+    </div>
+
+    <!-- EVIDENCE -->
+    <div class="tab-panel hidden" data-tab="evidence">
+      <h2 class="text-xl mb-2">Evidence Board</h2>
+      <input id="evidence-input" placeholder="Add evidence..." class="w-full p-2 rounded mb-3"/>
+      <div id="evidence-display"></div>
+    </div>
+
+    <!-- CASE FILES -->
+    <div class="tab-panel hidden" data-tab="cases">
+      <h2 class="text-xl mb-3">Case File Gallery</h2>
+      <div id="case-files-gallery" class="grid grid-cols-2 gap-4"></div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="tab-panel hidden" data-tab="status">
+      <h2 class="text-xl mb-3">Squad Status</h2>
+      <div id="status-display"></div>
+    </div>
+
+    <!-- MAP -->
+    <div class="tab-panel hidden" data-tab="map">
+      <h2 class="text-xl mb-3">Map Display</h2>
+      <img id="map-location-image" class="w-full rounded" src=""/>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="tab-panel hidden" data-tab="profile">
+      <h2 class="text-xl mb-3">Your Profile</h2>
+      <input id="display-name-input" class="w-full p-2 mb-3" placeholder="Display Name" />
+      <select id="photo-select" class="w-full p-2 mb-3"></select>
+      <img id="profile-preview" class="w-20 h-20 rounded-full border mb-3" />
+      <button id="profile-save-btn" class="px-4 py-2 bg-cyan-300 text-black w-full rounded font-bold">
+        Save Profile
+      </button>
+    </div>
+
+  </div>
+<script type="module">
+/* ---------------------------------------------------------
+   FIREBASE INITIALIZATION
+--------------------------------------------------------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { 
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { 
+  getFirestore,
+  collection,
+  addDoc,
+  setDoc,
+  doc,
+  onSnapshot,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB2WA7yotRlqNidwIgJcT19JNrK8ukMgs4",
+  authDomain: "phasmophobiabroads.firebaseapp.com",
+  projectId: "phasmophobiabroads",
+  storageBucket: "phasmophobiabroads.appspot.com",
+  messagingSenderId: "503659624108",
+  appId: "1:503659624108:web:6e57fbc6bf36b0d5989109"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let CURRENT_USER_ID = null;
+
+/* ---------------------------------------------------------
+   AUTH SYSTEM
+--------------------------------------------------------- */
+async function ensureAuth() {
+  return new Promise((resolve, reject) => {
+    onAuthStateChanged(auth, async user => {
+      try {
+        if (!user) {
+          const cred = await signInAnonymously(auth);
+          CURRENT_USER_ID = cred.user.uid;
+          resolve(CURRENT_USER_ID);
+        } else {
+          CURRENT_USER_ID = user.uid;
+          resolve(CURRENT_USER_ID);
+        }
+      } catch(err) {
+        console.error("Auth error:", err);
+        reject(err);
       }
     });
+  });
+}
 
-  </script>
+function safeUser() {
+  if (!CURRENT_USER_ID) {
+    console.warn("User not authenticated yet — write blocked.");
+    return false;
+  }
+  return true;
+}
+
+/* ---------------------------------------------------------
+   GHOST DATA
+--------------------------------------------------------- */
+const GHOST_DATA = {
+  Spirit:{evidence:["EMF 5","Spirit Box","Writing"],strength:"No specific strengths.",weakness:"Smudge sticks stop attacks for a long duration."},
+  Wraith:{evidence:["EMF 5","Spirit Box","DOTS"],strength:"Never leaves footsteps; rarely touches ground.",weakness:"Extremely affected by salt."},
+  Phantom:{evidence:["Spirit Box","Fingerprints","DOTS"],strength:"Looking at it drains sanity faster.",weakness:"Photo makes it disappear."},
+  Poltergeist:{evidence:["Spirit Box","Fingerprints","Writing"],strength:"Throws many objects.",weakness:"Weak in empty rooms."},
+  Banshee:{evidence:["Fingerprints","DOTS","Orb"],strength:"Stalks a chosen target.",weakness:"Crucifix stronger against it."},
+  Jinn:{evidence:["EMF 5","Fingerprints","Freezing"],strength:"Fast when far from players.",weakness:"Disabled if power is off."},
+  Mare:{evidence:["Spirit Box","Orb","Writing"],strength:"Stronger in dark.",weakness:"Light prevents hunts."},
+  Revenant:{evidence:["Orb","Writing","Freezing"],strength:"Fast in hunts.",weakness:"Slow when roaming."},
+  Shade:{evidence:["EMF 5","Writing","Freezing"],strength:"Shy ghost.",weakness:"Won’t hunt with 2+ players nearby."},
+  Demon:{evidence:["Fingerprints","Writing","Freezing"],strength:"Earliest hunts.",weakness:"Crucifix very effective."},
+  Yurei:{evidence:["Orb","Freezing","DOTS"],strength:"Massive sanity drain.",weakness:"Smudging traps it."},
+  Oni:{evidence:["EMF 5","Freezing","DOTS"],strength:"Very active.",weakness:"Shows physical form often."},
+  Yokai:{evidence:["Spirit Box","Orb","DOTS"],strength:"Triggered by talking.",weakness:"Limited hearing."},
+  Hantu:{evidence:["Fingerprints","Orb","Freezing"],strength:"Fast in cold.",weakness:"Slow in warm."},
+  Goryo:{evidence:["EMF 5","Fingerprints","DOTS"],strength:"Seen only through camera.",weakness:"Stays in ghost room."},
+  Myling:{evidence:["EMF 5","Fingerprints","Writing"],strength:"Quiet while hunting.",weakness:"Parabolic hears it clearly."},
+  Onryo:{evidence:["Spirit Box","Orb","Freezing"],strength:"Triggered by extinguished flames.",weakness:"Candles protect."},
+  Twins:{evidence:["Spirit Box","EMF 5","Freezing"],strength:"Two locations at once.",weakness:"Different EMF patterns."},
+  Raiju:{evidence:["EMF 5","DOTS","Orb"],strength:"Fast near electronics.",weakness:"Causes EMF spikes."},
+  Obake:{evidence:["EMF 5","Fingerprints","Orb"],strength:"Rare shapeshift fingerprints.",weakness:"Prints fade quickly."},
+  Mimic:{evidence:["Spirit Box","Freezing","Fingerprints","Orb"],strength:"Copies any ghost.",weakness:"Always shows Orbs."},
+  Moroi:{evidence:["Spirit Box","Writing","Freezing"],strength:"Curses players.",weakness:"Long smudge blind."},
+  Deogen:{evidence:["Spirit Box","Writing","DOTS"],strength:"Fast far away.",weakness:"Slow up close."},
+  Thaye:{evidence:["Orb","Writing","DOTS"],strength:"Strong early.",weakness:"Ages + weakens."
+};
+
+/* ---------------------------------------------------------
+   CASE FILES
+--------------------------------------------------------- */
+const CASE_FILES = [
+  {url:"/assets/profiles/case1.jpg",title:"The Silent Approach",description:"Case File 001: Encounter at Brownstone High."},
+  {url:"/assets/profiles/case2.jpg",title:"Closet Panic",description:"Case File 002: EMF spiking inside small room."},
+  {url:"/assets/profiles/case3.jpg",title:"Emergency Extraction",description:"Case File 003: Demon charge into hallway."},
+  {url:"/assets/profiles/case4.jpg",title:"Ouija Gamble",description:"Case File 004: Bad question → sanity wipe."},
+  {url:"/assets/profiles/case5.jpg",title:"The Voodoo Threat",description:"Case File 005: Voodoo puppet mimic."},
+  {url:"/assets/profiles/case6.jpg",title:"Summoning Circle",description:"Case File 006: Full manifestation."}
+];
+
+/* ---------------------------------------------------------
+   MAPS
+--------------------------------------------------------- */
+const MAP_DATA = {
+  Grafton:"/assets/maps/grafton.jpg",
+  Tanglewood:"/assets/maps/tanglewood.jpg",
+  Edgefield:"/assets/maps/edgefield.jpg",
+  Ridgeview:"/assets/maps/ridgeview.jpg",
+  Willow:"/assets/maps/willow.jpg",
+  Bleasdale:"/assets/maps/bleasdale.jpg",
+  Brownstone:"/assets/maps/brownstone.jpg"
+};
+const DEFAULT_MAP = "https://placehold.co/600x300/0a0a0f/5dfdff?text=Map+"; 
+
+/* ---------------------------------------------------------
+   UI RENDER FUNCTIONS
+--------------------------------------------------------- */
+function renderChat(messages){
+  const box = document.getElementById("chat-messages");
+  box.innerHTML = "";
+  messages.forEach(msg=>{
+    const t = new Date(msg.timestamp).toLocaleTimeString("en-US",{hour12:false});
+    const div = document.createElement("div");
+    div.className="msg-sent";
+    div.innerHTML = `<b>[${t}]</b> ${msg.text}`;
+    box.appendChild(div);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+
+function renderEvidence(list){
+  const box = document.getElementById("evidence-display");
+  box.innerHTML = "";
+  list.forEach(ev=>{
+    box.innerHTML += `<div class="p-2 border-b border-cyan-600">${ev.evidence}</div>`;
+  });
+}
+
+function renderSquadStatus(statuses, profiles){
+  const box = document.getElementById("status-display");
+  box.innerHTML="";
+  Object.values(statuses).forEach(st=>{
+    const prof = profiles[st.userId] || {};
+    const name = prof.displayName || "Unknown";
+    const photo = prof.photoUrl || "/assets/profiles/default.jpg";
+    box.innerHTML += `
+      <div class="flex items-center gap-3 p-3 bg-black/40 rounded border border-cyan-500">
+        <img src="${photo}" class="w-10 h-10 rounded-full border" />
+        <div>
+          <div class="font-bold">${name}</div>
+          <div class="text-sm text-gray-400">${st.location || "Unknown Room"} — ${st.map || "Unknown Map"}</div>
+        </div>
+      </div>`;
+  });
+}
+
+function renderGhostProfile(name){
+  const info = document.getElementById("ghost-info");
+  if(!name){ info.innerHTML="Select a ghost."; return; }
+  const g = GHOST_DATA[name];
+  info.innerHTML = `
+    <h3 class="text-xl text-cyan-300 mb-2">${name}</h3>
+    <p><b>Evidence:</b> ${g.evidence.join(", ")}</p>
+    <p><b>Strength:</b> ${g.strength}</p>
+    <p><b>Weakness:</b> ${g.weakness}</p>
+  `;
+}
+
+function populateGhostDropdown(){
+  const sel = document.getElementById("ghost-select");
+  sel.innerHTML = `<option value="">Select Ghost Type</option>`;
+  Object.keys(GHOST_DATA).sort().forEach(name=>{
+    const opt=document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    sel.appendChild(opt);
+  });
+}
+
+function populateCaseFiles(){
+  const gallery = document.getElementById("case-files-gallery");
+  gallery.innerHTML="";
+  CASE_FILES.forEach((file,idx)=>{
+    const img=document.createElement("img");
+    img.src=file.url;
+    img.className="rounded shadow border border-cyan-400 cursor-pointer";
+    img.onclick = ()=> openCaseModal(idx);
+    gallery.appendChild(img);
+  });
+}
+
+function openCaseModal(i){
+  const modal=document.getElementById("case-file-modal");
+  document.getElementById("modal-image").src = CASE_FILES[i].url;
+  document.getElementById("modal-title").textContent = CASE_FILES[i].title;
+  document.getElementById("modal-description").textContent = CASE_FILES[i].description;
+  modal.classList.add("active");
+}
+
+window.closeCaseModal = () => {
+  document.getElementById("case-file-modal").classList.remove("active");
+}
+
+function renderMap(name){
+  const img = document.getElementById("map-location-image");
+  img.src = MAP_DATA[name] || DEFAULT_MAP;
+}
+
+/* ---------------------------------------------------------
+   WRITE OPERATIONS
+--------------------------------------------------------- */
+async function sendChatMessage(text){
+  if(!safeUser()) return;
+  await addDoc(collection(db,"/app/chat"),{
+    userId:CURRENT_USER_ID,
+    text,
+    timestamp:Date.now()
+  });
+}
+async function saveEvidence(evidence){
+  if(!safeUser()) return;
+  await addDoc(collection(db,"/app/evidence"),{
+    userId:CURRENT_USER_ID,
+    evidence,
+    timestamp:Date.now()
+  });
+}
+async function saveUserProfile(name,photoUrl){
+  if(!safeUser()) return;
+  await setDoc(doc(db,"/app/profiles",CURRENT_USER_ID),{
+    displayName:name,
+    photoUrl,
+    lastSeen:Date.now()
+  },{merge:true});
+}
+
+/* ---------------------------------------------------------
+   REALTIME LISTENERS
+--------------------------------------------------------- */
+const latest={ profiles:{}, statuses:{} };
+
+function startRealtime(){
+  // chat
+  const chatQ = query(collection(db,"/app/chat"), orderBy("timestamp","asc"));
+  onSnapshot(chatQ, snap=>{
+    const msgs=[]; snap.forEach(d=> msgs.push(d.data()));
+    renderChat(msgs);
+  });
+
+  // evidence
+  onSnapshot(collection(db,"/app/evidence"), snap=>{
+    const list=[]; snap.forEach(d=> list.push(d.data()));
+    renderEvidence(list);
+  });
+
+  // profiles
+  onSnapshot(collection(db,"/app/profiles"), snap=>{
+    const prof={}; snap.forEach(d=> prof[d.id]=d.data());
+    latest.profiles = prof;
+
+    // update profile dropdown
+    const sel=document.getElementById("photo-select");
+    sel.innerHTML="";
+    Object.values(prof).forEach(p=>{
+      if(p.photoUrl){
+        const opt=document.createElement("option");
+        opt.value=p.photoUrl;
+        opt.textContent = p.displayName || "User";
+        sel.appendChild(opt);
+      }
+    });
+  });
+
+  // status
+  onSnapshot(collection(db,"/app/status"), snap=>{
+    const statuses={}; snap.forEach(d=> statuses[d.id]=d.data());
+    latest.statuses=statuses;
+    renderSquadStatus(statuses, latest.profiles);
+  });
+}
+
+/* ---------------------------------------------------------
+   TAB SYSTEM
+--------------------------------------------------------- */
+function switchTab(name){
+  document.querySelectorAll(".tab-panel").forEach(p=>{
+    p.classList.add("hidden");
+  });
+  document.querySelectorAll(".tab-btn").forEach(b=>{
+    b.classList.remove("active-glitch");
+  });
+
+  const panel=document.querySelector(`.tab-panel[data-tab="${name}"]`);
+  const btn=document.querySelector(`.tab-btn[data-tab="${name}"]`);
+
+  if(panel) panel.classList.remove("hidden");
+  if(btn) btn.classList.add("active-glitch");
+}
+
+/* Attach tab events */
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.onclick = ()=> switchTab(btn.dataset.tab);
+});
+switchTab("chat");
+
+/* ---------------------------------------------------------
+   INPUT HANDLERS
+--------------------------------------------------------- */
+document.getElementById("chat-input").addEventListener("keypress", e=>{
+  if(e.key==="Enter"){
+    const text=e.target.value.trim();
+    if(text!==""){
+      sendChatMessage(text);
+      e.target.value="";
+    }
+  }
+});
+
+document.getElementById("evidence-input").addEventListener("keypress", e=>{
+  if(e.key==="Enter"){
+    const ev=e.target.value.trim();
+    if(ev!==""){
+      saveEvidence(ev);
+      e.target.value="";
+    }
+  }
+});
+
+document.getElementById("ghost-select").addEventListener("change", e=>{
+  renderGhostProfile(e.target.value);
+});
+
+/* Profile saving */
+document.getElementById("profile-save-btn").onclick = ()=>{
+  const name=document.getElementById("display-name-input").value.trim();
+  const photo=document.getElementById("photo-select").value;
+  if(name==="") return alert("Enter a name.");
+  saveUserProfile(name,photo);
+  document.getElementById("profile-preview").src=photo;
+};
+
+/* ---------------------------------------------------------
+   JITSI POP-OUT
+--------------------------------------------------------- */
+document.getElementById("jitsi-btn").onclick = () => {
+  window.open(
+    "https://meet.jit.si/PhasmophobiaBroadsHQ",
+    "_blank",
+    "width=900,height=650"
+  );
+};
+
+/* ---------------------------------------------------------
+   APP BOOT
+--------------------------------------------------------- */
+async function boot(){
+  await ensureAuth();
+  populateGhostDropdown();
+  populateCaseFiles();
+  startRealtime();
+}
+
+document.addEventListener("DOMContentLoaded", boot);
+</script>
+<!-- ---------------------------------------------------------
+     CASE FILE MODAL (NEON POPUP)
+--------------------------------------------------------- -->
+<div id="case-file-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 transition-all">
+  <div class="bg-gray-900 border border-cyan-400 rounded-lg shadow-xl p-4 max-w-md w-full relative neon-border">
+
+    <img id="modal-image" class="w-full rounded mb-3 border border-cyan-300 shadow" />
+
+    <h2 id="modal-title" class="text-2xl text-cyan-300 font-bold mb-1"></h2>
+
+    <p id="modal-description" class="text-gray-300 mb-4 leading-relaxed"></p>
+
+    <button 
+      onclick="closeCaseModal()" 
+      class="w-full bg-cyan-300 text-black font-semibold p-2 rounded hover:bg-cyan-200 transition">
+      Close
+    </button>
+  </div>
+</div>
+
+
+<!-- ---------------------------------------------------------
+     END OF DOCUMENT
+--------------------------------------------------------- -->
 </body>
 </html>
+
+  </style>
+</head>
