@@ -1,17 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Phasmophobia Broads HQ - Team coordination hub for ghost hunting">
   <title>Phasmophobia Broads HQ — FULL SYSTEM</title>
-  <!-- Tailwind -->
+
+  <!-- Preconnect to external domains for improved performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+  <!-- Tailwind CSS Framework -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Google Fonts: Orbitron (headings) and Roboto (body text) -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
   <style>
-    /* ... your styles remain ... */
+    /* Base body styles: dark radial gradient background with glowing text effect */
     body {
       background: radial-gradient(circle at top, #09121a 0%, #05060a 60%, #010103 100%);
       color: #e0faff;
@@ -20,74 +30,162 @@
       text-shadow: 0 0 4px #00eaff;
       overflow-x: hidden;
     }
-    /* other style blocks unchanged ... */
+
+    /* Fallback utility classes in case Tailwind CDN fails to load */
+    .hidden {
+      display: none !important;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Active tab button style - add glow effect when tab is selected */
+    .tab-btn.active-glitch {
+      box-shadow: 0 0 12px #00eaff, 0 0 24px #00eaff;
+      border-color: #00eaff;
+    }
+
+    /* Focus styles for accessibility - visible focus rings */
+    .tab-btn:focus,
+    button:focus,
+    input:focus,
+    select:focus {
+      outline: 2px solid #00eaff;
+      outline-offset: 2px;
+    }
+
+    /* Skip link for keyboard navigation accessibility */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: #00eaff;
+      color: #000;
+      padding: 8px;
+      z-index: 100;
+      transition: top 0.3s;
+    }
+    .skip-link:focus {
+      top: 0;
+    }
   </style>
 </head>
-<body class="p-4">
-  <h1 class="text-3xl font-orbitron mb-6 text-center">Phasmophobia Broads HQ</h1>
-  <div class="flex flex-wrap gap-3 items-center justify-center mb-8">
-    <button class="tab-btn" data-tab="chat">Chat</button>
-    <button class="tab-btn" data-tab="ghosts">Ghost Profiles</button>
-    <button class="tab-btn" data-tab="evidence">Evidence</button>
-    <!-- Add more buttons as needed, e.g. case-files, status, map, profile -->
-  </div>
+<body class="p-4 min-h-screen">
+  <!-- Skip link for keyboard users to bypass navigation -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <!-- Tab Content Panels -->
-  <div class="max-w-3xl mx-auto space-y-6">
-    <!-- Chat Tab Content -->
-    <div class="tab-panel" data-tab="chat">
+  <!-- Page Header -->
+  <header>
+    <h1 class="text-3xl font-orbitron mb-6 text-center">Phasmophobia Broads HQ</h1>
+  </header>
+
+  <!-- Main Navigation: Tab buttons for switching between sections -->
+  <nav aria-label="Main navigation">
+    <div class="flex flex-wrap gap-3 items-center justify-center mb-8">
+      <button type="button" id="tab-chat" class="tab-btn px-4 py-2 border border-cyan-500 rounded hover:bg-cyan-900 transition-colors" data-tab="chat" aria-controls="panel-chat" aria-selected="true">
+        <i class="fas fa-comments mr-2" aria-hidden="true"></i>Chat
+      </button>
+      <button type="button" id="tab-ghosts" class="tab-btn px-4 py-2 border border-cyan-500 rounded hover:bg-cyan-900 transition-colors" data-tab="ghosts" aria-controls="panel-ghosts" aria-selected="false">
+        <i class="fas fa-ghost mr-2" aria-hidden="true"></i>Ghost Profiles
+      </button>
+      <button type="button" id="tab-evidence" class="tab-btn px-4 py-2 border border-cyan-500 rounded hover:bg-cyan-900 transition-colors" data-tab="evidence" aria-controls="panel-evidence" aria-selected="false">
+        <i class="fas fa-search mr-2" aria-hidden="true"></i>Evidence
+      </button>
+      <!-- Add more tab buttons here as needed (e.g., case-files, status, map, profile) -->
+    </div>
+  </nav>
+
+  <!-- Main Content Area: Tab Panels -->
+  <main id="main-content" class="max-w-3xl mx-auto space-y-6">
+
+    <!-- Chat Tab Panel -->
+    <section id="panel-chat" class="tab-panel" data-tab="chat" role="tabpanel" aria-labelledby="tab-chat">
       <h2 class="text-xl mb-3">Team Chat</h2>
-      <button id="jitsi-btn">Start Jitsi Call (Pop-out)</button>
-      <div id="chat-messages"></div>
-      <input id="chat-input" type="text" placeholder="Type message...">
-    </div>
+      <button type="button" id="jitsi-btn" class="px-4 py-2 bg-cyan-700 rounded hover:bg-cyan-600 transition-colors mb-4" aria-label="Start Jitsi video call in a new window">
+        <i class="fas fa-video mr-2" aria-hidden="true"></i>Start Jitsi Call (Pop-out)
+      </button>
+      <div id="chat-messages" class="mb-4 min-h-[100px] border border-cyan-800 rounded p-2" role="log" aria-live="polite" aria-label="Chat messages">
+        <!-- Chat messages will be dynamically inserted here -->
+      </div>
+      <label for="chat-input" class="sr-only">Type your message</label>
+      <input id="chat-input" type="text" placeholder="Type message..." class="w-full p-2 bg-gray-900 border border-cyan-700 rounded text-cyan-100 placeholder-cyan-600" aria-label="Chat message input">
+    </section>
 
-    <!-- Ghost Profiles Tab Content -->
-    <div class="tab-panel hidden" data-tab="ghosts">
+    <!-- Ghost Profiles Tab Panel -->
+    <section id="panel-ghosts" class="tab-panel hidden" data-tab="ghosts" role="tabpanel" aria-labelledby="tab-ghosts">
       <h2 class="text-xl mb-2">Ghost Profiles</h2>
-      <select id="ghost-select"></select>
-      <div id="ghost-info"></div>
-    </div>
+      <label for="ghost-select" class="sr-only">Select a ghost type</label>
+      <select id="ghost-select" class="w-full p-2 bg-gray-900 border border-cyan-700 rounded text-cyan-100 mb-4" aria-label="Ghost type selector">
+        <option value="">-- Select a Ghost --</option>
+        <!-- Ghost options will be dynamically populated -->
+      </select>
+      <section id="ghost-info" class="border border-cyan-800 rounded p-4 min-h-[100px]" aria-live="polite" aria-label="Ghost information display">
+        <!-- Ghost details will be displayed here -->
+      </section>
+    </section>
 
-    <!-- Evidence Tab Content -->
-    <div class="tab-panel hidden" data-tab="evidence">
-      <h2 class="text-xl mb-2">Evidence</h2>
-      <input id="evidence-input">
-      <div id="evidence-display"></div>
-    </div>
+    <!-- Evidence Tab Panel -->
+    <section id="panel-evidence" class="tab-panel hidden" data-tab="evidence" role="tabpanel" aria-labelledby="tab-evidence">
+      <h2 class="text-xl mb-2">Evidence Tracker</h2>
+      <label for="evidence-input" class="sr-only">Enter evidence</label>
+      <input id="evidence-input" type="text" placeholder="Enter evidence..." class="w-full p-2 bg-gray-900 border border-cyan-700 rounded text-cyan-100 placeholder-cyan-600 mb-4" aria-label="Evidence input field">
+      <section id="evidence-display" class="border border-cyan-800 rounded p-4 min-h-[100px]" aria-live="polite" aria-label="Evidence results">
+        <!-- Evidence matching results will be displayed here -->
+      </section>
+    </section>
 
-    <!-- You will need to add data-tab for your other hidden tab panels as well,
-         matching the data-tab attributes of their respective buttons. -->
-  </div>
+    <!-- Additional tab panels can be added here following the same pattern:
+         - Use data-tab attribute matching the button's data-tab
+         - Include role="tabpanel" and appropriate aria attributes
+         - Start with class="tab-panel hidden" for initially hidden panels -->
+  </main>
 
-  <!-- Keep your modal and script logic if needed -->
+  <!-- Footer (optional, can be expanded) -->
+  <footer class="mt-8 text-center text-sm text-cyan-600">
+    <p>&copy; 2025 Phasmophobia Broads HQ. Happy ghost hunting!</p>
+  </footer>
 
+  <!-- Main Application Script -->
   <script type="module">
-    // Adjust selectors as needed for tab switching and initialization
-    // ... Your script block goes here, as in your original file ...
-    // Update tab switching logic if needed:
+    /**
+     * Tab Switching Logic
+     * Handles showing/hiding tab panels and updating button states
+     * @param {string} tabName - The data-tab value of the tab to activate
+     */
     function switchTab(tabName) {
-      document.querySelectorAll(".tab-panel").forEach(p => {
-        if (p.dataset.tab === tabName) {
-          p.classList.remove("hidden");
-        } else {
-          p.classList.add("hidden");
-        }
+      // Update panel visibility
+      document.querySelectorAll(".tab-panel").forEach(panel => {
+        const isActive = panel.dataset.tab === tabName;
+        panel.classList.toggle("hidden", !isActive);
+        panel.setAttribute("aria-hidden", String(!isActive));
       });
+
+      // Update button states for accessibility
       document.querySelectorAll(".tab-btn").forEach(btn => {
-        if (btn.dataset.tab === tabName) {
-          btn.classList.add("active-glitch");
-        } else {
-          btn.classList.remove("active-glitch");
-        }
+        const isActive = btn.dataset.tab === tabName;
+        btn.classList.toggle("active-glitch", isActive);
+        btn.setAttribute("aria-selected", String(isActive));
       });
     }
+
+    // Initialize tab click handlers
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", () => switchTab(btn.dataset.tab));
     });
-    // Set initial tab
+
+    // Set initial active tab on page load
     switchTab("chat");
-    // Boot/init functions if needed
+
+    // Additional initialization functions can be added here
+    // Example: loadGhostProfiles(), initializeChat(), etc.
   </script>
 </body>
 </html>
